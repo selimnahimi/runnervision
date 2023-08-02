@@ -19,6 +19,8 @@ public class PawnController : EntityComponent<Pawn>
 	public float Acceleration => 0.02f;
 	public int Wallrunning { get; set; }
 	public int Dashing { get; set; }
+	public bool Noclipping { get; set; }
+	public bool UnlimitedSprint { get; set; }
 
 	private float CurrentMaxSpeed { get; set; }
 	private float TimeSinceLastFootstep { get; set; }
@@ -30,7 +32,7 @@ public class PawnController : EntityComponent<Pawn>
 
 	HashSet<string> ControllerEvents = new( StringComparer.OrdinalIgnoreCase );
 
-	bool Grounded => Entity.GroundEntity.IsValid();
+	public bool Grounded => Entity.GroundEntity.IsValid();
 
 	public PawnController()
 	{
@@ -40,6 +42,12 @@ public class PawnController : EntityComponent<Pawn>
 	public void Simulate( IClient cl )
 	{
 		ControllerEvents.Clear();
+
+		if ( Noclipping )
+		{
+			HandleNoclipping();
+			return;
+		}
 
 		var movement = Entity.InputDirection.Normal;
 		var angles = Entity.ViewAngles.WithPitch( 0 );
@@ -58,9 +66,6 @@ public class PawnController : EntityComponent<Pawn>
 
 		CheckForSharpTurn( moveVector );
 
-		//Log.Info( CurrentMaxSpeed );
-		DebugOverlay.ScreenText( CurrentMaxSpeed.ToString() );
-
 		if ( groundEntity.IsValid() )
 		{
 			if ( !Grounded )
@@ -69,6 +74,7 @@ public class PawnController : EntityComponent<Pawn>
 
 				Entity.Velocity = Entity.Velocity.WithZ( 0 );
 				AddEvent( "grounded" );
+				Wallrunning = 0;
 			}
 
 			Entity.Velocity = Accelerate( Entity.Velocity, moveVector.Normal, moveVector.Length, CurrentMaxSpeed, Acceleration );
@@ -113,10 +119,22 @@ public class PawnController : EntityComponent<Pawn>
 
 			if ( IsWallRunning() )
 			{
-				Entity.ApplyAbsoluteImpulse( Entity.Rotation.Forward * 250f + Vector3.Up * 50f );
+				Entity.Velocity *= 0.5f;
+				Entity.ApplyAbsoluteImpulse( Entity.Rotation.Forward * 250f + Entity.Rotation.Up * 100f );
 				Wallrunning = 0;
 			}
+			else if ( CheckForWallLeft() )
+			{
+				Wallrunning = 1;
+			}
+			else if ( CheckForWallRight() )
+			{
+				Wallrunning = 2;
+			}
 		}
+
+		DebugOverlay.Line( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Left * 30f + Entity.Rotation.Forward * 15f );
+		DebugOverlay.Line( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Right * 30f + Entity.Rotation.Forward * 15f );
 
 		TimeSinceDash += Time.Delta;
 
@@ -138,7 +156,60 @@ public class PawnController : EntityComponent<Pawn>
 
 		Entity.GroundEntity = groundEntity;
 
+		if ( UnlimitedSprint )
+			CurrentMaxSpeed = MaxSpeed;
+
+		DebugOverlay.ScreenText( CurrentMaxSpeed.ToString() );
+
 		FootstepWizard();
+	}
+
+	[ConCmd.Admin( "noclip" )]
+	static void DoPlayerNoclip()
+	{
+		if ( ConsoleSystem.Caller.Pawn is Pawn player )
+		{
+			if (player.Controller.Noclipping)
+				player.Controller.Noclipping = false;
+			else
+				player.Controller.Noclipping = true;
+		}
+	}
+
+	[ConCmd.Admin( "unlimited_sprint" )]
+	static void DoUnlimitedSprint()
+	{
+		if ( ConsoleSystem.Caller.Pawn is Pawn player )
+		{
+			if ( player.Controller.UnlimitedSprint )
+				player.Controller.UnlimitedSprint = false;
+			else
+				player.Controller.UnlimitedSprint = true;
+		}
+	}
+
+	void HandleNoclipping()
+	{
+		var movement = Entity.InputDirection.Normal;
+		var angles = Entity.ViewAngles;
+		var moveVector = Rotation.From( angles ) * movement * 10f;
+
+		Entity.Transform = Entity.Transform.Add( moveVector, true );
+		Entity.Velocity = 0;
+	}
+
+	bool CheckForWallLeft()
+	{
+		var trace = Trace.Ray( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Left * 30f + Entity.Rotation.Forward * 15f ).Run();
+
+		return trace.Hit && trace.Entity.IsWorld;
+	}
+
+	bool CheckForWallRight()
+	{
+		var trace = Trace.Ray( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Right * 30f + Entity.Rotation.Forward * 15f ).Run();
+
+		return trace.Hit && trace.Entity.IsWorld;
 	}
 
 	void FootstepWizard()
@@ -263,17 +334,17 @@ public class PawnController : EntityComponent<Pawn>
 		if ( accelspeed > addspeed )
 			accelspeed = addspeed;*/
 
-		var currentspeed = input.Dot( wishdir );
+		// var currentspeed = input.Dot( wishdir );
 
 		// Log.Info( wishspeed + " / " + currentspeed );
 		// Log.Info( acceleration );
 
 		input = input.LerpTo( wishdir * wishspeed, acceleration );
 
-		if (wishdir.Length < 0.1f )
-		{
+		// if (wishdir.Length < 0.1f )
+		// {
 			// input = input.LerpTo( wishdir, 0.005f );
-		}
+		// }
 
 		// Log.Info( Entity.Velocity.Length );
 
