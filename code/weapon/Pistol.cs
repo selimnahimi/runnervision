@@ -54,6 +54,9 @@ public partial class Hands : Weapon
 			Pawn.Controller.Wallrunning = 0;
 		}
 
+		DebugOverlay.Line( Pawn.Position + Vector3.Up * 50f, Pawn.Position + Vector3.Up * 50f + Pawn.Rotation.Left * 30f + Pawn.Rotation.Forward * 15f );
+		DebugOverlay.Line( Pawn.Position + Vector3.Up * 50f, Pawn.Position + Vector3.Up * 50f + Pawn.Rotation.Right * 30f + Pawn.Rotation.Forward * 15f );
+
 		if ( Input.Pressed( "jump" ) && Pawn.GroundEntity != null )
 		{
 			jumping = true;
@@ -78,14 +81,14 @@ public partial class Hands : Weapon
 
 	bool CheckForWallLeft()
 	{
-		var trace = Trace.Ray( Pawn.Position, Pawn.Position + Pawn.Rotation.Left * 30f ).Run();
+		var trace = Trace.Ray( Pawn.Position + Vector3.Up * 50f, Pawn.Position + Vector3.Up * 50f + Pawn.Rotation.Left * 30f + Pawn.Rotation.Forward * 15f ).Run();
 
 		return trace.Hit && trace.Entity.IsWorld;
 	}
 
 	bool CheckForWallRight()
 	{
-		var trace = Trace.Ray( Pawn.Position, Pawn.Position + Pawn.Rotation.Right * 30f ).Run();
+		var trace = Trace.Ray( Pawn.Position + Vector3.Up * 50f, Pawn.Position + Vector3.Up * 50f + Pawn.Rotation.Right * 30f + Pawn.Rotation.Forward * 15f ).Run();
 
 		return trace.Hit && trace.Entity.IsWorld;
 	}
