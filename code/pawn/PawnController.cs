@@ -110,6 +110,12 @@ public class PawnController : EntityComponent<Pawn>
 			{
 				DoJump();
 			}
+
+			if ( IsWallRunning() )
+			{
+				Entity.ApplyAbsoluteImpulse( Entity.Rotation.Forward * 250f + Vector3.Up * 50f );
+				Wallrunning = 0;
+			}
 		}
 
 		TimeSinceDash += Time.Delta;
