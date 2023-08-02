@@ -26,9 +26,6 @@ public class PawnController : EntityComponent<Pawn>
 	private float TimeSinceLastFootstep { get; set; }
 	private float TimeSinceLastFootstepRelease { get; set; }
 	private float TimeSinceDash { get; set; }
-	// private float NextFootstep { get; set; }
-
-	private float CurrentAcceleration { get; set; }
 
 	HashSet<string> ControllerEvents = new( StringComparer.OrdinalIgnoreCase );
 
@@ -79,20 +76,9 @@ public class PawnController : EntityComponent<Pawn>
 
 			Entity.Velocity = Accelerate( Entity.Velocity, moveVector.Normal, moveVector.Length, CurrentMaxSpeed, Acceleration );
 			Entity.Velocity = ApplyFriction( Entity.Velocity, Friction );
-
-			//Log.Info( Entity.Velocity.Distance( moveVector.Normal * moveVector.Length ) );
-			// Log.Info( Entity.Velocity.Angle( moveVector.Normal * moveVector.Length ) );
-
-			/*if ( Entity.Velocity.Angle( moveVector.Normal * moveVector.Length ) > 30 )
-			{
-				Entity.Velocity = ApplyFriction( Entity.Velocity, 4.0f );
-			}*/
-			//if ( Entity.Velocity.Distance(moveVector.Normal) )
-			//Entity.Velocity = ApplyFriction( Entity.Velocity, 4.0f );
 		}
 		else
 		{
-			// Entity.Velocity = Accelerate( Entity.Velocity, moveVector.Normal, moveVector.Length, CurrentMaxSpeed/2, Acceleration );
 			Entity.Velocity += Vector3.Down * (IsWallRunning() ? Gravity * 0.75f : Gravity ) * Time.Delta;
 		}
 
@@ -320,35 +306,7 @@ public class PawnController : EntityComponent<Pawn>
 		if ( speedLimit > 0 && wishspeed > speedLimit )
 			wishspeed = speedLimit;
 
-		/*var currentspeed = input.Dot( wishdir );
-		var addspeed = wishspeed - currentspeed;
-
-		if ( addspeed <= 0 )
-			return input;
-
-		bool goingFast = currentspeed > 0.2 * wishspeed;
-
-		var accelspeed = acceleration * Time.Delta * wishspeed;
-		Log.Info( accelspeed );
-
-		if ( accelspeed > addspeed )
-			accelspeed = addspeed;*/
-
-		// var currentspeed = input.Dot( wishdir );
-
-		// Log.Info( wishspeed + " / " + currentspeed );
-		// Log.Info( acceleration );
-
 		input = input.LerpTo( wishdir * wishspeed, acceleration );
-
-		// if (wishdir.Length < 0.1f )
-		// {
-			// input = input.LerpTo( wishdir, 0.005f );
-		// }
-
-		// Log.Info( Entity.Velocity.Length );
-
-		// input += wishdir * accelspeed;
 
 		return input;
 	}

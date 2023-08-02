@@ -32,8 +32,6 @@ public partial class Hands : Weapon
 	{
 		Pawn.SetAnimParameter( "holdtype", (int)CitizenAnimationHelper.HoldTypes.Pistol );
 		ViewModelEntity?.SetAnimParameter( "speed", Pawn.Velocity.Length );
-		// Log.Info( Pawn.Velocity.Length );
-		// Log.Info( ViewModelEntity?.GetAnimParameterFloat( "speed" ) );
 	}
 
 	public override void FrameSimulate( IClient cl )
@@ -48,8 +46,5 @@ public partial class Hands : Weapon
 		ViewModelEntity?.SetAnimParameter( "jumping", !Pawn.Controller.Grounded );
 		ViewModelEntity?.SetAnimParameter( "dashing", Pawn.Controller.Dashing );
 		ViewModelEntity?.SetAnimParameter( "wallrunning", Pawn.Controller.Wallrunning );
-
-		// Log.Info( "Left: " + CheckForWallLeft() );
-		// Log.Info( "Right: " + CheckForWallRight() );
 	}
 }

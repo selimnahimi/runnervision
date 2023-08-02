@@ -171,7 +171,6 @@ public partial class Pawn : AnimatedEntity
 		{
 			bool turningLeft = ViewAngles.yaw > PreviousViewAngles.yaw;
 			float turnRate = PreviousViewAngles.ToRotation().Distance( ViewAngles.ToRotation() );
-			// Log.Info( "turnRate: " + turnRate );
 
 			if ( turnRate > CameraTiltDeadzone )
 				CameraTilt = CameraTilt.LerpTo( turningLeft ? -CameraTiltMax : CameraTiltMax, CameraTiltMultiplier * PreviousViewAngles.ToRotation().Distance( ViewAngles.ToRotation() )) ;
