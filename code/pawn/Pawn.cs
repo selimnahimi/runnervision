@@ -20,9 +20,9 @@ public partial class Pawn : AnimatedEntity
 
 	public float CameraTiltMultiplier => 0.01f;
 
-	private Angles PreviousViewAngles { get; set; }
+	public float CameraTilt { get; set; }
 
-	private float CameraTilt { get; set; }
+	private Angles PreviousViewAngles { get; set; }
 
 	/// <summary>
 	/// Position a player should be looking from in world space.
@@ -171,7 +171,7 @@ public partial class Pawn : AnimatedEntity
 		{
 			bool turningLeft = ViewAngles.yaw > PreviousViewAngles.yaw;
 			float turnRate = PreviousViewAngles.ToRotation().Distance( ViewAngles.ToRotation() );
-			Log.Info( "turnRate: " + turnRate );
+			// Log.Info( "turnRate: " + turnRate );
 
 			if ( turnRate > CameraTiltDeadzone )
 				CameraTilt = CameraTilt.LerpTo( turningLeft ? -CameraTiltMax : CameraTiltMax, CameraTiltMultiplier * PreviousViewAngles.ToRotation().Distance( ViewAngles.ToRotation() )) ;
@@ -183,7 +183,14 @@ public partial class Pawn : AnimatedEntity
 			Camera.Position = EyePosition;
 		}
 
-		CameraTilt = CameraTilt.LerpTo( 0, 0.05f );
+		if ( Controller.Wallrunning != 0 )
+		{
+			CameraTilt = CameraTilt.LerpTo( Controller.Wallrunning == 1 ? 10f : -10f, 0.05f);
+		}
+		else
+		{
+			CameraTilt = CameraTilt.LerpTo( 0, 0.05f );
+		}
 	}
 
 	public TraceResult TraceBBox( Vector3 start, Vector3 end, float liftFeet = 0.0f )

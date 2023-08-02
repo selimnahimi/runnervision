@@ -1,0 +1,20 @@
+{
+  "UI": false,
+  "Volume": "0.80,0.80,0",
+  "Pitch": "1.00,1.00,0",
+  "Decibels": 50,
+  "SelectionMode": "RandomExclusive",
+  "Sounds": [
+    "sound/concretefootstepland_01.vsnd",
+    "sound/concretefootstepland_02.vsnd",
+    "sound/concretefootstepland_03.vsnd",
+    "sound/concretefootstepland_04.vsnd",
+    "sound/concretefootstepland_05.vsnd",
+    "sound/concretefootstepland_06.vsnd",
+    "sound/concretefootstepland_07.vsnd",
+    "sound/concretefootstepland_08.vsnd",
+    "sound/concretefootstepland_09.vsnd"
+  ],
+  "MaximumDistance": 599.31305,
+  "MinimumDistance": 29.965652
+}

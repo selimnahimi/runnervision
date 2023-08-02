@@ -1,0 +1,25 @@
+{
+  "UI": false,
+  "Volume": "1.00,1.00,0",
+  "Pitch": "1.00,1.00,0",
+  "Decibels": 70,
+  "SelectionMode": "Random",
+  "Sounds": [
+    "sound/concretefootsteprun_01.vsnd",
+    "sound/concretefootsteprun_02.vsnd",
+    "sound/concretefootsteprun_03.vsnd",
+    "sound/concretefootsteprun_04.vsnd",
+    "sound/concretefootsteprun_05.vsnd",
+    "sound/concretefootsteprun_06.vsnd",
+    "sound/concretefootsteprun_07.vsnd",
+    "sound/concretefootsteprun_08.vsnd",
+    "sound/concretefootsteprun_09.vsnd",
+    "sound/concretefootsteprun_10.vsnd",
+    "sound/concretefootsteprun_11.vsnd",
+    "sound/concretefootsteprun_12.vsnd",
+    "sound/concretefootsteprun_13.vsnd",
+    "sound/concretefootsteprun_14.vsnd"
+  ],
+  "MaximumDistance": 1143.9335,
+  "MinimumDistance": 57.196674
+}

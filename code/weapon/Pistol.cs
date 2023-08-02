@@ -1,5 +1,6 @@
 using Sandbox;
 using Sandbox.Diagnostics;
+using System;
 using System.Numerics;
 
 namespace MyGame;
@@ -49,11 +50,42 @@ public partial class Hands : Weapon
 		if ( Pawn.GroundEntity != null )
 		{
 			jumping = false;
+			Pawn.Controller.Wallrunning = 0;
 		}
 
 		if ( Input.Pressed( "jump" ) && Pawn.GroundEntity != null )
 		{
 			jumping = true;
+
+			if ( CheckForWallLeft() )
+			{
+				// ViewModelEntity?.SetAnimParameter( "wallrunning", 1 );
+				// Pawn.CameraTilt = 10f;
+				Pawn.Controller.Wallrunning = 1;
+			}
+			else if ( CheckForWallRight() )
+			{
+				Pawn.Controller.Wallrunning = 2;
+			}
 		}
+
+		ViewModelEntity?.SetAnimParameter( "wallrunning", Pawn.Controller.Wallrunning );
+
+		Log.Info( "Left: " + CheckForWallLeft() );
+		Log.Info( "Right: " + CheckForWallRight() );
+	}
+
+	bool CheckForWallLeft()
+	{
+		var trace = Trace.Ray( Pawn.Position, Pawn.Position + Pawn.Rotation.Left * 30f ).Run();
+
+		return trace.Hit && trace.Entity.IsWorld;
+	}
+
+	bool CheckForWallRight()
+	{
+		var trace = Trace.Ray( Pawn.Position, Pawn.Position + Pawn.Rotation.Right * 30f ).Run();
+
+		return trace.Hit && trace.Entity.IsWorld;
 	}
 }

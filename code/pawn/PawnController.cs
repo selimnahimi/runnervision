@@ -17,7 +17,12 @@ public class PawnController : EntityComponent<Pawn>
 	public float Friction => 3.0f;
 	public float SharpTurnAngle => 50f;
 	public float Acceleration => 0.02f;
+	public int Wallrunning { get; set; }
+
 	private float CurrentMaxSpeed { get; set; }
+	private float TimeSinceLastFootstep { get; set; }
+	private float TimeSinceLastFootstepRelease { get; set; }
+	// private float NextFootstep { get; set; }
 
 	private float CurrentAcceleration { get; set; }
 
@@ -39,7 +44,7 @@ public class PawnController : EntityComponent<Pawn>
 		var moveVector = Rotation.From( angles ) * movement * CurrentMaxSpeed;
 		var groundEntity = CheckForGround();
 
-		Log.Info( moveVector );
+		// Log.Info( moveVector );
 		if ( moveVector.LengthSquared != 0 )
 		{
 			CurrentMaxSpeed = CurrentMaxSpeed.Approach( MaxSpeed, SpeedGrowthRate );
@@ -51,12 +56,14 @@ public class PawnController : EntityComponent<Pawn>
 
 		CheckForSharpTurn( moveVector );
 
-		Log.Info( CurrentMaxSpeed );
+		// Log.Info( CurrentMaxSpeed );
 
 		if ( groundEntity.IsValid() )
 		{
 			if ( !Grounded )
 			{
+				Sound.FromWorld( "concretefootstepland", Entity.Position + Vector3.Down * 10f );
+
 				Entity.Velocity = Entity.Velocity.WithZ( 0 );
 				AddEvent( "grounded" );
 			}
@@ -87,7 +94,7 @@ public class PawnController : EntityComponent<Pawn>
 
 		var mh = new MoveHelper( Entity.Position, Entity.Velocity );
 		mh.Trace = mh.Trace.Size( Entity.Hull ).Ignore( Entity );
-
+		
 		if ( mh.TryMoveWithStep( Time.Delta, StepSize ) > 0 )
 		{
 			if ( Grounded )
@@ -100,8 +107,41 @@ public class PawnController : EntityComponent<Pawn>
 
 		Entity.GroundEntity = groundEntity;
 
-		Log.Info( CheckForWall() );
-		Log.Info( moveVector.Normal );
+		FootstepWizard();
+	}
+
+	void FootstepWizard()
+	{
+		float speed = Entity.Velocity.Length;
+
+		if ( Game.IsServer )
+			return;
+
+		if ( speed == 0f )
+			return;
+
+		if ( !Grounded )
+			return;
+
+		TimeSinceLastFootstep += Time.Delta;
+		TimeSinceLastFootstepRelease += Time.Delta;
+
+		float nextStep = 80f / speed;
+		String sound = speed < 300 ? "concretefootstepwalk" : "concretefootsteprun";
+
+		if (TimeSinceLastFootstep > nextStep )
+		{
+			Sound.FromWorld( sound, Entity.Position + Vector3.Down * 10f );
+
+			TimeSinceLastFootstep = 0f;
+		}
+
+		if ( TimeSinceLastFootstepRelease > nextStep*1.05 && speed > 400)
+		{
+			Sound.FromWorld( "concretefootsteprunrelease", Entity.Position + Vector3.Down * 10f );
+
+			TimeSinceLastFootstepRelease = 0f;
+		}
 	}
 
 	void CheckForSharpTurn(Vector3 moveVector)
@@ -118,20 +158,6 @@ public class PawnController : EntityComponent<Pawn>
 		{
 			Entity.Velocity = ApplyJump( Entity.Velocity, "jump" );
 		}
-	}
-
-	bool CheckForWall()
-	{
-		var leftTrace = Entity.TraceBBox( Entity.Position, Entity.Position + Entity.Rotation.Right * 4f, 2f );
-		var rightTrace = Entity.TraceBBox( Entity.Position, Entity.Position + Entity.Rotation.Left * 4f, 2f );
-
-		if ( leftTrace.Hit && leftTrace.Entity.IsWorld )
-			return true;
-
-		if ( rightTrace.Hit && rightTrace.Entity.IsWorld )
-			return true;
-
-		return false;
 	}
 
 	Entity CheckForGround()
@@ -206,7 +232,7 @@ public class PawnController : EntityComponent<Pawn>
 			// input = input.LerpTo( wishdir, 0.005f );
 		}
 
-		Log.Info( Entity.Velocity.Length );
+		// Log.Info( Entity.Velocity.Length );
 
 		// input += wishdir * accelspeed;
 

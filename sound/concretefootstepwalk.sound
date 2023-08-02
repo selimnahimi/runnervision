@@ -1,0 +1,21 @@
+{
+  "UI": false,
+  "Volume": "1.00,1.00,0",
+  "Pitch": "1.00,1.00,0",
+  "Decibels": 50,
+  "SelectionMode": "RandomExclusive",
+  "Sounds": [
+    "sound/concretefootstepwalk_01.vsnd",
+    "sound/concretefootstepwalk_02.vsnd",
+    "sound/concretefootstepwalk_03.vsnd",
+    "sound/concretefootstepwalk_04.vsnd",
+    "sound/concretefootstepwalk_05.vsnd",
+    "sound/concretefootstepwalk_06.vsnd",
+    "sound/concretefootstepwalk_07.vsnd",
+    "sound/concretefootstepwalk_08.vsnd",
+    "sound/concretefootstepwalk_09.vsnd",
+    "sound/concretefootstepwalk_10.vsnd"
+  ],
+  "MaximumDistance": 599.31305,
+  "MinimumDistance": 29.965652
+}
