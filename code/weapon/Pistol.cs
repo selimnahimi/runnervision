@@ -46,6 +46,7 @@ public partial class Hands : Weapon
 		base.Simulate( player );
 
 		ViewModelEntity?.SetAnimParameter( "jumping", jumping );
+		ViewModelEntity?.SetAnimParameter( "dashing", Pawn.Controller.Dashing );
 
 		if ( Pawn.GroundEntity != null )
 		{
@@ -71,8 +72,8 @@ public partial class Hands : Weapon
 
 		ViewModelEntity?.SetAnimParameter( "wallrunning", Pawn.Controller.Wallrunning );
 
-		Log.Info( "Left: " + CheckForWallLeft() );
-		Log.Info( "Right: " + CheckForWallRight() );
+		// Log.Info( "Left: " + CheckForWallLeft() );
+		// Log.Info( "Right: " + CheckForWallRight() );
 	}
 
 	bool CheckForWallLeft()

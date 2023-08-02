@@ -18,10 +18,12 @@ public class PawnController : EntityComponent<Pawn>
 	public float SharpTurnAngle => 50f;
 	public float Acceleration => 0.02f;
 	public int Wallrunning { get; set; }
+	public int Dashing { get; set; }
 
 	private float CurrentMaxSpeed { get; set; }
 	private float TimeSinceLastFootstep { get; set; }
 	private float TimeSinceLastFootstepRelease { get; set; }
+	private float TimeSinceDash { get; set; }
 	// private float NextFootstep { get; set; }
 
 	private float CurrentAcceleration { get; set; }
@@ -56,7 +58,8 @@ public class PawnController : EntityComponent<Pawn>
 
 		CheckForSharpTurn( moveVector );
 
-		// Log.Info( CurrentMaxSpeed );
+		//Log.Info( CurrentMaxSpeed );
+		DebugOverlay.ScreenText( CurrentMaxSpeed.ToString() );
 
 		if ( groundEntity.IsValid() )
 		{
@@ -84,13 +87,35 @@ public class PawnController : EntityComponent<Pawn>
 		else
 		{
 			// Entity.Velocity = Accelerate( Entity.Velocity, moveVector.Normal, moveVector.Length, CurrentMaxSpeed/2, Acceleration );
-			Entity.Velocity += Vector3.Down * Gravity * Time.Delta;
+			Entity.Velocity += Vector3.Down * (IsWallRunning() ? Gravity * 0.75f : Gravity ) * Time.Delta;
 		}
 
 		if ( Input.Pressed( "jump" ) )
 		{
-			DoJump();
+			if ( !Input.Down("forward") && ( Input.Down( "left" ) || Input.Down( "right" ) ) )
+			{
+				if ( TimeSinceDash > 1.0f )
+				{
+					var isLeft = Input.Down( "left" );
+
+					Dashing = isLeft ? 1 : 2;
+
+					Entity.ApplyAbsoluteImpulse( ( isLeft ? Entity.Rotation.Left : Entity.Rotation.Right ) * 300f );
+					CurrentMaxSpeed += 200f;
+
+					TimeSinceDash = 0.0f;
+				}
+			}
+			else
+			{
+				DoJump();
+			}
 		}
+
+		TimeSinceDash += Time.Delta;
+
+		if ( Dashing != 0 && TimeSinceDash > 1.0f )
+			Dashing = 0;
 
 		var mh = new MoveHelper( Entity.Position, Entity.Velocity );
 		mh.Trace = mh.Trace.Size( Entity.Hull ).Ignore( Entity );
@@ -120,28 +145,40 @@ public class PawnController : EntityComponent<Pawn>
 		if ( speed == 0f )
 			return;
 
-		if ( !Grounded )
+		if ( !Grounded && !IsWallRunning() )
 			return;
 
 		TimeSinceLastFootstep += Time.Delta;
 		TimeSinceLastFootstepRelease += Time.Delta;
 
 		float nextStep = 80f / speed;
-		String sound = speed < 300 ? "concretefootstepwalk" : "concretefootsteprun";
+		String footstepSound = speed < 300 ? "concretefootstepwalk" : "concretefootsteprun";
+		String footstepReleaseSound = IsWallRunning() ? "concretefootstepwallrunrelease" : "concretefootsteprunrelease";
+
+		if ( IsWallRunning() )
+		{
+			nextStep = 75f / speed;
+			footstepSound = "concretefootstepwallrun";
+		}
 
 		if (TimeSinceLastFootstep > nextStep )
 		{
-			Sound.FromWorld( sound, Entity.Position + Vector3.Down * 10f );
+			Sound.FromWorld( footstepSound, Entity.Position + Vector3.Down * 10f );
 
 			TimeSinceLastFootstep = 0f;
 		}
 
 		if ( TimeSinceLastFootstepRelease > nextStep*1.05 && speed > 400)
 		{
-			Sound.FromWorld( "concretefootsteprunrelease", Entity.Position + Vector3.Down * 10f );
+			Sound.FromWorld( footstepReleaseSound, Entity.Position + Vector3.Down * 10f );
 
 			TimeSinceLastFootstepRelease = 0f;
 		}
+	}
+
+	bool IsWallRunning()
+	{
+		return Wallrunning != 0;
 	}
 
 	void CheckForSharpTurn(Vector3 moveVector)

@@ -1,0 +1,17 @@
+{
+  "UI": false,
+  "Volume": "0.80,0.80,0",
+  "Pitch": "1.00,1.00,0",
+  "Decibels": 50,
+  "SelectionMode": "Random",
+  "Sounds": [
+    "sound/concretefootstepwallrunrelease_01.vsnd",
+    "sound/concretefootstepwallrunrelease_02.vsnd",
+    "sound/concretefootstepwallrunrelease_03.vsnd",
+    "sound/concretefootstepwallrunrelease_04.vsnd",
+    "sound/concretefootstepwallrunrelease_05.vsnd",
+    "sound/concretefootstepwallrunrelease_06.vsnd"
+  ],
+  "MaximumDistance": 599.31305,
+  "MinimumDistance": 29.965652
+}
