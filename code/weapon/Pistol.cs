@@ -7,8 +7,8 @@ namespace MyGame;
 
 public partial class Hands : Weapon
 {
-	public override string ModelPath => "models/faith.vmdl";
-	public override string ViewModelPath => "models/faith.vmdl";
+	public override string ModelPath => "models/faith_v2.vmdl";
+	public override string ViewModelPath => "models/faith_v2.vmdl";
 
 	private bool jumping = false;
 	private float yaw = 0.0f;
@@ -31,7 +31,6 @@ public partial class Hands : Weapon
 	protected override void Animate()
 	{
 		Pawn.SetAnimParameter( "holdtype", (int)CitizenAnimationHelper.HoldTypes.Pistol );
-		ViewModelEntity?.SetAnimParameter( "speed", Pawn.Velocity.Length );
 	}
 
 	public override void FrameSimulate( IClient cl )
@@ -42,10 +41,5 @@ public partial class Hands : Weapon
 	public override void Simulate( IClient player )
 	{
 		base.Simulate( player );
-
-		ViewModelEntity?.SetAnimParameter( "jumping", !Pawn.Controller.Grounded );
-		ViewModelEntity?.SetAnimParameter( "dashing", Pawn.Controller.Dashing );
-		ViewModelEntity?.SetAnimParameter( "wallrunning", Pawn.Controller.Wallrunning );
-		ViewModelEntity?.SetAnimParameter( "vaulting", Pawn.Controller.Vaulting ? 1 : 0 );
 	}
 }

@@ -24,6 +24,9 @@ public partial class Pawn : AnimatedEntity
 
 	private Angles PreviousViewAngles { get; set; }
 
+	[Net, Predicted]
+	public AnimatedEntity CameraHelper { get; set; }
+
 	/// <summary>
 	/// Position a player should be looking from in world space.
 	/// </summary>
@@ -75,11 +78,15 @@ public partial class Pawn : AnimatedEntity
 	/// </summary>
 	public override void Spawn()
 	{
-		SetModel( "models/citizen/citizen.vmdl" );
+		SetModel( "models/faith_v2.vmdl" );
 
 		EnableDrawing = true;
-		EnableHideInFirstPerson = true;
+		EnableHideInFirstPerson = false;
 		EnableShadowInFirstPerson = true;
+
+		CameraHelper = new AnimatedEntity();
+		CameraHelper.Position = Position + Model.GetBoneTransform( "CameraJoint" ).Position;
+		CameraHelper.SetParent( this, "CameraJoint" );
 	}
 
 	public void SetActiveWeapon( Weapon weapon )
@@ -94,23 +101,39 @@ public partial class Pawn : AnimatedEntity
 		Components.Create<PawnController>();
 		Components.Create<PawnAnimator>();
 
-		SetActiveWeapon( new Hands() );
+		// SetActiveWeapon( new Hands() );
 	}
 
 	public void DressFromClient( IClient cl )
 	{
-		var c = new ClothingContainer();
-		c.LoadFromClient( cl );
-		c.DressEntity( this );
 	}
 
 	public override void Simulate( IClient cl )
 	{
+		UpdateAnimParameters();
 		SimulateRotation();
 		Controller?.Simulate( cl );
 		Animator?.Simulate();
 		ActiveWeapon?.Simulate( cl );
 		EyeLocalPosition = Vector3.Up * (64f * Scale);
+
+		// var cameraPos = Model.GetBoneTransform( "CameraJoint" );
+		// Log.Info( cameraPos.Position );
+
+		// var cameraBone = Model.Bones.GetBone( "CameraJoint" );
+
+		
+
+		// Log.Info( Model.GetAttachment( "camera" ).Value.Position );
+	}
+
+	void UpdateAnimParameters()
+	{
+		SetAnimParameter( "speed", Velocity.Length );
+		SetAnimParameter( "jumping", !Controller.Grounded );
+		SetAnimParameter( "dashing", Controller.Dashing );
+		SetAnimParameter( "wallrunning", Controller.Wallrunning );
+		SetAnimParameter( "vaulting", Controller.Vaulting ? 1 : 0 );
 	}
 
 	public override void BuildInput()
@@ -180,6 +203,19 @@ public partial class Pawn : AnimatedEntity
 			Camera.Rotation = Rotation.From( ViewAngles.pitch, ViewAngles.yaw, ViewAngles.roll + CameraTilt );
 			Camera.FirstPersonViewer = this;
 			Camera.Position = EyePosition;
+
+			var cameraBone = Model.Bones.GetBone("CameraJoint");
+			// Log.Info( cameraBone.LocalTransform.Position );
+
+			var cameraPos = Model.GetBoneTransform( "CameraJoint" );
+			// Log.Info( cameraPos.Position );
+
+			// Camera.Position = Position + cameraBone.LocalTransform.Position;
+
+			Camera.Position = Position + cameraBone.LocalTransform.Position + Model.GetAttachment("camera").Value.Position * 500f;
+			
+			Camera.Position = CameraHelper.Position + Rotation.Forward * 3f;
+
 		}
 
 		if ( Controller.Wallrunning != 0 )
@@ -190,10 +226,6 @@ public partial class Pawn : AnimatedEntity
 		{
 			CameraTilt = CameraTilt.LerpTo( 0, 0.05f );
 		}
-
-		var faithModel = ActiveWeapon.Model;
-
-		Camera.Position = ActiveWeapon.Position + faithModel.Bones.GetBone( "CameraJoint" ).LocalTransform.Position;
 	}
 
 	public TraceResult TraceBBox( Vector3 start, Vector3 end, float liftFeet = 0.0f )
