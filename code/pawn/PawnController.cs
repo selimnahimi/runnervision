@@ -158,8 +158,8 @@ public class PawnController : EntityComponent<Pawn>
 
 		DebugOverlay.ScreenText( CurrentMaxSpeed.ToString() );
 
-		DebugOverlay.Line( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Left * 30f + Entity.Rotation.Forward * 15f );
-		DebugOverlay.Line( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Right * 30f + Entity.Rotation.Forward * 15f );
+		// DebugOverlay.Line( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Left * 30f + Entity.Rotation.Forward * 15f );
+		// DebugOverlay.Line( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Right * 30f + Entity.Rotation.Forward * 15f );
 
 		/*DebugOverlay.Box(
 			mins: Vector3.Up * 50f + Vector3.Forward * 50f + Vector3.Left * 25f,
@@ -205,7 +205,7 @@ public class PawnController : EntityComponent<Pawn>
 			Color.Blue
 		);*/
 
-		float speed = Entity.Velocity.Length;
+		/*float speed = Entity.Velocity.Length;
 		float rayDistance = Math.Max((speed / 500) * 60f, 40f);
 
 		DebugOverlay.Line(
@@ -236,7 +236,7 @@ public class PawnController : EntityComponent<Pawn>
 			start: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 70f,
 			end: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 40f,
 			color: Color.Yellow
-		);
+		);*/
 
 		DebugOverlay.ScreenText( Vaulting.ToString(), 1 );
 
@@ -264,12 +264,13 @@ public class PawnController : EntityComponent<Pawn>
 			t: bezierCounter
 		);
 
-		bezierCounter += (vaultSpeed/75) * 0.01f;
+		bezierCounter += (vaultSpeed/100) * Time.Delta; 
+		Log.Info( Time.Delta );
 
 		Log.Info( "pos:" + pos );
 		Log.Info( "counter: " + bezierCounter );
 
-		Entity.Position = Entity.Position.LerpTo( pos, 1.0f );
+		Entity.Position = Entity.Position.LerpTo( pos, 0.5f );
 
 		if ( Entity.Position.AlmostEqual( VaultTargetPos, 7f ) || bezierCounter >= 1.0f )
 			Vaulting = false;
@@ -326,13 +327,16 @@ public class PawnController : EntityComponent<Pawn>
 
 		if ( !traceBehind.Hit )
 			// Vault over
-			VaultTargetPos = Entity.Position + Entity.Rotation.Forward * (rayDistance + 50f);
+			VaultTargetPos = Entity.Position + Entity.Rotation.Forward * (rayDistance + 60f);
 		else
 			// Vault onto
 			VaultTargetPos = traceGround.HitPosition + Vector3.Up * 13f;
 
-		Entity.Velocity = (VaultTargetPos - Entity.Position).WithZ( 0 ).Normal * Entity.Velocity.WithZ( 0 ).Length;
-		vaultSpeed = Math.Max(Entity.Velocity.Length, 200f);
+		var vaultDirection = (VaultTargetPos - Entity.Position).WithZ( 0 ).Normal;
+		var speedAfterVault = Entity.Velocity.WithZ( 0 ).Length;
+
+		Entity.Velocity = vaultDirection * speedAfterVault;
+		vaultSpeed = Math.Max(Entity.Velocity.Length, 250f);
 	}
 
 	[ConCmd.Admin( "noclip" )]
