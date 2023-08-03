@@ -2,6 +2,7 @@
 using Sandbox.UI;
 using System;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace MyGame;
 
@@ -28,7 +29,11 @@ public class PawnController : EntityComponent<Pawn>
 	private float TimeSinceLastFootstep { get; set; }
 	private float TimeSinceLastFootstepRelease { get; set; }
 	private float TimeSinceDash { get; set; }
-	private Vector3 VaultTarget { get; set; }
+	private Vector3 VaultTargetPos { get; set; }
+	private Vector3 VaultStartPos { get; set; }
+
+	private float bezierCounter = 0f;
+	private float vaultSpeed = 0f;
 
 	HashSet<string> ControllerEvents = new( StringComparer.OrdinalIgnoreCase );
 
@@ -238,15 +243,96 @@ public class PawnController : EntityComponent<Pawn>
 		FootstepWizard();
 	}
 
+	// Source: https://programmerbay.com/c-program-to-draw-bezier-curve-using-4-control-points/
+	Vector3 BezierApproach( Vector3 start, Vector3 end, float curveSize, float t )
+	{
+		var cp1 = start + Vector3.Up * curveSize;
+		var cp2 = end + Vector3.Up * curveSize;
+		float x = (float)(Math.Pow( 1 - t, 3 ) * start.x + 3 * t * Math.Pow( 1 - t, 2 ) * cp1.x + 3 * t * t * (1 - t) * cp2.x + Math.Pow( t, 3 ) * end.x);
+		float y = (float)(Math.Pow( 1 - t, 3 ) * start.y + 3 * t * Math.Pow( 1 - t, 2 ) * cp1.y + 3 * t * t * (1 - t) * cp2.y + Math.Pow( t, 3 ) * end.y);
+		float z = (float)(Math.Pow( 1 - t, 3 ) * start.z + 3 * t * Math.Pow( 1 - t, 2 ) * cp1.z + 3 * t * t * (1 - t) * cp2.z + Math.Pow( t, 3 ) * end.z);
+
+		return new Vector3( x, y, z );
+	}
+
 	void UpdateVault()
 	{
-		float speed = Entity.Velocity.Length;
-		float vaultSpeed = 100f / 700f;
+		Vector3 pos = BezierApproach(
+			start: VaultStartPos,
+			end: VaultTargetPos,
+			curveSize: 30f,
+			t: bezierCounter
+		);
 
-		Entity.Position = Entity.Position.LerpTo( VaultTarget, vaultSpeed );
+		bezierCounter += (vaultSpeed/75) * 0.01f;
 
-		if ( Entity.Position.AlmostEqual( VaultTarget, 7f ) )
+		Log.Info( "pos:" + pos );
+		Log.Info( "counter: " + bezierCounter );
+
+		Entity.Position = Entity.Position.LerpTo( pos, 1.0f );
+
+		if ( Entity.Position.AlmostEqual( VaultTargetPos, 7f ) || bezierCounter >= 1.0f )
 			Vaulting = false;
+	}
+
+	void TryVaulting()
+	{
+		float speed = Entity.Velocity.Length;
+		float rayDistance = Math.Max( (speed / 500) * 60f, 40f );
+
+		var traceFront = Trace.Ray(
+			from: Entity.Position + Entity.Rotation.Up * 20f,
+			to: Entity.Position + Entity.Rotation.Forward * rayDistance * 1.5f + Entity.Rotation.Up * 20f
+		).Run();
+
+		var traceTop = Trace.Sphere(
+			from: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 70f,
+			to: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 70f,
+			radius: 15f
+		).Run();
+
+		Log.Info( "Front hit: " + traceFront.Hit );
+		Log.Info( "Top hit: " + traceTop.Hit );
+
+		if ( !traceFront.Hit || traceTop.Hit )
+			return;
+
+		DebugOverlay.Line(
+			start: Entity.Position + Entity.Rotation.Forward * traceFront.Distance + Entity.Rotation.Up * 60f,
+			end: Entity.Position + Entity.Rotation.Forward * traceFront.Distance + Entity.Rotation.Up,
+			color: Color.Blue,
+			duration: 1f
+		);
+
+		var traceGround = Trace.Ray(
+			from: Entity.Position + Entity.Rotation.Forward * (traceFront.Distance + 3) + Entity.Rotation.Up * 60f,
+			to: Entity.Position + Entity.Rotation.Forward * (traceFront.Distance + 3) + Entity.Rotation.Up
+		).Run();
+
+		Log.Info( traceGround.HitPosition );
+
+		if ( !traceGround.Hit )
+			return;
+
+		var traceBehind = Trace.Sphere(
+			from: Entity.Position + Entity.Rotation.Forward * (rayDistance + 50f) + Entity.Rotation.Up * 30f,
+			to: Entity.Position + Entity.Rotation.Forward * (rayDistance + 50f) + Entity.Rotation.Up * 30f,
+			radius: 15f
+		).Run();
+
+		VaultStartPos = Entity.Position;
+		Vaulting = true;
+		bezierCounter = 0f;
+
+		if ( !traceBehind.Hit )
+			// Vault over
+			VaultTargetPos = Entity.Position + Entity.Rotation.Forward * (rayDistance + 50f);
+		else
+			// Vault onto
+			VaultTargetPos = traceGround.HitPosition + Vector3.Up * 13f;
+
+		Entity.Velocity = (VaultTargetPos - Entity.Position).WithZ( 0 ).Normal * Entity.Velocity.WithZ( 0 ).Length;
+		vaultSpeed = Math.Max(Entity.Velocity.Length, 200f);
 	}
 
 	[ConCmd.Admin( "noclip" )]
@@ -257,7 +343,9 @@ public class PawnController : EntityComponent<Pawn>
 			if (player.Controller.Noclipping)
 				player.Controller.Noclipping = false;
 			else
+			{
 				player.Controller.Noclipping = true;
+			}
 		}
 	}
 
@@ -349,64 +437,6 @@ public class PawnController : EntityComponent<Pawn>
 		{
 			CurrentMaxSpeed = CurrentMaxSpeed.Approach( StartingSpeed, SpeedShrinkRate );
 		}
-	}
-
-	void TryVaulting()
-	{
-		float speed = Entity.Velocity.Length;
-		float rayDistance = Math.Max( (speed / 500) * 60f, 40f );
-
-		var traceFront = Trace.Ray(
-			from: Entity.Position + Entity.Rotation.Up * 20f,
-			to: Entity.Position + Entity.Rotation.Forward * rayDistance * 1.5f + Entity.Rotation.Up * 20f
-		).Run();
-
-		var traceTop = Trace.Sphere(
-			from: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 70f,
-			to: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 70f,
-			radius: 15f
-		).Run();
-
-		Log.Info( "Front hit: " + traceFront.Hit );
-		Log.Info( "Top hit: " + traceTop.Hit );
-
-		if ( !traceFront.Hit || traceTop.Hit )
-			return;
-
-		DebugOverlay.Line(
-			start: Entity.Position + Entity.Rotation.Forward * traceFront.Distance + Entity.Rotation.Up * 60f,
-			end: Entity.Position + Entity.Rotation.Forward * traceFront.Distance + Entity.Rotation.Up,
-			color: Color.Blue,
-			duration: 1f
-		);
-
-		var traceGround = Trace.Ray(
-			from: Entity.Position + Entity.Rotation.Forward * (traceFront.Distance + 3) + Entity.Rotation.Up * 60f,
-			to: Entity.Position + Entity.Rotation.Forward * (traceFront.Distance + 3) + Entity.Rotation.Up
-		).Run();
-
-		Log.Info( traceGround.HitPosition );
-
-		if ( !traceGround.Hit )
-			return;
-
-		var traceBehind = Trace.Sphere(
-			from: Entity.Position + Entity.Rotation.Forward * (rayDistance + 50f) + Entity.Rotation.Up * 30f,
-			to: Entity.Position + Entity.Rotation.Forward * (rayDistance + 50f) + Entity.Rotation.Up * 30f,
-			radius: 15f
-		).Run();
-
-		if ( !traceBehind.Hit )
-		{
-			VaultTarget = traceBehind.StartPosition;
-			Vaulting = true;
-			return;
-		}
-
-		Vaulting = true;
-		VaultTarget = traceGround.HitPosition + Vector3.Up * 13f;
-
-		Entity.Velocity = (VaultTarget - Entity.Position).WithZ( 0 ).Normal * Entity.Velocity.WithZ( 0 ).Length;
 	}
 
 	void DoJump()
