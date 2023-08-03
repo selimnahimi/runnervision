@@ -11,7 +11,7 @@
 				[
 					{
 						_class = "ModelModifier_ScaleAndMirror"
-						scale = 100.0
+						scale = 35.0
 						mirror_x = false
 						mirror_y = false
 						mirror_z = false
@@ -20,7 +20,7 @@
 					},
 					{
 						_class = "ModelModifier_Translate"
-						translation = [ -20.0, 0.0, -155.0 ]
+						translation = [ 0.0, 0.0, 0.0 ]
 					},
 				]
 			},
@@ -4394,9 +4394,9 @@
 								_class = "ExtractMotion"
 								extract_tx = true
 								extract_ty = true
-								extract_tz = false
-								extract_rz = false
-								linear = false
+								extract_tz = true
+								extract_rz = true
+								linear = true
 								quadratic = false
 								root_bone_name = ""
 								motion_type = "Single"
@@ -6557,6 +6557,21 @@
 					},
 				]
 				default_root_bone_name = ""
+			},
+			{
+				_class = "AttachmentList"
+				children = 
+				[
+					{
+						_class = "Attachment"
+						name = "camera"
+						parent_bone = "CameraJoint"
+						relative_origin = [ 0.0, 0.0, 0.0 ]
+						relative_angles = [ 0.0, 0.0, 0.0 ]
+						weight = 1.0
+						ignore_rotation = false
+					},
+				]
 			},
 		]
 		model_archetype = ""
