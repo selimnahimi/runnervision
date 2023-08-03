@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandbox.UI;
 using System;
 using System.Collections.Generic;
 
@@ -6,8 +7,8 @@ namespace MyGame;
 
 public class PawnController : EntityComponent<Pawn>
 {
-	public int StepSize => 24;
-	public int GroundAngle => 45;
+	public int StepSize => 26;
+	public int GroundAngle => 70;
 	public int JumpSpeed => 300;
 	public float Gravity => 800f;
 	public float StartingSpeed => 600f;
@@ -21,11 +22,13 @@ public class PawnController : EntityComponent<Pawn>
 	public int Dashing { get; set; }
 	public bool Noclipping { get; set; }
 	public bool UnlimitedSprint { get; set; }
+	public bool Vaulting { get; set; }
 
 	private float CurrentMaxSpeed { get; set; }
 	private float TimeSinceLastFootstep { get; set; }
 	private float TimeSinceLastFootstepRelease { get; set; }
 	private float TimeSinceDash { get; set; }
+	private Vector3 VaultTarget { get; set; }
 
 	HashSet<string> ControllerEvents = new( StringComparer.OrdinalIgnoreCase );
 
@@ -46,12 +49,17 @@ public class PawnController : EntityComponent<Pawn>
 			return;
 		}
 
+		if ( Vaulting )
+		{
+			DoVault();
+			return;
+		}
+
 		var movement = Entity.InputDirection.Normal;
 		var angles = Entity.ViewAngles.WithPitch( 0 );
 		var moveVector = Rotation.From( angles ) * movement * CurrentMaxSpeed;
 		var groundEntity = CheckForGround();
 
-		// Log.Info( moveVector );
 		if ( moveVector.LengthSquared != 0 )
 		{
 			CurrentMaxSpeed = CurrentMaxSpeed.Approach( MaxSpeed, SpeedGrowthRate );
@@ -119,9 +127,6 @@ public class PawnController : EntityComponent<Pawn>
 			}
 		}
 
-		DebugOverlay.Line( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Left * 30f + Entity.Rotation.Forward * 15f );
-		DebugOverlay.Line( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Right * 30f + Entity.Rotation.Forward * 15f );
-
 		TimeSinceDash += Time.Delta;
 
 		if ( Dashing != 0 && TimeSinceDash > 1.0f )
@@ -147,7 +152,100 @@ public class PawnController : EntityComponent<Pawn>
 
 		DebugOverlay.ScreenText( CurrentMaxSpeed.ToString() );
 
+		DebugOverlay.Line( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Left * 30f + Entity.Rotation.Forward * 15f );
+		DebugOverlay.Line( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Right * 30f + Entity.Rotation.Forward * 15f );
+
+		/*DebugOverlay.Box(
+			mins: Vector3.Up * 50f + Vector3.Forward * 50f + Vector3.Left * 25f,
+			maxs: Vector3.Up * 40f + Vector3.Right * 25f + Vector3.Forward * 25f,
+			rotation: Entity.Rotation,
+			position: Entity.Position,
+			color: Color.Red
+		); */
+
+		/*DebugOverlay.Box(
+			mins: Vector3.Up * 80f + Vector3.Forward * 50f + Vector3.Left * 25f,
+			maxs: Vector3.Up * 60f + Vector3.Right * 25f + Vector3.Forward * 25f,
+			rotation: Entity.Rotation,
+			position: Entity.Position,
+			color: Color.Green
+		);*/
+
+		/*DebugOverlay.Line(
+			Entity.Position + Entity.Rotation.Up * 50f + Entity.Rotation.Forward * 40f + Entity.Rotation.Left * 25f,
+			Entity.Position + Entity.Rotation.Up * 50f + Entity.Rotation.Forward * 40f + Entity.Rotation.Right * 25f,
+			Color.Red
+		);
+
+		var traceBottom = Trace.Ray(
+			Entity.Position + Entity.Rotation.Up * 50f + Entity.Rotation.Forward * 40f + Entity.Rotation.Left * 25f,
+			Entity.Position + Entity.Rotation.Up * 50f + Entity.Rotation.Forward * 40f + Entity.Rotation.Right * 25f
+		);
+
+		DebugOverlay.Line(
+			Entity.Position + Entity.Rotation.Up * 70f + Entity.Rotation.Forward * 40f + Entity.Rotation.Left * 25f,
+			Entity.Position + Entity.Rotation.Up * 70f + Entity.Rotation.Forward * 40f + Entity.Rotation.Right * 25f,
+			Color.Green
+		);
+
+		var traceTop = Trace.Ray(
+			Entity.Position + Entity.Rotation.Up * 70f + Entity.Rotation.Forward * 40f + Entity.Rotation.Left * 25f,
+			Entity.Position + Entity.Rotation.Up * 70f + Entity.Rotation.Forward * 40f + Entity.Rotation.Right * 25f
+		);
+
+		DebugOverlay.Line(
+			Entity.Position + Entity.Rotation.Up * 50f + Entity.Rotation.Forward * 60f + Entity.Rotation.Left * 25f,
+			Entity.Position + Entity.Rotation.Up * 50f + Entity.Rotation.Forward * 60f + Entity.Rotation.Right * 25f,
+			Color.Blue
+		);*/
+
+		/*float speed = Entity.Velocity.Length;
+		float rayDistance = Math.Max((speed / 500) * 60f, 40f);
+
+		DebugOverlay.Line(
+			start: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 60f,
+			end: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 20f,
+			color: Color.Red
+		);
+
+		DebugOverlay.Line(
+			start: Entity.Position + Entity.Rotation.Up * 30f,
+			end: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 30f,
+			color: Color.Red
+		);
+
+		DebugOverlay.Sphere(
+			Entity.Position + Entity.Rotation.Forward * 100f + Entity.Rotation.Up * 30f,
+			15f,
+			Color.Blue
+		);
+
+		DebugOverlay.Sphere(
+			Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 70f,
+			15f,
+			Color.Green
+		);
+
+		DebugOverlay.Line(
+			start: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 70f,
+			end: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 40f,
+			color: Color.Yellow
+		);*/
+
+		DebugOverlay.ScreenText( Vaulting.ToString(), 1 );
+
 		FootstepWizard();
+	}
+
+	void DoVault()
+	{
+		float speed = Entity.Velocity.Length;
+		float vaultSpeed = 100f / 700f;
+
+		Entity.Position = Entity.Position.LerpTo( VaultTarget, vaultSpeed );
+
+		if ( Entity.Position.AlmostEqual( VaultTarget, 7f ) )
+			Vaulting = false;
 	}
 
 	[ConCmd.Admin( "noclip" )]
@@ -254,10 +352,60 @@ public class PawnController : EntityComponent<Pawn>
 
 	void DoJump()
 	{
-		if ( Grounded )
+		float speed = Entity.Velocity.Length;
+		float rayDistance = Math.Max( (speed / 500) * 60f, 40f );
+
+		// TODO: Move vaulting code elsewhere
+		var traceFront = Trace.Ray(
+			from: Entity.Position + Entity.Rotation.Up * 20f,
+			to: Entity.Position + Entity.Rotation.Forward * rayDistance * 1.5f + Entity.Rotation.Up * 20f
+		).Run();
+
+		var traceTop = Trace.Sphere(
+			from: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 70f,
+			to: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 70f,
+			radius: 15f
+		).Run();
+
+		Log.Info( "Front hit: " + traceFront.Hit );
+		Log.Info( "Top hit: " + traceTop.Hit );
+
+		if ( traceFront.Hit && !traceTop.Hit )
+		{
+			DebugOverlay.Line(
+				start: Entity.Position + Entity.Rotation.Forward * traceFront.Distance + Entity.Rotation.Up * 60f,
+				end: Entity.Position + Entity.Rotation.Forward * traceFront.Distance + Entity.Rotation.Up,
+				color: Color.Blue,
+				duration: 1f
+			);
+
+			var traceGround = Trace.Ray(
+				from: Entity.Position + Entity.Rotation.Forward * (traceFront.Distance + 3) + Entity.Rotation.Up * 60f,
+				to: Entity.Position + Entity.Rotation.Forward * (traceFront.Distance + 3) + Entity.Rotation.Up
+			).Run();
+
+			Log.Info( traceGround.HitPosition );
+
+			if ( !traceGround.Hit )
+				return;
+
+			Vaulting = true;
+			VaultTarget = traceGround.HitPosition + Vector3.Up * 13f;
+
+			Entity.Velocity = (VaultTarget - Entity.Position).WithZ(0).Normal * Entity.Velocity.WithZ(0).Length;
+
+			return;
+		}
+
+		if ( CanJump() )
 		{
 			Entity.Velocity = ApplyJump( Entity.Velocity, "jump" );
 		}
+	}
+
+	bool CanJump()
+	{
+		return Grounded && !Vaulting;
 	}
 
 	Entity CheckForGround()

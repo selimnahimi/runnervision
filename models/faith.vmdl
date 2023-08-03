@@ -5308,6 +5308,20 @@
 					{
 						_class = "AnimFile"
 						name = "VaultOnto"
+						children = 
+						[
+							{
+								_class = "ExtractMotion"
+								extract_tx = true
+								extract_ty = true
+								extract_tz = true
+								extract_rz = false
+								linear = true
+								quadratic = false
+								root_bone_name = ""
+								motion_type = "Single"
+							},
+						]
 						activity_name = ""
 						activity_weight = 1
 						weight_list_name = ""

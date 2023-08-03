@@ -46,5 +46,6 @@ public partial class Hands : Weapon
 		ViewModelEntity?.SetAnimParameter( "jumping", !Pawn.Controller.Grounded );
 		ViewModelEntity?.SetAnimParameter( "dashing", Pawn.Controller.Dashing );
 		ViewModelEntity?.SetAnimParameter( "wallrunning", Pawn.Controller.Wallrunning );
+		ViewModelEntity?.SetAnimParameter( "vaulting", Pawn.Controller.Vaulting ? 1 : 0 );
 	}
 }
