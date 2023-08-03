@@ -40,6 +40,14 @@
 								from = "mi_female_arm_skinn.vmat"
 								to = "materials/faith_arms/mi_female_arm_skinn.vmat"
 							},
+							{
+								from = "mi_faith_lowres_upper.vmat"
+								to = "materials/faith_arms/mi_faith_lowres_upper.vmat"
+							},
+							{
+								from = "mi_shtest.vmat"
+								to = "materials/faith_arms/mi_shtest.vmat"
+							},
 						]
 						use_global_default = false
 						global_default_material = ""
@@ -67,6 +75,22 @@
 							[
 								"collection",
 							]
+						}
+					},
+					{
+						_class = "RenderMeshFile"
+						filename = "model_source/faith_torso/faith_torso.smd"
+						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_rotation = [ 0.0, 0.0, 0.0 ]
+						import_scale = 1.0
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
+						parent_bone = ""
+						import_filter = 
+						{
+							exclude_by_default = false
+							exception_list = [  ]
 						}
 					},
 				]
