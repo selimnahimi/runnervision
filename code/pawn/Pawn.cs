@@ -190,6 +190,10 @@ public partial class Pawn : AnimatedEntity
 		{
 			CameraTilt = CameraTilt.LerpTo( 0, 0.05f );
 		}
+
+		var faithModel = ActiveWeapon.Model;
+
+		Camera.Position = ActiveWeapon.Position + faithModel.Bones.GetBone( "CameraJoint" ).LocalTransform.Position;
 	}
 
 	public TraceResult TraceBBox( Vector3 start, Vector3 end, float liftFeet = 0.0f )
