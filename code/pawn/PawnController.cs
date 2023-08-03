@@ -51,7 +51,7 @@ public class PawnController : EntityComponent<Pawn>
 
 		if ( Vaulting )
 		{
-			DoVault();
+			UpdateVault();
 			return;
 		}
 
@@ -108,6 +108,7 @@ public class PawnController : EntityComponent<Pawn>
 			}
 			else
 			{
+				TryVaulting();
 				DoJump();
 			}
 
@@ -199,7 +200,7 @@ public class PawnController : EntityComponent<Pawn>
 			Color.Blue
 		);*/
 
-		/*float speed = Entity.Velocity.Length;
+		float speed = Entity.Velocity.Length;
 		float rayDistance = Math.Max((speed / 500) * 60f, 40f);
 
 		DebugOverlay.Line(
@@ -215,7 +216,7 @@ public class PawnController : EntityComponent<Pawn>
 		);
 
 		DebugOverlay.Sphere(
-			Entity.Position + Entity.Rotation.Forward * 100f + Entity.Rotation.Up * 30f,
+			Entity.Position + Entity.Rotation.Forward * (rayDistance + 30f) + Entity.Rotation.Up * 30f,
 			15f,
 			Color.Blue
 		);
@@ -230,14 +231,14 @@ public class PawnController : EntityComponent<Pawn>
 			start: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 70f,
 			end: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 40f,
 			color: Color.Yellow
-		);*/
+		);
 
 		DebugOverlay.ScreenText( Vaulting.ToString(), 1 );
 
 		FootstepWizard();
 	}
 
-	void DoVault()
+	void UpdateVault()
 	{
 		float speed = Entity.Velocity.Length;
 		float vaultSpeed = 100f / 700f;
@@ -350,12 +351,11 @@ public class PawnController : EntityComponent<Pawn>
 		}
 	}
 
-	void DoJump()
+	void TryVaulting()
 	{
 		float speed = Entity.Velocity.Length;
 		float rayDistance = Math.Max( (speed / 500) * 60f, 40f );
 
-		// TODO: Move vaulting code elsewhere
 		var traceFront = Trace.Ray(
 			from: Entity.Position + Entity.Rotation.Up * 20f,
 			to: Entity.Position + Entity.Rotation.Forward * rayDistance * 1.5f + Entity.Rotation.Up * 20f
@@ -370,33 +370,47 @@ public class PawnController : EntityComponent<Pawn>
 		Log.Info( "Front hit: " + traceFront.Hit );
 		Log.Info( "Top hit: " + traceTop.Hit );
 
-		if ( traceFront.Hit && !traceTop.Hit )
+		if ( !traceFront.Hit || traceTop.Hit )
+			return;
+
+		DebugOverlay.Line(
+			start: Entity.Position + Entity.Rotation.Forward * traceFront.Distance + Entity.Rotation.Up * 60f,
+			end: Entity.Position + Entity.Rotation.Forward * traceFront.Distance + Entity.Rotation.Up,
+			color: Color.Blue,
+			duration: 1f
+		);
+
+		var traceGround = Trace.Ray(
+			from: Entity.Position + Entity.Rotation.Forward * (traceFront.Distance + 3) + Entity.Rotation.Up * 60f,
+			to: Entity.Position + Entity.Rotation.Forward * (traceFront.Distance + 3) + Entity.Rotation.Up
+		).Run();
+
+		Log.Info( traceGround.HitPosition );
+
+		if ( !traceGround.Hit )
+			return;
+
+		var traceBehind = Trace.Sphere(
+			from: Entity.Position + Entity.Rotation.Forward * (rayDistance + 50f) + Entity.Rotation.Up * 30f,
+			to: Entity.Position + Entity.Rotation.Forward * (rayDistance + 50f) + Entity.Rotation.Up * 30f,
+			radius: 15f
+		).Run();
+
+		if ( !traceBehind.Hit )
 		{
-			DebugOverlay.Line(
-				start: Entity.Position + Entity.Rotation.Forward * traceFront.Distance + Entity.Rotation.Up * 60f,
-				end: Entity.Position + Entity.Rotation.Forward * traceFront.Distance + Entity.Rotation.Up,
-				color: Color.Blue,
-				duration: 1f
-			);
-
-			var traceGround = Trace.Ray(
-				from: Entity.Position + Entity.Rotation.Forward * (traceFront.Distance + 3) + Entity.Rotation.Up * 60f,
-				to: Entity.Position + Entity.Rotation.Forward * (traceFront.Distance + 3) + Entity.Rotation.Up
-			).Run();
-
-			Log.Info( traceGround.HitPosition );
-
-			if ( !traceGround.Hit )
-				return;
-
+			VaultTarget = traceBehind.StartPosition;
 			Vaulting = true;
-			VaultTarget = traceGround.HitPosition + Vector3.Up * 13f;
-
-			Entity.Velocity = (VaultTarget - Entity.Position).WithZ(0).Normal * Entity.Velocity.WithZ(0).Length;
-
 			return;
 		}
 
+		Vaulting = true;
+		VaultTarget = traceGround.HitPosition + Vector3.Up * 13f;
+
+		Entity.Velocity = (VaultTarget - Entity.Position).WithZ( 0 ).Normal * Entity.Velocity.WithZ( 0 ).Length;
+	}
+
+	void DoJump()
+	{
 		if ( CanJump() )
 		{
 			Entity.Velocity = ApplyJump( Entity.Velocity, "jump" );
