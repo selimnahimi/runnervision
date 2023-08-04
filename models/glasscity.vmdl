@@ -1,0 +1,317 @@
+<!-- kv3 encoding:text:version{e21c7f3c-8a33-41c5-9977-a76d3a32aa0d} format:modeldoc29:version{3cec427c-1b0e-4d48-a90a-0436f33a6041} -->
+{
+	rootNode = 
+	{
+		_class = "RootNode"
+		children = 
+		[
+			{
+				_class = "MaterialGroupList"
+				children = 
+				[
+					{
+						_class = "DefaultMaterialGroup"
+						remaps = 
+						[
+							{
+								from = "材质.051.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.052.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.053.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.054.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.055.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.056.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.057.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.058.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.059.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.060.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.061.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.062.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.063.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.064.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.065.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.066.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.067.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.068.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.069.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.070.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.071.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.072.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.073.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.074.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.075.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.076.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.077.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.078.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.079.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.080.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.081.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.082.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.083.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.084.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.085.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.086.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.088.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.087.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.089.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.090.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.091.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.092.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.093.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.094.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.095.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.096.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.097.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.098.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "材质.099.vmat"
+								to = "materials/menu_city/city_material.vmat"
+							},
+							{
+								from = "glass.001.vmat"
+								to = "materials/menu_city/city_glass.vmat"
+							},
+							{
+								from = "ocean.004.vmat"
+								to = "materials/menu_city/city_ocean.vmat"
+							},
+						]
+						use_global_default = false
+						global_default_material = "materials/menu_city/city_material.vmat"
+					},
+				]
+			},
+			{
+				_class = "RenderMeshList"
+				children = 
+				[
+					{
+						_class = "RenderMeshFile"
+						filename = "model_source/city/glasscity.dmx"
+						import_translation = [ 0.0, 0.0, 0.0 ]
+						import_rotation = [ 0.0, 0.0, 0.0 ]
+						import_scale = 1.0
+						align_origin_x_type = "None"
+						align_origin_y_type = "None"
+						align_origin_z_type = "None"
+						parent_bone = ""
+						import_filter = 
+						{
+							exclude_by_default = true
+							exception_list = 
+							[
+								"ac_crystal_valley_area02_mat_001",
+								"ac_eden_village_area03_mat_001",
+								"ac_shimmering_heights_area01_mat_001",
+								"Buildings_Close_1_mat_001",
+								"Buildings_Close_2_mat_001",
+								"Buildings_Close_3_mat_001",
+								"Buildings_Close_4_mat_001",
+								"Buildings_Close_5_mat_001",
+								"Buildings_Close_6_mat_001",
+								"Buildings_Close_7_mat_001",
+								"Buildings_Close_8_mat_001",
+								"ct_omnistat_tunnels_area01_mat_001",
+								"ct_residental_development_zone_g_area02_mat_001",
+								"ct_residental_development_zone_g_area04_mat_001",
+								"ct_residental_development_zone_g_dreams_mat_001",
+								"ct_residental_development_zone_g_gridnode_mat_001",
+								"dt_centurian_yards_area06_mat_001",
+								"dt_charter_hill_area05_mat_001",
+								"dt_concord_plaza_area08_mat_001",
+								"dt_release_into_mat_001",
+								"dt_triumvirate_drive_area01_mat_001",
+								"dt_triumvirate_drive_area02_mat_001",
+								"dt_triumvirate_drive_area03_mat_001",
+								"dt_triumvirate_drive_area04_mat_001",
+								"Ground_Playable_mat_001",
+								"Ground_SurroundingCity02_mat_001",
+								"Ground_SurroundingCity_mat_001",
+								"Landmarks_ac_crystal_valley_building_glass_mat_001",
+								"Landmarks_ac_crystal_valley_building_mat_001",
+								"Landmarks_ac_eden_village_anansi_emporium_glass_mat_001",
+								"Landmarks_ac_eden_village_anansi_emporium_mat_001",
+								"Landmarks_ac_eden_village_bauble_mall_glass_mat_001",
+								"Landmarks_ac_eden_village_bauble_mall_mat_001",
+								"Landmarks_ct_residental_development_zone_g_area03_glass_mat_001",
+								"Landmarks_ct_residental_development_zone_g_area03_mat_001",
+								"Landmarks_dt_centurian_yards_elysium_glass_mat_001",
+								"Landmarks_dt_centurian_yards_elysium_mat_001",
+								"Landmarks_dt_triumvirate_drive_kruger_arms_glass_mat_001",
+								"Landmarks_dt_triumvirate_drive_kruger_arms_mat_001",
+								"Landmarks_KrugerSec_glass_mat_001",
+								"Landmarks_KrugerSec_mat_001",
+								"Landmarks_trainstation_glass_mat_001",
+								"Landmarks_trainstation_mat_001",
+								"Landmarks_tv_regatta_bay_area02_glass_mat_001",
+								"Landmarks_tv_regatta_bay_area02_mat_001",
+								"Landmarks_vista_ac_shimmering_heights_allcom_east_glass_mat_001",
+								"Landmarks_vista_ac_shimmering_heights_allcom_east_mat_001",
+								"map_mat_001",
+								"Omnistat_mat_001",
+								"Roads_Close_mat_001",
+								"skycity01_mat_001",
+								"skycity02_glass_mat_001",
+								"skycity02_mat_001",
+								"tv_ocean_pier_area01_mat_001",
+								"tv_ocean_pier_area03_mat_001",
+								"tv_regatta_bay_area04_mat_001",
+								"VISTA_CityBuildings_Assets_mat_001",
+								"vista_dt_noth_north_mat_001",
+								"vista_dt_south_west_mat_001",
+								"vista_release_northeast_mat_001",
+								"water_mat_001",
+							]
+						}
+					},
+				]
+			},
+		]
+		model_archetype = ""
+		primary_associated_entity = ""
+		anim_graph_name = ""
+		base_model_name = ""
+	}
+}

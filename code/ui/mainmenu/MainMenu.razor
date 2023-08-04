@@ -7,12 +7,27 @@
 @attribute [StyleSheet]
 
 <root style="flex-direction: column;">
-    <div class="background" />
+    <MenuCity class="background" />
     <div class="navigator-canvas" slot="navigator-canvas" />
 </root>
 
 @code
 {
+    void PlayMusic()
+    {
+        Audio.Play("runnervision_menumusic");
+    }
+
+    protected override void OnAfterTreeRender(bool firstTime)
+    {
+        base.OnAfterTreeRender(firstTime);
+
+        if (!firstTime)
+            return;
+
+        PlayMusic();
+    }
+
     public MainMenu()
     {
         DefaultUrl = "/";

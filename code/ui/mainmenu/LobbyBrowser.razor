@@ -26,12 +26,17 @@
         <div class="spacer" />
 
         <a class="button" @onclick=@CreateLobbyAsync>Create Lobby</a>
-        <a class="button" href="/">Return</a>
+        <a class="button" @onclick=@PlayBack href="/">Return</a>
     </div>
 </root>
 
 @code
 {
+    void PlayBack()
+    {
+        Audio.Play("runnervision_menuback");
+    }
+
     public async void CreateLobbyAsync()
     {
         await Game.Menu.CreateLobbyAsync( 64, "game", true );
