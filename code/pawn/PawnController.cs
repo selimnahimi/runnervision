@@ -157,6 +157,7 @@ public class PawnController : EntityComponent<Pawn>
 			CurrentMaxSpeed = MaxSpeed;
 
 		DebugOverlay.ScreenText( CurrentMaxSpeed.ToString() );
+		DebugOverlay.ScreenText( Entity.Position.ToString(), 3 );
 
 		// DebugOverlay.Line( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Left * 30f + Entity.Rotation.Forward * 15f );
 		// DebugOverlay.Line( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Right * 30f + Entity.Rotation.Forward * 15f );
@@ -281,10 +282,21 @@ public class PawnController : EntityComponent<Pawn>
 		float speed = Entity.Velocity.Length;
 		float rayDistance = Math.Max( (speed / 500) * 60f, 40f );
 
-		var traceFront = Trace.Ray(
+		/*var traceFront = Trace.Ray(
 			from: Entity.Position + Entity.Rotation.Up * 20f,
 			to: Entity.Position + Entity.Rotation.Forward * rayDistance * 1.5f + Entity.Rotation.Up * 20f
+		).Run();*/
+
+		var traceFront = Trace.Box(
+			bbox: new BBox( Vector3.Zero, 30f ),
+			from: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 20f,
+			to: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 20f
 		).Run();
+
+		DebugOverlay.Box(
+			bounds: new BBox( Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 20f, 30f ),
+			color: Color.Red
+		);
 
 		var traceTop = Trace.Sphere(
 			from: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 70f,
@@ -292,28 +304,26 @@ public class PawnController : EntityComponent<Pawn>
 			radius: 15f
 		).Run();
 
-		Log.Info( "Front hit: " + traceFront.Hit );
+		Log.Info( "Front hit: " + traceFront.HitPosition );
 		Log.Info( "Top hit: " + traceTop.Hit );
 
 		if ( !traceFront.Hit || traceTop.Hit )
 			return;
 
+		var obstaclePosition = traceFront.HitPosition;
+		var obstacleDistance = Entity.Position.Distance( obstaclePosition ) + 3f;
+
 		DebugOverlay.Line(
-			start: Entity.Position + Entity.Rotation.Forward * traceFront.Distance + Entity.Rotation.Up * 60f,
-			end: Entity.Position + Entity.Rotation.Forward * traceFront.Distance + Entity.Rotation.Up,
+			start: Entity.Position + Entity.Rotation.Forward * obstacleDistance + Entity.Rotation.Up * 60f,
+			end: Entity.Position + Entity.Rotation.Forward * obstacleDistance + Entity.Rotation.Up,
 			color: Color.Blue,
 			duration: 1f
 		);
 
 		var traceGround = Trace.Ray(
-			from: Entity.Position + Entity.Rotation.Forward * (traceFront.Distance + 3) + Entity.Rotation.Up * 60f,
-			to: Entity.Position + Entity.Rotation.Forward * (traceFront.Distance + 3) + Entity.Rotation.Up
+			from: Entity.Position + Entity.Rotation.Forward * obstacleDistance + Entity.Rotation.Up * 60f,
+			to: Entity.Position + Entity.Rotation.Forward * obstacleDistance + Entity.Rotation.Up
 		).Run();
-
-		Log.Info( traceGround.HitPosition );
-
-		if ( !traceGround.Hit )
-			return;
 
 		var traceBehind = Trace.Sphere(
 			from: Entity.Position + Entity.Rotation.Forward * (rayDistance + 50f) + Entity.Rotation.Up * 30f,
@@ -321,21 +331,26 @@ public class PawnController : EntityComponent<Pawn>
 			radius: 15f
 		).Run();
 
-		VaultStartPos = Entity.Position;
-		bezierCounter = 0f;
+		if ( traceGround.Hit && traceBehind.Hit )
+		{
+			// Vault onto
+			var groundPosition = traceGround.HitPosition;
+			Log.Info( groundPosition );
 
-		if ( !traceBehind.Hit )
+			VaultTargetPos = groundPosition + Vector3.Up * 13f;
+			Vaulting = 1;
+		}
+		else if ( !traceBehind.Hit )
 		{
 			// Vault over
 			VaultTargetPos = Entity.Position + Entity.Rotation.Forward * (rayDistance + 60f);
 			Vaulting = 2;
 		}
 		else
-		{
-			// Vault onto
-			Vaulting = 1;
-			VaultTargetPos = traceGround.HitPosition + Vector3.Up * 13f;
-		}
+			return;
+
+		VaultStartPos = Entity.Position;
+		bezierCounter = 0f;
 
 		var vaultDirection = (VaultTargetPos - Entity.Position).WithZ( 0 ).Normal;
 		var speedAfterVault = Entity.Velocity.WithZ( 0 ).Length;
