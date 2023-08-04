@@ -23,7 +23,7 @@ public class PawnController : EntityComponent<Pawn>
 	public int Dashing { get; set; }
 	public bool Noclipping { get; set; }
 	public bool UnlimitedSprint { get; set; }
-	public bool Vaulting { get; set; }
+	public int Vaulting { get; set; }
 
 	private float CurrentMaxSpeed { get; set; }
 	private float TimeSinceLastFootstep { get; set; }
@@ -54,7 +54,7 @@ public class PawnController : EntityComponent<Pawn>
 			return;
 		}
 
-		if ( Vaulting )
+		if ( Vaulting != 0 )
 		{
 			UpdateVault();
 			return;
@@ -273,7 +273,7 @@ public class PawnController : EntityComponent<Pawn>
 		Entity.Position = Entity.Position.LerpTo( pos, 0.5f );
 
 		if ( Entity.Position.AlmostEqual( VaultTargetPos, 7f ) || bezierCounter >= 1.0f )
-			Vaulting = false;
+			Vaulting = 0;
 	}
 
 	void TryVaulting()
@@ -322,21 +322,26 @@ public class PawnController : EntityComponent<Pawn>
 		).Run();
 
 		VaultStartPos = Entity.Position;
-		Vaulting = true;
 		bezierCounter = 0f;
 
 		if ( !traceBehind.Hit )
+		{
 			// Vault over
 			VaultTargetPos = Entity.Position + Entity.Rotation.Forward * (rayDistance + 60f);
+			Vaulting = 2;
+		}
 		else
+		{
 			// Vault onto
+			Vaulting = 1;
 			VaultTargetPos = traceGround.HitPosition + Vector3.Up * 13f;
+		}
 
 		var vaultDirection = (VaultTargetPos - Entity.Position).WithZ( 0 ).Normal;
 		var speedAfterVault = Entity.Velocity.WithZ( 0 ).Length;
 
 		Entity.Velocity = vaultDirection * speedAfterVault;
-		vaultSpeed = Math.Max(Entity.Velocity.Length, 250f);
+		vaultSpeed = Math.Max(Entity.Velocity.Length, 200f);
 	}
 
 	[ConCmd.Admin( "noclip" )]
@@ -453,7 +458,7 @@ public class PawnController : EntityComponent<Pawn>
 
 	bool CanJump()
 	{
-		return Grounded && !Vaulting;
+		return Grounded && Vaulting == 0;
 	}
 
 	Entity CheckForGround()

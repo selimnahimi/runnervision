@@ -1249,6 +1249,28 @@
 			{
 				key = 
 				{
+					m_id = 974541017
+				}
+				value = 
+				{
+					_class = "CSequenceAnimNode"
+					m_sName = "Unnamed"
+					m_vecPosition = [ -144.0, 656.0 ]
+					m_nNodeID = 
+					{
+						m_id = 974541017
+					}
+					m_networkMode = "ServerAuthoritative"
+					m_sNote = ""
+					m_tagSpans = [  ]
+					m_sequenceName = "VaultOver"
+					m_playbackSpeed = 1.0
+					m_bLoop = false
+				}
+			},
+			{
+				key = 
+				{
 					m_id = 1209336584
 				}
 				value = 
@@ -1277,7 +1299,7 @@
 				{
 					_class = "CSequenceAnimNode"
 					m_sName = "Unnamed"
-					m_vecPosition = [ 64.0, 576.0 ]
+					m_vecPosition = [ -144.0, 576.0 ]
 					m_nNodeID = 
 					{
 						m_id = 1308160069
@@ -1799,10 +1821,17 @@
 									m_conditions = 
 									[
 										{
-											_class = "CFinishedCondition"
+											_class = "CParameterAnimCondition"
 											m_comparisonOp = 0
-											m_option = "FinishedConditionOption_OnAlmostFinished"
-											m_bIsFinished = true
+											m_paramID = 
+											{
+												m_id = 2061745515
+											}
+											m_comparisonValue = 
+											{
+												m_nType = 2
+												m_data = 0
+											}
 										},
 									]
 									m_blendDuration = 0.2
@@ -1832,7 +1861,7 @@
 							{
 								m_nodeID = 
 								{
-									m_id = 1308160069
+									m_id = 2052922077
 								}
 								m_outputID = 
 								{
@@ -2015,6 +2044,94 @@
 			{
 				key = 
 				{
+					m_id = 2052922077
+				}
+				value = 
+				{
+					_class = "CSelectorAnimNode"
+					m_sName = "Unnamed"
+					m_vecPosition = [ 64.0, 560.0 ]
+					m_nNodeID = 
+					{
+						m_id = 2052922077
+					}
+					m_networkMode = "ServerAuthoritative"
+					m_sNote = ""
+					m_children = 
+					[
+						{
+							m_nodeID = 
+							{
+								m_id = 4294967295
+							}
+							m_outputID = 
+							{
+								m_id = 4294967295
+							}
+						},
+						{
+							m_nodeID = 
+							{
+								m_id = 1308160069
+							}
+							m_outputID = 
+							{
+								m_id = 4294967295
+							}
+						},
+						{
+							m_nodeID = 
+							{
+								m_id = 974541017
+							}
+							m_outputID = 
+							{
+								m_id = 4294967295
+							}
+						},
+					]
+					m_tags = 
+					[
+						{
+							m_id = 4294967295
+						},
+						{
+							m_id = 4294967295
+						},
+						{
+							m_id = 4294967295
+						},
+					]
+					m_selectionSource = "SelectionSource_Enum"
+					m_boolParamID = 
+					{
+						m_id = 4294967295
+					}
+					m_enumParamID = 
+					{
+						m_id = 2061745515
+					}
+					m_intParamID = 
+					{
+						m_id = 4294967295
+					}
+					m_intParamMinValue = 0
+					m_intParamMaxValue = 2
+					m_blendDuration = 0.2
+					m_tagBehavior = "SelectorTagBehavior_OffWhenFinished"
+					m_bResetOnChange = true
+					m_bSyncCyclesOnChange = false
+					m_blendCurve = 
+					{
+						m_vControlPoint1 = [ 0.5, 0.0 ]
+						m_vControlPoint2 = [ 0.5, 1.0 ]
+					}
+					m_intParamNames = [  ]
+				}
+			},
+			{
+				key = 
+				{
 					m_id = 2100532318
 				}
 				value = 
@@ -2128,7 +2245,8 @@
 				m_enumOptions = 
 				[
 					"No",
-					"Small",
+					"Onto",
+					"Over",
 				]
 			},
 		]

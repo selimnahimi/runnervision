@@ -5361,6 +5361,20 @@
 					{
 						_class = "AnimFile"
 						name = "VaultOver"
+						children = 
+						[
+							{
+								_class = "ExtractMotion"
+								extract_tx = true
+								extract_ty = true
+								extract_tz = true
+								extract_rz = true
+								linear = true
+								quadratic = false
+								root_bone_name = ""
+								motion_type = "Uniform"
+							},
+						]
 						activity_name = ""
 						activity_weight = 1
 						weight_list_name = ""
@@ -5375,7 +5389,7 @@
 						source_filename = "model_source/faith_v2/anims/VaultOver.dmx"
 						start_frame = -1
 						end_frame = -1
-						framerate = -1.0
+						framerate = 50.0
 						take = 0
 						reverse = false
 					},
