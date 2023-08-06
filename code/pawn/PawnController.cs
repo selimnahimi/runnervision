@@ -285,6 +285,7 @@ public class PawnController : EntityComponent<Pawn>
 
 		float showDebugTime = 3f;
 		float boxRadius = 20f;
+		var distanceBehindObstacle = rayDistance + 60f;
 
 		var traceFront = Trace.Box(
 			bbox: new BBox( 0, 30f ),
@@ -305,8 +306,6 @@ public class PawnController : EntityComponent<Pawn>
 
 		var obstaclePosition = traceFront.HitPosition;
 		var obstacleDistance = Entity.Position.Distance( obstaclePosition ) + 3f;
-
-		var distanceBehindObstacle = rayDistance + 50f;
 
 		BBox boxBehindObstacle = new BBox(
 			mins: Vector3.Forward * +boxRadius + Vector3.Up * 70f + Vector3.Left * boxRadius,
