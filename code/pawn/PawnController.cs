@@ -11,7 +11,7 @@ namespace MyGame;
 public class PawnController : EntityComponent<Pawn>
 {
 	public int StepSize => 26;
-	public int GroundAngle => 70;
+	public int GroundAngle => 100;
 	public int JumpSpeed => 300;
 	public float Gravity => 800f;
 	public float StartingSpeed => 1000f;
