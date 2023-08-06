@@ -212,7 +212,7 @@ public partial class Pawn : AnimatedEntity
 
 			// Camera.Position = Position + cameraBone.LocalTransform.Position;
 			
-			Camera.Position = CameraHelper.Position + Rotation.Down * 3f + Rotation.Forward * 3f + Rotation.Right * 4f;
+			Camera.Position = CameraHelper.Position + Rotation.Down * 3f + Rotation.Forward * 3f;
 
 		}
 
