@@ -35,6 +35,7 @@ public class PawnController : EntityComponent<Pawn>
 
 	private float bezierCounter = 0f;
 	private float vaultSpeed = 0f;
+	private bool debugMode = RunnerVision.CurrentRunnerVision().DebugMode;
 
 	HashSet<string> ControllerEvents = new( StringComparer.OrdinalIgnoreCase );
 
@@ -209,11 +210,12 @@ public class PawnController : EntityComponent<Pawn>
 			to: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 20f
 		).Run();
 
-		DebugOverlay.Box(
-			bounds: new BBox( Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 20f, 30f ),
-			color: Color.Red,
-			duration: showDebugTime
-		);
+		if ( debugMode )
+			DebugOverlay.Box(
+				bounds: new BBox( Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 20f, 30f ),
+				color: Color.Red,
+				duration: showDebugTime
+			);
 
 		if ( !traceFront.Hit  )
 			return;
@@ -226,11 +228,8 @@ public class PawnController : EntityComponent<Pawn>
 			maxs: Vector3.Forward * -boxRadius + Vector3.Up * 0f + Vector3.Right * boxRadius
 		).Translate( Entity.Position + Entity.Rotation.Forward * distanceBehindObstacle );
 
-		DebugOverlay.Box(
-			bounds: boxBehindObstacle,
-			color: Color.Blue,
-			duration: showDebugTime
-		);
+		if ( debugMode )
+			DebugOverlay.Box( bounds: boxBehindObstacle, color: Color.Blue, duration: showDebugTime );
 
 		var traceBehindObstacle = Trace.Box(
 			bbox: boxBehindObstacle,
@@ -245,11 +244,12 @@ public class PawnController : EntityComponent<Pawn>
 
 		var hitFailsafe = traceWallFailsafe.Entity?.IsWorld == true; //bool? needs to be converted to bool
 
-		DebugOverlay.Line(
-			start: Entity.Position + Entity.Rotation.Up * 60f,
-			end: Entity.Position + Entity.Rotation.Up * 60f + Entity.Rotation.Forward * distanceBehindObstacle,
-			duration: showDebugTime
-		);
+		if ( debugMode )
+			DebugOverlay.Line(
+				start: Entity.Position + Entity.Rotation.Up * 60f,
+				end: Entity.Position + Entity.Rotation.Up * 60f + Entity.Rotation.Forward * distanceBehindObstacle,
+				duration: showDebugTime
+			);
 
 		if (!traceBehindObstacle.Hit && !hitFailsafe )
 		{
@@ -266,7 +266,8 @@ public class PawnController : EntityComponent<Pawn>
 				from: 0, to: 0
 			).Run();
 
-			DebugOverlay.Box( bounds: topBoxSmall, color: Color.Green, duration: showDebugTime );
+			if ( debugMode )
+				DebugOverlay.Box( bounds: topBoxSmall, color: Color.Green, duration: showDebugTime );
 
 			if ( traceBoxSmallAboveObstacle.Hit )
 				return;
@@ -290,7 +291,8 @@ public class PawnController : EntityComponent<Pawn>
 				from: 0, to: 0
 			).Run();
 
-			DebugOverlay.Box( bounds: topBoxLarge, color: Color.Green, duration: showDebugTime );
+			if ( debugMode )
+				DebugOverlay.Box( bounds: topBoxLarge, color: Color.Green, duration: showDebugTime );
 
 			if ( traceBoxLargeAboveObstacle.Hit )
 				return;
@@ -300,12 +302,12 @@ public class PawnController : EntityComponent<Pawn>
 				to: Entity.Position + Entity.Rotation.Forward * obstacleDistance + Entity.Rotation.Up
 			).Run();
 
-			DebugOverlay.Line(
-				start: Entity.Position + Entity.Rotation.Forward * obstacleDistance + Entity.Rotation.Up * 60f,
-				end: Entity.Position + Entity.Rotation.Forward * obstacleDistance + Entity.Rotation.Up,
-				color: Color.Blue,
-				duration: showDebugTime
-			);
+			if ( debugMode )
+				DebugOverlay.Line(
+					start: Entity.Position + Entity.Rotation.Forward * obstacleDistance + Entity.Rotation.Up * 60f,
+					end: Entity.Position + Entity.Rotation.Forward * obstacleDistance + Entity.Rotation.Up,
+					color: Color.Blue, duration: showDebugTime
+				);
 
 			if ( !traceObstacleSurface.Hit )
 				return;
