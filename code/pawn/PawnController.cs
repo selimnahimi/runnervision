@@ -173,12 +173,21 @@ public class PawnController : EntityComponent<Pawn>
 
 	void UpdateWallrunning()
 	{
-		if ( Wallrunning == 1 && CheckForWall( rightSide: false, behind: true ) )
-			return;
-		if ( Wallrunning == 2 && CheckForWall( rightSide: true, behind: true ) )
-			return;
+		Wallrunning = CanWallrun() ? Wallrunning : 0;
+	}
 
-		Wallrunning = 0;
+	bool CanWallrun()
+	{
+		if ( Wallrunning == 1 && !CheckForWall( rightSide: false, behind: true ) )
+			return false;
+
+		if ( Wallrunning == 2 && !CheckForWall( rightSide: true, behind: true ) )
+			return false;
+
+		if ( Entity.Velocity.WithZ( 0 ).Length < 200f )
+			return false;
+
+		return true;
 	}
 
 	// Source: https://programmerbay.com/c-program-to-draw-bezier-curve-using-4-control-points/
