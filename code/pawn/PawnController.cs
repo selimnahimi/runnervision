@@ -104,7 +104,7 @@ public class PawnController : EntityComponent<Pawn>
 
 		if ( Input.Pressed( "jump" ) )
 		{
-			if ( !Input.Down("forward") && ( Input.Down( "left" ) || Input.Down( "right" ) ) )
+			if ( Grounded && !Input.Down("forward") && ( Input.Down( "left" ) || Input.Down( "right" ) ) )
 			{
 				if ( TimeSinceDash > 1.0f )
 				{
