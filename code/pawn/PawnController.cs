@@ -284,7 +284,7 @@ public class PawnController : EntityComponent<Pawn>
 		float rayDistance = Math.Max( (speed / 500) * 60f, 40f );
 
 		float showDebugTime = 3f;
-		float boxRadius = 15f;
+		float boxRadius = 20f;
 
 		var traceFront = Trace.Box(
 			bbox: new BBox( 0, 30f ),
