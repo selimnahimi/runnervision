@@ -15,12 +15,12 @@ namespace MyGame;
 /// You can use this to create things like HUDs and declare which player class
 /// to use for spawned players.
 /// </summary>
-public partial class MyGame : Sandbox.GameManager
+public partial class RunnerVisionGame : Sandbox.GameManager
 {
 	/// <summary>
 	/// Called when the game is created (on both the server and client)
 	/// </summary>
-	public MyGame()
+	public RunnerVisionGame()
 	{
 		if ( Game.IsClient )
 		{
