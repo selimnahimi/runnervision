@@ -2,6 +2,7 @@
 using Sandbox.UI;
 using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Numerics;
 
 namespace MyGame;
@@ -282,32 +283,48 @@ public class PawnController : EntityComponent<Pawn>
 		float speed = Entity.Velocity.Length;
 		float rayDistance = Math.Max( (speed / 500) * 60f, 40f );
 
+		float showDebugTime = 3f;
+
 		/*var traceFront = Trace.Ray(
 			from: Entity.Position + Entity.Rotation.Up * 20f,
 			to: Entity.Position + Entity.Rotation.Forward * rayDistance * 1.5f + Entity.Rotation.Up * 20f
 		).Run();*/
 
 		var traceFront = Trace.Box(
-			bbox: new BBox( Vector3.Zero, 30f ),
+			bbox: new BBox( 0, 30f ),
 			from: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 20f,
 			to: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 20f
 		).Run();
 
 		DebugOverlay.Box(
 			bounds: new BBox( Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 20f, 30f ),
-			color: Color.Red
+			color: Color.Red,
+			duration: showDebugTime
 		);
 
-		var traceTop = Trace.Sphere(
+		/*var traceTop = Trace.Sphere(
 			from: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 70f,
 			to: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 70f,
 			radius: 15f
+		).Run();*/
+
+		// Check if there's space to vault over
+		var topBoxSmall = new BBox(
+			mins: Vector3.Forward * +15f + Vector3.Up * 40f + Vector3.Left * 15f,
+			maxs: Vector3.Forward * -15f + Vector3.Up * 90f + Vector3.Right * 15f
+		).Translate( Entity.Position + Entity.Rotation.Forward * rayDistance );
+
+		var traceBoxSmallAboveObstacle = Trace.Box(
+			bbox: topBoxSmall,
+			from: 0, to: 0
 		).Run();
 
-		Log.Info( "Front hit: " + traceFront.HitPosition );
-		Log.Info( "Top hit: " + traceTop.Hit );
+		DebugOverlay.Box( bounds: topBoxSmall, color: Color.Green, duration: showDebugTime );
 
-		if ( !traceFront.Hit || traceTop.Hit )
+		Log.Info( "Front hit: " + traceFront.HitPosition );
+		Log.Info( "Top hit: " + traceBoxSmallAboveObstacle.Hit );
+
+		if ( !traceFront.Hit || traceBoxSmallAboveObstacle.Hit )
 			return;
 
 		var obstaclePosition = traceFront.HitPosition;
@@ -317,34 +334,60 @@ public class PawnController : EntityComponent<Pawn>
 			start: Entity.Position + Entity.Rotation.Forward * obstacleDistance + Entity.Rotation.Up * 60f,
 			end: Entity.Position + Entity.Rotation.Forward * obstacleDistance + Entity.Rotation.Up,
 			color: Color.Blue,
-			duration: 1f
+			duration: showDebugTime
 		);
 
-		var traceGround = Trace.Ray(
+		var traceObstacleSurface = Trace.Ray(
 			from: Entity.Position + Entity.Rotation.Forward * obstacleDistance + Entity.Rotation.Up * 60f,
 			to: Entity.Position + Entity.Rotation.Forward * obstacleDistance + Entity.Rotation.Up
 		).Run();
 
-		var traceBehind = Trace.Sphere(
-			from: Entity.Position + Entity.Rotation.Forward * (rayDistance + 50f) + Entity.Rotation.Up * 30f,
-			to: Entity.Position + Entity.Rotation.Forward * (rayDistance + 50f) + Entity.Rotation.Up * 30f,
-			radius: 15f
+		var distanceBehindObstacle = rayDistance + 50f;
+
+		BBox boxBehindObstacle = new BBox(
+			mins: Vector3.Forward * +15f + Vector3.Up * 70f + Vector3.Left * 15f,
+			maxs: Vector3.Forward * -15f + Vector3.Up * 0f + Vector3.Right * 15f
+		).Translate( Entity.Position + Entity.Rotation.Forward * distanceBehindObstacle );
+
+		DebugOverlay.Box(
+			bounds: boxBehindObstacle,
+			color: Color.Blue,
+			duration: showDebugTime
+		);
+
+		var traceBehindObstacle = Trace.Box(
+			bbox: boxBehindObstacle,
+			from: 0, to: 0
 		).Run();
 
-		if ( traceGround.Hit && traceBehind.Hit )
-		{
-			// Vault onto
-			var groundPosition = traceGround.HitPosition;
-			Log.Info( groundPosition );
+		// Make sure we are not vaulting inside map geometry
+		var traceWallFailsafe = Trace.Ray(
+			from: Entity.Position + Entity.Rotation.Up * 60f,
+			to: Entity.Position + Entity.Rotation.Up * 60f + Entity.Rotation.Forward * distanceBehindObstacle
+		).Run();
 
-			VaultTargetPos = groundPosition + Vector3.Up * 13f;
-			Vaulting = 1;
-		}
-		else if ( !traceBehind.Hit )
+		var hitFailsafe = traceWallFailsafe.Entity?.IsWorld == true; //bool? needs to be converted to bool
+
+		DebugOverlay.Line(
+			start: Entity.Position + Entity.Rotation.Up * 60f,
+			end: Entity.Position + Entity.Rotation.Up * 60f + Entity.Rotation.Forward * distanceBehindObstacle,
+			duration: showDebugTime
+		);
+
+		if (!traceBehindObstacle.Hit && !hitFailsafe )
 		{
 			// Vault over
 			VaultTargetPos = Entity.Position + Entity.Rotation.Forward * (rayDistance + 60f);
 			Vaulting = 2;
+		}
+		else if ( traceObstacleSurface.Hit )
+		{
+			// Vault onto
+			var groundPosition = traceObstacleSurface.HitPosition;
+			Log.Info( groundPosition );
+
+			VaultTargetPos = groundPosition + Vector3.Up * 13f;
+			Vaulting = 1;
 		}
 		else
 			return;
