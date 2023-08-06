@@ -285,7 +285,7 @@ public class PawnController : EntityComponent<Pawn>
 
 		float showDebugTime = 3f;
 		float boxRadius = 20f;
-		var distanceBehindObstacle = rayDistance + 60f;
+		var distanceBehindObstacle = rayDistance * 1.20f + 60f;
 
 		var traceFront = Trace.Box(
 			bbox: new BBox( 0, 30f ),
@@ -343,8 +343,8 @@ public class PawnController : EntityComponent<Pawn>
 
 			// Check if there's space to vault over
 			var topBoxSmall = new BBox(
-				mins: Vector3.Forward * +boxRadius + Vector3.Up * 40f + Vector3.Left * boxRadius,
-				maxs: Vector3.Forward * -boxRadius + Vector3.Up * 90f + Vector3.Right * boxRadius
+				mins: Vector3.Forward * +boxRadius * 0.70f + Vector3.Up * 50f + Vector3.Left * boxRadius * 0.70f,
+				maxs: Vector3.Forward * -boxRadius * 0.70f + Vector3.Up * 80f + Vector3.Right * boxRadius * 0.70f
 			).Translate( Entity.Position + Entity.Rotation.Forward * rayDistance );
 
 			var traceBoxSmallAboveObstacle = Trace.Box(
@@ -357,8 +357,9 @@ public class PawnController : EntityComponent<Pawn>
 			if ( traceBoxSmallAboveObstacle.Hit )
 				return;
 
-			VaultTargetPos = Entity.Position + Entity.Rotation.Forward * (rayDistance + 60f);
+			VaultTargetPos = Entity.Position + Entity.Rotation.Forward * distanceBehindObstacle;
 			Vaulting = 2;
+			vaultSpeed = 200f;
 		}
 		else
 		{
@@ -366,7 +367,7 @@ public class PawnController : EntityComponent<Pawn>
 
 			// Make sure there's enough space to stand on obstacle
 			var topBoxLarge = new BBox(
-				mins: Vector3.Forward * +boxRadius + Vector3.Up * 40f + Vector3.Left * boxRadius,
+				mins: Vector3.Forward * +boxRadius + Vector3.Up * 45f + Vector3.Left * boxRadius,
 				maxs: Vector3.Forward * -boxRadius + Vector3.Up * 115f + Vector3.Right * boxRadius
 			).Translate( Entity.Position + Entity.Rotation.Forward * rayDistance );
 
@@ -400,6 +401,7 @@ public class PawnController : EntityComponent<Pawn>
 
 			VaultTargetPos = groundPosition + Vector3.Up * 13f;
 			Vaulting = 1;
+			vaultSpeed = Math.Max( Entity.Velocity.Length, 200f );
 		}
 
 		VaultStartPos = Entity.Position;
@@ -409,7 +411,6 @@ public class PawnController : EntityComponent<Pawn>
 		var speedAfterVault = Entity.Velocity.WithZ( 0 ).Length;
 
 		Entity.Velocity = vaultDirection * speedAfterVault;
-		vaultSpeed = Math.Max(Entity.Velocity.Length, 200f);
 	}
 
 	[ConCmd.Admin( "noclip" )]
