@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using Sandbox.Internal;
 using Sandbox.UI;
 using System;
 using System.Collections.Generic;
@@ -63,6 +64,9 @@ public class PawnController : EntityComponent<Pawn>
 			return;
 		}
 
+		if ( Wallrunning != 0 )
+			UpdateWallrunning();
+
 		var movement = Entity.InputDirection.Normal;
 		var angles = Entity.ViewAngles.WithPitch( 0 );
 		var moveVector = Rotation.From( angles ) * movement * CurrentMaxSpeed;
@@ -126,11 +130,11 @@ public class PawnController : EntityComponent<Pawn>
 				Entity.ApplyAbsoluteImpulse( Entity.Rotation.Forward * 250f + Entity.Rotation.Up * 100f );
 				Wallrunning = 0;
 			}
-			else if ( CheckForWallLeft() )
+			else if ( CheckForWall( rightSide: false ) )
 			{
 				Wallrunning = 1;
 			}
-			else if ( CheckForWallRight() )
+			else if ( CheckForWall( rightSide: true ) )
 			{
 				Wallrunning = 2;
 			}
@@ -165,6 +169,16 @@ public class PawnController : EntityComponent<Pawn>
 		DebugOverlay.ScreenText( Vaulting.ToString(), 1 );
 
 		FootstepWizard();
+	}
+
+	void UpdateWallrunning()
+	{
+		if ( Wallrunning == 1 && CheckForWall( rightSide: false, behind: true ) )
+			return;
+		if ( Wallrunning == 2 && CheckForWall( rightSide: true, behind: true ) )
+			return;
+
+		Wallrunning = 0;
 	}
 
 	// Source: https://programmerbay.com/c-program-to-draw-bezier-curve-using-4-control-points/
@@ -365,16 +379,12 @@ public class PawnController : EntityComponent<Pawn>
 		Entity.Velocity = 0;
 	}
 
-	bool CheckForWallLeft()
+	bool CheckForWall( bool rightSide, bool behind = false )
 	{
-		var trace = Trace.Ray( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Left * 30f + Entity.Rotation.Forward * 15f ).Run();
+		var from = Entity.Position + Vector3.Up * 50f;
+		var to = Entity.Position + Vector3.Up * 50f + Entity.Rotation.Left * (rightSide ? -30f : 30f) + Entity.Rotation.Forward * (behind ? -15f : 15f);
 
-		return trace.Hit && trace.Entity.IsWorld;
-	}
-
-	bool CheckForWallRight()
-	{
-		var trace = Trace.Ray( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Right * 30f + Entity.Rotation.Forward * 15f ).Run();
+		var trace = Trace.Ray(from, to).Run();
 
 		return trace.Hit && trace.Entity.IsWorld;
 	}
