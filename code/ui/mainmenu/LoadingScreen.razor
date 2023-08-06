@@ -2,6 +2,7 @@
 @using Sandbox.UI;
 @using System.Linq;
 @using System.Threading.Tasks;
+@using System.Collections.Generic;
 @using Sandbox.Menu;
 
 @inherits RootPanel
@@ -9,7 +10,7 @@
 @attribute [StyleSheet]
 
 <root style="flex-direction: column;">
-    <div class="background" />
+    <div class="background @( ChosenAnimClass )" />
 
     <div style="flex-grow: 1;" />
 
@@ -22,9 +23,25 @@
 {
     public LoadingProgress Progress;
 
+    public string[] AnimClassArray = { "loadingAnim1", "loadingAnim2", "loadingAnim3" };
+    public string ChosenAnimClass;
+
+    public string getRandomAnimation()
+    {
+        return AnimClassArray[System.Random.Shared.Int(AnimClassArray.Length - 1)];
+    }
+
     public void OnLoadingProgress( LoadingProgress progress )
     {
         Progress = progress;
         StateHasChanged();
+    }
+
+    protected override void OnAfterTreeRender(bool firstTime)
+    {
+        base.OnAfterTreeRender(firstTime);
+
+        if (firstTime)
+            ChosenAnimClass = getRandomAnimation();
     }
 }
