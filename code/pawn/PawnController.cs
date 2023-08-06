@@ -160,86 +160,6 @@ public class PawnController : EntityComponent<Pawn>
 		DebugOverlay.ScreenText( CurrentMaxSpeed.ToString() );
 		DebugOverlay.ScreenText( Entity.Position.ToString(), 3 );
 
-		// DebugOverlay.Line( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Left * 30f + Entity.Rotation.Forward * 15f );
-		// DebugOverlay.Line( Entity.Position + Vector3.Up * 50f, Entity.Position + Vector3.Up * 50f + Entity.Rotation.Right * 30f + Entity.Rotation.Forward * 15f );
-
-		/*DebugOverlay.Box(
-			mins: Vector3.Up * 50f + Vector3.Forward * 50f + Vector3.Left * 25f,
-			maxs: Vector3.Up * 40f + Vector3.Right * 25f + Vector3.Forward * 25f,
-			rotation: Entity.Rotation,
-			position: Entity.Position,
-			color: Color.Red
-		); */
-
-		/*DebugOverlay.Box(
-			mins: Vector3.Up * 80f + Vector3.Forward * 50f + Vector3.Left * 25f,
-			maxs: Vector3.Up * 60f + Vector3.Right * 25f + Vector3.Forward * 25f,
-			rotation: Entity.Rotation,
-			position: Entity.Position,
-			color: Color.Green
-		);*/
-
-		/*DebugOverlay.Line(
-			Entity.Position + Entity.Rotation.Up * 50f + Entity.Rotation.Forward * 40f + Entity.Rotation.Left * 25f,
-			Entity.Position + Entity.Rotation.Up * 50f + Entity.Rotation.Forward * 40f + Entity.Rotation.Right * 25f,
-			Color.Red
-		);
-
-		var traceBottom = Trace.Ray(
-			Entity.Position + Entity.Rotation.Up * 50f + Entity.Rotation.Forward * 40f + Entity.Rotation.Left * 25f,
-			Entity.Position + Entity.Rotation.Up * 50f + Entity.Rotation.Forward * 40f + Entity.Rotation.Right * 25f
-		);
-
-		DebugOverlay.Line(
-			Entity.Position + Entity.Rotation.Up * 70f + Entity.Rotation.Forward * 40f + Entity.Rotation.Left * 25f,
-			Entity.Position + Entity.Rotation.Up * 70f + Entity.Rotation.Forward * 40f + Entity.Rotation.Right * 25f,
-			Color.Green
-		);
-
-		var traceTop = Trace.Ray(
-			Entity.Position + Entity.Rotation.Up * 70f + Entity.Rotation.Forward * 40f + Entity.Rotation.Left * 25f,
-			Entity.Position + Entity.Rotation.Up * 70f + Entity.Rotation.Forward * 40f + Entity.Rotation.Right * 25f
-		);
-
-		DebugOverlay.Line(
-			Entity.Position + Entity.Rotation.Up * 50f + Entity.Rotation.Forward * 60f + Entity.Rotation.Left * 25f,
-			Entity.Position + Entity.Rotation.Up * 50f + Entity.Rotation.Forward * 60f + Entity.Rotation.Right * 25f,
-			Color.Blue
-		);*/
-
-		/*float speed = Entity.Velocity.Length;
-		float rayDistance = Math.Max((speed / 500) * 60f, 40f);
-
-		DebugOverlay.Line(
-			start: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 60f,
-			end: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 20f,
-			color: Color.Red
-		);
-
-		DebugOverlay.Line(
-			start: Entity.Position + Entity.Rotation.Up * 30f,
-			end: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 30f,
-			color: Color.Red
-		);
-
-		DebugOverlay.Sphere(
-			Entity.Position + Entity.Rotation.Forward * (rayDistance + 30f) + Entity.Rotation.Up * 30f,
-			15f,
-			Color.Blue
-		);
-
-		DebugOverlay.Sphere(
-			Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 70f,
-			15f,
-			Color.Green
-		);
-
-		DebugOverlay.Line(
-			start: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 70f,
-			end: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 40f,
-			color: Color.Yellow
-		);*/
-
 		DebugOverlay.ScreenText( Vaulting.ToString(), 1 );
 
 		FootstepWizard();
@@ -266,11 +186,7 @@ public class PawnController : EntityComponent<Pawn>
 			t: bezierCounter
 		);
 
-		bezierCounter += (vaultSpeed/100) * Time.Delta; 
-		Log.Info( Time.Delta );
-
-		Log.Info( "pos:" + pos );
-		Log.Info( "counter: " + bezierCounter );
+		bezierCounter += (vaultSpeed/100) * Time.Delta;
 
 		Entity.Position = Entity.Position.LerpTo( pos, 0.5f );
 
@@ -298,8 +214,6 @@ public class PawnController : EntityComponent<Pawn>
 			color: Color.Red,
 			duration: showDebugTime
 		);
-
-		Log.Info( "Front hit: " + traceFront.HitPosition );
 
 		if ( !traceFront.Hit  )
 			return;
@@ -397,7 +311,6 @@ public class PawnController : EntityComponent<Pawn>
 				return;
 
 			var groundPosition = traceObstacleSurface.HitPosition;
-			Log.Info( groundPosition );
 
 			VaultTargetPos = groundPosition + Vector3.Up * 13f;
 			Vaulting = 1;
