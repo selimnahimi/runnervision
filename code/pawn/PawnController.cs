@@ -13,13 +13,14 @@ public class PawnController : EntityComponent<Pawn>
 	public int GroundAngle => 70;
 	public int JumpSpeed => 300;
 	public float Gravity => 800f;
-	public float StartingSpeed => 600f;
-	public float MaxSpeed => 1700f;
-	public float SpeedGrowthRate => 5.0f;
+	public float StartingSpeed => 1000f;
+	public float MaxSpeed => 1500f;
+	public float SpeedGrowthRate => 2.0f;
 	public float SpeedShrinkRate => 50.0f;
 	public float Friction => 3.0f;
 	public float SharpTurnAngle => 50f;
 	public float Acceleration => 0.02f;
+	public float StartFootSoundVelocity => 300f;
 	public int Wallrunning { get; set; }
 	public int Dashing { get; set; }
 	public bool Noclipping { get; set; }
@@ -411,7 +412,7 @@ public class PawnController : EntityComponent<Pawn>
 			TimeSinceLastFootstep = 0f;
 		}
 
-		if ( TimeSinceLastFootstepRelease > nextStep*1.05 && speed > 400)
+		if ( TimeSinceLastFootstepRelease > nextStep*1.05 && speed > StartFootSoundVelocity )
 		{
 			Sound.FromWorld( footstepReleaseSound, Entity.Position + Vector3.Down * 10f );
 
