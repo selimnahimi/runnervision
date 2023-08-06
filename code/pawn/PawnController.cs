@@ -36,7 +36,7 @@ public class PawnController : EntityComponent<Pawn>
 
 	private float bezierCounter = 0f;
 	private float vaultSpeed = 0f;
-	private bool debugMode = RunnerVision.CurrentRunnerVision().DebugMode;
+	private bool debugMode = true; /*RunnerVision.CurrentRunnerVision().DebugMode*/
 
 	HashSet<string> ControllerEvents = new( StringComparer.OrdinalIgnoreCase );
 
@@ -226,7 +226,7 @@ public class PawnController : EntityComponent<Pawn>
 
 		BBox boxBehindObstacle = new BBox(
 			mins: Vector3.Forward * +boxRadius + Vector3.Up * 70f + Vector3.Left * boxRadius,
-			maxs: Vector3.Forward * -boxRadius + Vector3.Up * 0f + Vector3.Right * boxRadius
+			maxs: Vector3.Forward * -boxRadius + Vector3.Up * 10f + Vector3.Right * boxRadius
 		).Translate( Entity.Position + Entity.Rotation.Forward * distanceBehindObstacle );
 
 		if ( debugMode )
