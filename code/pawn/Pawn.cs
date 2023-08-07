@@ -202,15 +202,6 @@ public partial class Pawn : AnimatedEntity
 
 			Camera.Rotation = Rotation.From( ViewAngles.pitch, ViewAngles.yaw, ViewAngles.roll + CameraTilt );
 			Camera.FirstPersonViewer = this;
-			Camera.Position = EyePosition;
-
-			var cameraBone = Model.Bones.GetBone("CameraJoint");
-			// Log.Info( cameraBone.LocalTransform.Position );
-
-			var cameraPos = Model.GetBoneTransform( "CameraJoint" );
-			// Log.Info( cameraPos.Position );
-
-			// Camera.Position = Position + cameraBone.LocalTransform.Position;
 			
 			Camera.Position = CameraHelper.Position + Rotation.Down * 3f + Rotation.Forward * 3f;
 
