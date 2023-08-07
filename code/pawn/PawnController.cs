@@ -104,7 +104,7 @@ public class PawnController : EntityComponent<Pawn>
 
 		if ( Input.Pressed( "jump" ) )
 		{
-			if ( Grounded && !Input.Down("forward") && ( Input.Down( "left" ) || Input.Down( "right" ) ) )
+			if ( ShouldDash() )
 			{
 				if ( TimeSinceDash > 1.0f )
 				{
@@ -169,6 +169,11 @@ public class PawnController : EntityComponent<Pawn>
 		DebugOverlay.ScreenText( Vaulting.ToString(), 1 );
 
 		FootstepWizard();
+	}
+
+	bool ShouldDash()
+	{
+		return Grounded && !Input.Down( "forward" ) && (Input.Down( "left" ) || Input.Down( "right" ));
 	}
 
 	void UpdateWallrunning()
