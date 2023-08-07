@@ -227,6 +227,9 @@ public class PawnController : EntityComponent<Pawn>
 
 	void TryVaulting()
 	{
+		if ( !Input.Down( "forward" ) )
+			return;
+
 		float speed = Entity.Velocity.Length;
 
 		if ( speed.AlmostEqual(0f) )
