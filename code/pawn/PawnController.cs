@@ -227,6 +227,10 @@ public class PawnController : EntityComponent<Pawn>
 	void TryVaulting()
 	{
 		float speed = Entity.Velocity.Length;
+
+		if ( speed.AlmostEqual(0f) )
+			return;
+
 		float rayDistance = Math.Max( (speed / 500) * 60f, 40f );
 
 		float showDebugTime = 3f;
