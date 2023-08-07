@@ -440,7 +440,7 @@ public class PawnController : EntityComponent<Pawn>
 			TimeSinceLastFootstep = 0f;
 		}
 
-		if ( TimeSinceLastFootstepRelease > nextStep*1.05 && speed > StartFootSoundVelocity )
+		if ( TimeSinceLastFootstepRelease > nextStep*1.15 && speed > StartFootSoundVelocity )
 		{
 			Sound.FromWorld( footstepReleaseSound, Entity.Position + Vector3.Down * 10f );
 
