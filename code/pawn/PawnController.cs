@@ -178,7 +178,8 @@ public class PawnController : EntityComponent<Pawn>
 
 	void UpdateWallrunning()
 	{
-		Wallrunning = CanWallrun() ? Wallrunning : 0;
+		if ( !CanWallrun() )
+			Wallrunning = 0;
 	}
 
 	bool CanWallrun()
