@@ -98,7 +98,7 @@ public class MenuCity : ScenePanel
 
 			if (ChangingCenter)
 			{
-				SpinVelocity = SpinVelocity.LerpTo( new Vector3( 0f, 5f, 0f ), 0.01f );
+				SpinVelocity = SpinVelocity.LerpTo( new Vector3( 0f, 15f, 0f ), 0.1f );
 
 				Center = Center.LerpTo( NewCenter, 0.05f );
 

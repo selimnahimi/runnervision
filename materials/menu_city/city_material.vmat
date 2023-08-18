@@ -31,12 +31,12 @@ Layer0
 	TextureNormal "materials/default/default_normal.tga"
 
 	//---- Roughness ----
-	g_flRoughnessScaleFactor "0.957"
-	TextureRoughness "[1.000000 1.000000 1.000000 0.000000]"
+	g_flRoughnessScaleFactor "0.252"
+	TextureRoughness "[0.000000 0.000000 0.000000 0.000000]"
 
 	//---- Self Illum ----
 	g_flSelfIllumAlbedoFactor "1.000"
-	g_flSelfIllumBrightness "-2.558"
+	g_flSelfIllumBrightness "0.299"
 	g_flSelfIllumScale "16.000"
 	g_vSelfIllumScrollSpeed "[0.000 0.000]"
 	g_vSelfIllumTint "[0.772549 0.772549 0.772549 0.000000]"
