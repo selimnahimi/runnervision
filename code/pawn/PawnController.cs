@@ -38,6 +38,7 @@ public class PawnController : EntityComponent<Pawn>
 	private float bezierCounter = 0f;
 	private float vaultSpeed = 0f;
 	private bool debugMode = true; /*RunnerVision.CurrentRunnerVision().DebugMode*/
+	private bool parkouredSinceJumping = false;
 
 	HashSet<string> ControllerEvents = new( StringComparer.OrdinalIgnoreCase );
 
@@ -92,6 +93,8 @@ public class PawnController : EntityComponent<Pawn>
 				Entity.Velocity = Entity.Velocity.WithZ( 0 );
 				AddEvent( "grounded" );
 				Wallrunning = 0;
+
+				parkouredSinceJumping = false;
 			}
 
 			Entity.Velocity = Accelerate( Entity.Velocity, moveVector.Normal, moveVector.Length, CurrentMaxSpeed, Acceleration );
@@ -112,31 +115,40 @@ public class PawnController : EntityComponent<Pawn>
 
 					Dashing = isLeft ? 1 : 2;
 
-					Entity.ApplyAbsoluteImpulse( ( isLeft ? Entity.Rotation.Left : Entity.Rotation.Right ) * 300f );
+					Entity.ApplyAbsoluteImpulse( (isLeft ? Entity.Rotation.Left : Entity.Rotation.Right) * 300f );
 					CurrentMaxSpeed += 200f;
 
 					TimeSinceDash = 0.0f;
 				}
-			}
+			} 
 			else
 			{
-				TryVaulting();
 				DoJump();
-			}
 
-			if ( IsWallRunning() )
-			{
-				Entity.Velocity *= 0.5f;
-				Entity.ApplyAbsoluteImpulse( Entity.Rotation.Forward * 250f + Entity.Rotation.Up * 100f );
-				Wallrunning = 0;
+				if ( IsWallRunning() )
+				{
+					Entity.Velocity *= 0.5f;
+					Entity.ApplyAbsoluteImpulse( Entity.Rotation.Forward * 250f + Entity.Rotation.Up * 100f );
+					Wallrunning = 0;
+				}
 			}
-			else if ( CheckForWall( rightSide: false ) )
+		}
+
+		if ( Input.Down( "jump" ) && !Grounded && !parkouredSinceJumping )
+		{
+			TryVaulting();
+
+			if ( !IsWallRunning() && CheckForWall( rightSide: false ) )
 			{
 				Wallrunning = 1;
+
+				parkouredSinceJumping = true;
 			}
-			else if ( CheckForWall( rightSide: true ) )
+			else if ( !IsWallRunning() && CheckForWall( rightSide: true ) )
 			{
 				Wallrunning = 2;
+
+				parkouredSinceJumping = true;
 			}
 		}
 
@@ -184,10 +196,10 @@ public class PawnController : EntityComponent<Pawn>
 
 	bool CanWallrun()
 	{
-		if ( Wallrunning == 1 && !CheckForWall( rightSide: false, behind: true ) )
+		if ( Wallrunning == 1 && !CheckForWall( rightSide: false, behind: false ) )
 			return false;
 
-		if ( Wallrunning == 2 && !CheckForWall( rightSide: true, behind: true ) )
+		if ( Wallrunning == 2 && !CheckForWall( rightSide: true, behind: false ) )
 			return false;
 
 		if ( Entity.Velocity.WithZ( 0 ).Length < 200f )
@@ -227,7 +239,7 @@ public class PawnController : EntityComponent<Pawn>
 
 	void TryVaulting()
 	{
-		if ( !Input.Down( "forward" ) )
+		if ( Grounded && !Input.Down( "forward" ) )
 			return;
 
 		float speed = Entity.Velocity.Length;
