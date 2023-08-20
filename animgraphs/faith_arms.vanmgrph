@@ -185,7 +185,7 @@
 					m_sNote = ""
 					m_tagSpans = [  ]
 					m_sequenceName = "dodgejumpright"
-					m_playbackSpeed = 1.0
+					m_playbackSpeed = 1.5
 					m_bLoop = false
 				}
 			},
@@ -207,7 +207,7 @@
 					m_sNote = ""
 					m_tagSpans = [  ]
 					m_sequenceName = "dodgejumpleft"
-					m_playbackSpeed = 1.0
+					m_playbackSpeed = 1.5
 					m_bLoop = false
 				}
 			},
@@ -2177,4 +2177,11 @@
 		"models/faith.vmdl",
 	]
 	m_boneMergeModels = [  ]
+	m_cameraSettings = 
+	{
+		m_flFov = 60.0
+		m_sLockBoneName = "hips"
+		m_bLockCamera = false
+		m_bViewModelCamera = false
+	}
 }
