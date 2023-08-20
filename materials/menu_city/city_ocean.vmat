@@ -35,11 +35,11 @@ Layer0
 	TextureRoughness "[0.000000 0.000000 0.000000 0.000000]"
 
 	//---- Self Illum ----
-	g_flSelfIllumAlbedoFactor "1.000"
+	g_flSelfIllumAlbedoFactor "0.575"
 	g_flSelfIllumBrightness "-1.096"
 	g_flSelfIllumScale "1.000"
 	g_vSelfIllumScrollSpeed "[0.000 0.000]"
-	g_vSelfIllumTint "[0.686275 0.933333 0.933333 1.000000]"
+	g_vSelfIllumTint "[0.917647 0.960784 0.960784 1.000000]"
 	TextureSelfIllumMask "[1.000000 1.000000 1.000000 0.000000]"
 
 	//---- Texture Coordinates ----
@@ -47,5 +47,5 @@ Layer0
 	g_nScaleTexCoordVByModelScaleAxis "0"
 	g_vTexCoordOffset "[0.000 0.000]"
 	g_vTexCoordScale "[100.000 100.000]"
-	g_vTexCoordScrollSpeed "[0.100 -0.100]"
+	g_vTexCoordScrollSpeed "[0.010 -0.010]"
 }
