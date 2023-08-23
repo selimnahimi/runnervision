@@ -56,7 +56,6 @@ public class MenuCity : ScenePanel
 		public Vector3 SpinVelocity;
 
 		public float TimeSinceCenterChange;
-		public bool ChangingCenter = false;
 		public Vector3 NewCenter;
 		public float Pitch = 5f;
 
@@ -80,9 +79,6 @@ public class MenuCity : ScenePanel
 
 			Angles = Angles.Normal;
 
-			//Angles.pitch = Angles.pitch.Clamp( PitchLimit.x, PitchLimit.y );
-			//Angles.yaw = Angles.yaw.Clamp( YawLimit.x, YawLimit.y );
-
 			if ( TimeSinceCenterChange > 8f )
 			{
 				var x = Random.Shared.Float( -25f, 25f );
@@ -92,7 +88,6 @@ public class MenuCity : ScenePanel
 				NewCenter = new Vector3(x, y, 0f) + (mc.Camera.Rotation.Backward * Distance) + Offset;
 				Pitch = pitch;
 
-				ChangingCenter = true;
 				TimeSinceCenterChange = 0f;
 			}
 
@@ -107,7 +102,6 @@ public class MenuCity : ScenePanel
 
 			Center = Center.LerpTo( NewCenter, 0.01f );
 			
-
 			mc.Camera.Position = Center + (mc.Camera.Rotation.Backward * Distance) + Offset;
 			mc.Camera.Rotation = Rotation.From( Angles );
 
