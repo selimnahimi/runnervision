@@ -126,7 +126,8 @@ public class PawnController : EntityComponent<Pawn>
 				if ( IsWallRunning() )
 				{
 					Entity.Velocity *= 0.5f;
-					Entity.ApplyAbsoluteImpulse( Entity.Rotation.Forward * 250f + Entity.Rotation.Up * 100f );
+					
+					Entity.ApplyAbsoluteImpulse( Camera.Rotation.Forward * 250f + Entity.Rotation.Up * 100f );
 					Wallrunning = 0;
 
 					parkouredSinceJumping = false;
@@ -231,6 +232,8 @@ public class PawnController : EntityComponent<Pawn>
 
 	void UpdateVault()
 	{
+		// TODO: make smoother
+
 		Vector3 pos = BezierApproach(
 			start: VaultStartPos,
 			end: VaultTargetPos,
@@ -332,7 +335,7 @@ public class PawnController : EntityComponent<Pawn>
 			if ( traceBoxSmallAboveObstacle.Hit )
 				return;
 
-			VaultTargetPos = Entity.Position + Entity.Rotation.Forward * distanceBehindObstacle;
+			VaultTargetPos = Entity.Position + Entity.Rotation.Forward * distanceBehindObstacle + Entity.Rotation.Up * 5f;
 			Vaulting = 2;
 			vaultSpeed = 200f;
 		}
