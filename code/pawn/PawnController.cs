@@ -84,7 +84,7 @@ public class PawnController : EntityComponent<Pawn>
 			CurrentMaxSpeed = CurrentMaxSpeed.Approach( StartingSpeed, Time.Delta * 50f * SpeedShrinkRate );
 		}
 
-		CheckForSharpTurn( moveVector );
+		AdjustSharpTurn( moveVector );
 
 		if ( groundEntity.IsValid() )
 		{
@@ -544,7 +544,7 @@ public class PawnController : EntityComponent<Pawn>
 		return Wallrunning != 0;
 	}
 
-	void CheckForSharpTurn(Vector3 moveVector)
+	void AdjustSharpTurn(Vector3 moveVector)
 	{
 		if ( Entity.Velocity.Angle( moveVector.Normal * moveVector.Length ) > SharpTurnAngle )
 		{
