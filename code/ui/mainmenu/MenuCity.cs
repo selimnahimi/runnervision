@@ -75,7 +75,7 @@ public class MenuCity : ScenePanel
 			Angles.yaw += SpinVelocity.y * Time.Delta;
 
 			Angles.roll = 0;
-			Angles.pitch = Angles.pitch.LerpTo( Pitch, 0.01f );
+			Angles.pitch = Angles.pitch.LerpTo( Pitch, Time.Delta * 3f );
 
 			Angles = Angles.Normal;
 
@@ -93,14 +93,14 @@ public class MenuCity : ScenePanel
 
 			if (Center.DistanceSquared(NewCenter) > 100f)
 			{
-				SpinVelocity = SpinVelocity.LerpTo( new Vector3( 0f, 15f, 0f ), 0.1f );
+				SpinVelocity = SpinVelocity.LerpTo( new Vector3( 0f, 15f, 0f ), Time.Delta * 3f );
 			}
 			else
 			{
-				SpinVelocity = SpinVelocity.LerpTo( new Vector3( 0f, 2f, 0f ), 0.01f );
+				SpinVelocity = SpinVelocity.LerpTo( new Vector3( 0f, 2f, 0f ), Time.Delta * 3f );
 			}
 
-			Center = Center.LerpTo( NewCenter, 0.01f );
+			Center = Center.LerpTo( NewCenter, Time.Delta * 3f );
 			
 			mc.Camera.Position = Center + (mc.Camera.Rotation.Backward * Distance) + Offset;
 			mc.Camera.Rotation = Rotation.From( Angles );
