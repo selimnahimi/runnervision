@@ -211,7 +211,7 @@ public class PawnController : EntityComponent<Pawn>
 		if ( Wallrunning == 2 && !CheckForWall( isWallrunningOnRightSide: true, behind: false ) )
 			return false;
 
-		if ( Entity.Velocity.WithZ( 0 ).Length < 200f )
+		if ( Entity.Velocity.WithZ( 0 ).Length < 150f )
 			return false;
 
 		return true;
@@ -263,7 +263,7 @@ public class PawnController : EntityComponent<Pawn>
 		var distanceBehindObstacle = rayDistance * 1.20f + 60f;
 
 		BBox boxFront = new BBox(center: 0, size: 40f)
-			.Translate( Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 20f );
+			.Translate( Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 30f );
 
 		var traceFront = Trace.Box(
 			bbox: boxFront,
@@ -438,7 +438,7 @@ public class PawnController : EntityComponent<Pawn>
 
 		var trace = Trace.Ray(from, to).Run();
 
-		return trace.Hit && trace.Entity.IsWorld;
+		return trace.Hit;
 	}
 
 	void FootstepWizard()
