@@ -14,7 +14,7 @@ public partial class Pawn : AnimatedEntity
 	[ClientInput]
 	public Angles ViewAngles { get; set; }
 
-	public float CameraTiltDeadzone => 1f;
+	public float CameraTiltDeadzone => 10f;
 
 	public float CameraTiltMax => 10f;
 
