@@ -211,9 +211,13 @@ public partial class Pawn : AnimatedEntity
 		{
 			CameraTilt = CameraTilt.LerpTo( Controller.Wallrunning == 1 ? 10f : -10f, 0.05f);
 		}
+		else if ( Controller.TimeSinceDash < 0.1f )
+		{
+			CameraTilt = CameraTilt.LerpTo( Controller.Dashing == 1 ? -10f : 10f, 0.04f );
+		}
 		else
 		{
-			CameraTilt = CameraTilt.LerpTo( 0, 0.05f );
+			CameraTilt = CameraTilt.LerpTo( 0, 0.03f );
 		}
 	}
 

@@ -27,11 +27,11 @@ public class PawnController : EntityComponent<Pawn>
 	public bool Noclipping { get; set; }
 	public bool UnlimitedSprint { get; set; }
 	public int Vaulting { get; set; }
+	public float TimeSinceDash { get; set; }
 
 	private float CurrentMaxSpeed { get; set; }
 	private float TimeSinceLastFootstep { get; set; }
 	private float TimeSinceLastFootstepRelease { get; set; }
-	private float TimeSinceDash { get; set; }
 	private Vector3 VaultTargetPos { get; set; }
 	private Vector3 VaultStartPos { get; set; }
 
