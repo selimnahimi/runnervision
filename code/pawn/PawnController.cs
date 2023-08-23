@@ -287,9 +287,6 @@ public class PawnController : EntityComponent<Pawn>
 		if ( !traceFront.Hit  )
 			return;
 
-		var obstaclePosition = traceFront.HitPosition;
-		var obstacleDistance = Entity.Position.Distance( obstaclePosition ) + 3f;
-
 		BBox boxBehindObstacle = new BBox(
 			mins: Vector3.Forward * +boxRadius + Vector3.Up * 70f + Vector3.Left * boxRadius,
 			maxs: Vector3.Forward * -boxRadius + Vector3.Up * 10f + Vector3.Right * boxRadius
@@ -318,6 +315,8 @@ public class PawnController : EntityComponent<Pawn>
 				duration: showDebugTime
 			);
 
+		var fallAfterVault = false;
+
 		if (!traceBehindObstacle.Hit && !hitFailsafe )
 		{
 			// Vault over
@@ -339,7 +338,31 @@ public class PawnController : EntityComponent<Pawn>
 			if ( traceBoxSmallAboveObstacle.Hit )
 				return;
 
-			VaultTargetPos = Entity.Position + Entity.Rotation.Forward * distanceBehindObstacle + Entity.Rotation.Up * 5f;
+			// Cast a ray to check where the ground is
+			var traceObstacleSurface = Trace.Ray(
+				from: boxBehindObstacle.Center + Entity.Rotation.Up * 60f,
+				to: boxBehindObstacle.Center + Entity.Rotation.Up * -60f
+			).Run();
+
+			if ( debugMode )
+				DebugOverlay.Line(
+					start: boxBehindObstacle.Center + Entity.Rotation.Up * 60f,
+					end: boxBehindObstacle.Center + Entity.Rotation.Up * -60f,
+					color: Color.Blue, duration: showDebugTime
+				);
+
+			if ( traceObstacleSurface.Hit )
+			{
+				var groundPosition = traceObstacleSurface.HitPosition;
+
+				VaultTargetPos = groundPosition + Vector3.Up * 10f;
+			}
+			else
+			{
+				VaultTargetPos = boxBehindObstacle.Center + Entity.Rotation.Up * -40f;
+				fallAfterVault = true;
+			}
+
 			Vaulting = 2;
 			vaultSpeed = 200f;
 		}
@@ -365,14 +388,14 @@ public class PawnController : EntityComponent<Pawn>
 				return;
 
 			var traceObstacleSurface = Trace.Ray(
-				from: Entity.Position + Entity.Rotation.Forward * obstacleDistance + Entity.Rotation.Up * 60f,
-				to: Entity.Position + Entity.Rotation.Forward * obstacleDistance + Entity.Rotation.Up
+				from: topBoxLarge.Center + Entity.Rotation.Up * 60f,
+				to: topBoxLarge.Center + Entity.Rotation.Up * -60f
 			).Run();
 
 			if ( debugMode )
 				DebugOverlay.Line(
-					start: Entity.Position + Entity.Rotation.Forward * obstacleDistance + Entity.Rotation.Up * 60f,
-					end: Entity.Position + Entity.Rotation.Forward * obstacleDistance + Entity.Rotation.Up,
+					start: topBoxLarge.Center + Entity.Rotation.Up * 60f,
+					end: topBoxLarge.Center + Entity.Rotation.Up * -60f,
 					color: Color.Blue, duration: showDebugTime
 				);
 
@@ -391,7 +414,13 @@ public class PawnController : EntityComponent<Pawn>
 		VaultStartPos = Entity.Position;
 		bezierCounter = 0f;
 
-		var vaultDirection = (VaultTargetPos - Entity.Position).WithZ( 0 ).Normal;
+		Vector3 vaultDirection;
+
+		if ( fallAfterVault )
+			vaultDirection = Entity.Rotation.Forward * 0.4f + Entity.Rotation.Down * 0.3f;
+		else
+			vaultDirection = (VaultTargetPos - Entity.Position).WithZ( 0 ).Normal;
+
 		var speedAfterVault = Entity.Velocity.WithZ( 0 ).Length;
 
 		Entity.Velocity = vaultDirection * speedAfterVault;
