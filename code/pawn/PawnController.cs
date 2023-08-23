@@ -123,8 +123,6 @@ public class PawnController : EntityComponent<Pawn>
 			} 
 			else
 			{
-				DoJump();
-
 				if ( IsWallRunning() )
 				{
 					Entity.Velocity *= 0.5f;
@@ -132,6 +130,10 @@ public class PawnController : EntityComponent<Pawn>
 					Wallrunning = 0;
 
 					parkouredSinceJumping = false;
+				}
+				else
+				{
+					DoJump();
 				}
 			}
 		}
