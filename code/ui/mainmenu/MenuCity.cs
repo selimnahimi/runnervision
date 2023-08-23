@@ -96,22 +96,17 @@ public class MenuCity : ScenePanel
 				TimeSinceCenterChange = 0f;
 			}
 
-			if (ChangingCenter)
+			if (Center.DistanceSquared(NewCenter) > 100f)
 			{
 				SpinVelocity = SpinVelocity.LerpTo( new Vector3( 0f, 15f, 0f ), 0.1f );
-
-				Center = Center.LerpTo( NewCenter, 0.05f );
-
-				if ( Center.AlmostEqual( NewCenter ) )
-				{
-					ChangingCenter = false;
-					Center = NewCenter;
-				}
 			}
 			else
 			{
 				SpinVelocity = SpinVelocity.LerpTo( new Vector3( 0f, 2f, 0f ), 0.01f );
 			}
+
+			Center = Center.LerpTo( NewCenter, 0.01f );
+			
 
 			mc.Camera.Position = Center + (mc.Camera.Rotation.Backward * Distance) + Offset;
 			mc.Camera.Rotation = Rotation.From( Angles );
