@@ -75,11 +75,11 @@ public class PawnController : EntityComponent<Pawn>
 
 		if ( moveVector.LengthSquared != 0 )
 		{
-			CurrentMaxSpeed = CurrentMaxSpeed.Approach( MaxSpeed, SpeedGrowthRate );
+			CurrentMaxSpeed = CurrentMaxSpeed.Approach( MaxSpeed, Time.Delta * 50f * SpeedGrowthRate );
 		}
 		else
 		{
-			CurrentMaxSpeed = CurrentMaxSpeed.Approach( StartingSpeed, SpeedShrinkRate );
+			CurrentMaxSpeed = CurrentMaxSpeed.Approach( StartingSpeed, Time.Delta * 50f * SpeedShrinkRate );
 		}
 
 		CheckForSharpTurn( moveVector );
@@ -243,7 +243,7 @@ public class PawnController : EntityComponent<Pawn>
 
 		bezierCounter += (vaultSpeed/100) * Time.Delta;
 
-		Entity.Position = Entity.Position.LerpTo( pos, 0.5f );
+		Entity.Position = Entity.Position.LerpTo( pos, Time.Delta * 5f );
 
 		if ( bezierCounter >= 1.0f )
 			Vaulting = 0;
@@ -526,7 +526,7 @@ public class PawnController : EntityComponent<Pawn>
 	{
 		if ( Entity.Velocity.Angle( moveVector.Normal * moveVector.Length ) > SharpTurnAngle )
 		{
-			CurrentMaxSpeed = CurrentMaxSpeed.Approach( StartingSpeed, SpeedShrinkRate );
+			CurrentMaxSpeed = CurrentMaxSpeed.Approach( StartingSpeed, Time.Delta * 50f * SpeedShrinkRate );
 		}
 	}
 
@@ -589,7 +589,7 @@ public class PawnController : EntityComponent<Pawn>
 		if ( speedLimit > 0 && wishspeed > speedLimit )
 			wishspeed = speedLimit;
 
-		input = input.LerpTo( wishdir * wishspeed, acceleration );
+		input = input.LerpTo( wishdir * wishspeed, Time.Delta * 45f * acceleration );
 
 		return input;
 	}
