@@ -53,6 +53,8 @@ public class PawnController : EntityComponent<Pawn>
 	{
 		ControllerEvents.Clear();
 
+		TestAndFixStuck();
+
 		if ( Noclipping )
 		{
 			HandleNoclipping();
@@ -191,6 +193,26 @@ public class PawnController : EntityComponent<Pawn>
 		}
 
 		FootstepWizard();
+	}
+
+	void UnStuck()
+	{
+		// TODO: make this smarter
+		Entity.Position += Entity.Rotation.Up;
+	}
+
+	bool IsStuck()
+	{
+		var result = Entity.TraceBBox( Entity.Position, Entity.Position );
+		return result.Hit;
+	}
+
+	void TestAndFixStuck()
+	{
+		if ( IsStuck() )
+		{
+			UnStuck();
+		}
 	}
 
 	bool ShouldDash()
