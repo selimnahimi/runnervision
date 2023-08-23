@@ -140,13 +140,13 @@ public class PawnController : EntityComponent<Pawn>
 
 		if ( Input.Down( "jump" ) && !Grounded && !parkouredSinceJumping )
 		{
-			if ( CanWallrun() && CheckForWall( rightSide: false ) )
+			if ( CanWallrun() && CheckForWall( isWallrunningOnRightSide: false ) )
 			{
 				Wallrunning = 1;
 
 				parkouredSinceJumping = true;
 			}
-			else if ( CanWallrun() && CheckForWall( rightSide: true ) )
+			else if ( CanWallrun() && CheckForWall( isWallrunningOnRightSide: true ) )
 			{
 				Wallrunning = 2;
 
@@ -205,10 +205,10 @@ public class PawnController : EntityComponent<Pawn>
 
 	bool CanWallrun()
 	{
-		if ( Wallrunning == 1 && !CheckForWall( rightSide: false, behind: false ) )
+		if ( Wallrunning == 1 && !CheckForWall( isWallrunningOnRightSide: false, behind: false ) )
 			return false;
 
-		if ( Wallrunning == 2 && !CheckForWall( rightSide: true, behind: false ) )
+		if ( Wallrunning == 2 && !CheckForWall( isWallrunningOnRightSide: true, behind: false ) )
 			return false;
 
 		if ( Entity.Velocity.WithZ( 0 ).Length < 200f )
@@ -424,10 +424,17 @@ public class PawnController : EntityComponent<Pawn>
 		Entity.Velocity = 0;
 	}
 
-	bool CheckForWall( bool rightSide, bool behind = false )
+	bool CheckForWall( bool isWallrunningOnRightSide, bool behind = false )
 	{
+		var leftDirection = Entity.Velocity.EulerAngles.ToRotation().Left;
+		var forwardDirection = Entity.Velocity.EulerAngles.ToRotation().Forward;
+
 		var from = Entity.Position + Vector3.Up * 50f;
-		var to = Entity.Position + Vector3.Up * 50f + Entity.Rotation.Left * (rightSide ? -30f : 30f) + Entity.Rotation.Forward * (behind ? -15f : 15f);
+		var to = Entity.Position + Vector3.Up * 50f + leftDirection * (isWallrunningOnRightSide ? -30f : 30f) + forwardDirection * (behind ? -15f : 15f);
+
+
+		if ( debugMode )
+			DebugOverlay.Line( start: from, end: to, duration: 1f );
 
 		var trace = Trace.Ray(from, to).Run();
 
