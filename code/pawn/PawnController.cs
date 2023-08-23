@@ -351,7 +351,7 @@ public class PawnController : EntityComponent<Pawn>
 			{
 				var groundPosition = traceObstacleSurface.HitPosition;
 
-				VaultTargetPos = groundPosition + Vector3.Up * 10f;
+				VaultTargetPos = groundPosition;
 			}
 			else
 			{

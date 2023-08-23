@@ -159,6 +159,7 @@ public partial class Pawn : AnimatedEntity
 
 	bool IsThirdPerson { get; set; } = false;
 
+	private float cameraLerpTime = 0f;
 	public override void FrameSimulate( IClient cl )
 	{
 		SimulateRotation();
