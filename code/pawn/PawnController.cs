@@ -414,7 +414,7 @@ public class PawnController : EntityComponent<Pawn>
 		Vector3 vaultDirection;
 
 		if ( fallAfterVault )
-			vaultDirection = Entity.Rotation.Forward * 0.4f + Entity.Rotation.Down * 0.3f;
+			vaultDirection = Entity.Rotation.Forward * 0.3f + Entity.Rotation.Down * 0.3f;
 		else
 			vaultDirection = (VaultTargetPos - Entity.Position).WithZ( 0 ).Normal;
 
