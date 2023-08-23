@@ -88,13 +88,12 @@ public class PawnController : EntityComponent<Pawn>
 		{
 			if ( !Grounded )
 			{
+				// Landed on floor
 				Sound.FromWorld( "concretefootstepland", Entity.Position + Vector3.Down * 10f );
 
 				Entity.Velocity = Entity.Velocity.WithZ( 0 );
 				AddEvent( "grounded" );
 				Wallrunning = 0;
-
-				parkouredSinceJumping = false;
 			}
 
 			Entity.Velocity = Accelerate( Entity.Velocity, moveVector.Normal, moveVector.Length, CurrentMaxSpeed, Acceleration );
@@ -103,6 +102,11 @@ public class PawnController : EntityComponent<Pawn>
 		else
 		{
 			Entity.Velocity += Vector3.Down * (IsWallRunning() ? Gravity * 0.75f : Gravity ) * Time.Delta;
+		}
+
+		if ( Grounded && parkouredSinceJumping && !Input.Down( "jump" ) )
+		{
+			parkouredSinceJumping = false;
 		}
 
 		if ( Input.Pressed( "jump" ) )
@@ -381,6 +385,8 @@ public class PawnController : EntityComponent<Pawn>
 			Vaulting = 1;
 			vaultSpeed = Math.Max( Entity.Velocity.Length, 200f );
 		}
+
+		parkouredSinceJumping = true;
 
 		VaultStartPos = Entity.Position;
 		bezierCounter = 0f;
