@@ -175,10 +175,13 @@ public class PawnController : EntityComponent<Pawn>
 		if ( UnlimitedSprint )
 			CurrentMaxSpeed = MaxSpeed;
 
-		DebugOverlay.ScreenText( CurrentMaxSpeed.ToString() );
-		DebugOverlay.ScreenText( Entity.Position.ToString(), 3 );
+		if (debugMode)
+		{
+			DebugOverlay.ScreenText( CurrentMaxSpeed.ToString() );
+			DebugOverlay.ScreenText( Entity.Position.ToString(), 3 );
 
-		DebugOverlay.ScreenText( Vaulting.ToString(), 1 );
+			DebugOverlay.ScreenText( Vaulting.ToString(), 1 );
+		}
 
 		FootstepWizard();
 	}
@@ -253,10 +256,12 @@ public class PawnController : EntityComponent<Pawn>
 		float boxRadius = 20f;
 		var distanceBehindObstacle = rayDistance * 1.20f + 60f;
 
+		BBox boxFront = new BBox(center: 0, size: 30f)
+			.Translate( Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 20f );
+
 		var traceFront = Trace.Box(
-			bbox: new BBox( 0, 30f ),
-			from: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 20f,
-			to: Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 20f
+			bbox: boxFront,
+			from: 0, to: 0
 		).Run();
 
 		if ( debugMode )
@@ -291,7 +296,7 @@ public class PawnController : EntityComponent<Pawn>
 			to: Entity.Position + Entity.Rotation.Up * 60f + Entity.Rotation.Forward * distanceBehindObstacle
 		).Run();
 
-		var hitFailsafe = traceWallFailsafe.Entity?.IsWorld == true; //bool? needs to be converted to bool
+		var hitFailsafe = traceWallFailsafe.Entity?.IsValid == true; //bool? needs to be converted to bool
 
 		if ( debugMode )
 			DebugOverlay.Line(
