@@ -130,25 +130,29 @@ public class PawnController : EntityComponent<Pawn>
 					Entity.Velocity *= 0.5f;
 					Entity.ApplyAbsoluteImpulse( Entity.Rotation.Forward * 250f + Entity.Rotation.Up * 100f );
 					Wallrunning = 0;
+
+					parkouredSinceJumping = false;
 				}
 			}
 		}
 
 		if ( Input.Down( "jump" ) && !Grounded && !parkouredSinceJumping )
 		{
-			TryVaulting();
-
-			if ( !IsWallRunning() && CheckForWall( rightSide: false ) )
+			if ( CanWallrun() && CheckForWall( rightSide: false ) )
 			{
 				Wallrunning = 1;
 
 				parkouredSinceJumping = true;
 			}
-			else if ( !IsWallRunning() && CheckForWall( rightSide: true ) )
+			else if ( CanWallrun() && CheckForWall( rightSide: true ) )
 			{
 				Wallrunning = 2;
 
 				parkouredSinceJumping = true;
+			}
+			else
+			{
+				TryVaulting();
 			}
 		}
 
