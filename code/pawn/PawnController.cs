@@ -165,7 +165,7 @@ public class PawnController : EntityComponent<Pawn>
 
 		TimeSinceDash += Time.Delta;
 
-		if ( Dashing != 0 && TimeSinceDash > 0.5f )
+		if ( TimeSinceDash > 0.5f )
 			Dashing = 0;
 
 		var mh = new MoveHelper( Entity.Position, Entity.Velocity );
