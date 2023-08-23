@@ -148,14 +148,10 @@ public class PawnController : EntityComponent<Pawn>
 			if ( CanWallrun() && CheckForWall( isWallrunningOnRightSide: false ) )
 			{
 				Wallrunning = 1;
-
-				parkouredSinceJumping = true;
 			}
 			else if ( CanWallrun() && CheckForWall( isWallrunningOnRightSide: true ) )
 			{
 				Wallrunning = 2;
-
-				parkouredSinceJumping = true;
 			}
 			else
 			{
@@ -387,6 +383,7 @@ public class PawnController : EntityComponent<Pawn>
 			if ( traceBoxLargeAboveObstacle.Hit )
 				return;
 
+			// Cast a ray to check where the ground is
 			var traceObstacleSurface = Trace.Ray(
 				from: topBoxLarge.Center + Entity.Rotation.Up * 60f,
 				to: topBoxLarge.Center + Entity.Rotation.Up * -60f
