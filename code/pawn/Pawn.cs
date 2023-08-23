@@ -18,7 +18,7 @@ public partial class Pawn : AnimatedEntity
 
 	public float CameraTiltMax => 10f;
 
-	public float CameraTiltMultiplier => 0.01f;
+	public float CameraTiltMultiplier => 5f;
 
 	public float CameraTilt { get; set; }
 
@@ -193,13 +193,13 @@ public partial class Pawn : AnimatedEntity
 		}
 		else
 		{
-			bool turningLeft = ViewAngles.yaw > PreviousViewAngles.yaw;
+			bool turningLeft = ViewAngles.yaw.NormalizeDegrees() > PreviousViewAngles.yaw.NormalizeDegrees();
 			float turnRate = PreviousViewAngles.ToRotation().Distance( ViewAngles.ToRotation() );
 
 			if ( turnRate > CameraTiltDeadzone )
-				CameraTilt = CameraTilt.LerpTo( turningLeft ? -CameraTiltMax : CameraTiltMax, CameraTiltMultiplier * PreviousViewAngles.ToRotation().Distance( ViewAngles.ToRotation() )) ;
-			
-			PreviousViewAngles = ViewAngles;
+				CameraTilt = CameraTilt.LerpTo( turningLeft ? -CameraTiltMax : CameraTiltMax, Time.Delta * CameraTiltMultiplier );
+
+			PreviousViewAngles = PreviousViewAngles.LerpTo(ViewAngles, Time.Delta * 50f );
 
 			Camera.Rotation = Rotation.From( ViewAngles.pitch, ViewAngles.yaw, ViewAngles.roll + CameraTilt );
 			Camera.FirstPersonViewer = this;
@@ -210,15 +210,15 @@ public partial class Pawn : AnimatedEntity
 
 		if ( Controller.Wallrunning != 0 )
 		{
-			CameraTilt = CameraTilt.LerpTo( Controller.Wallrunning == 1 ? 10f : -10f, 0.05f);
+			CameraTilt = CameraTilt.LerpTo( Controller.Wallrunning == 1 ? 10f : -10f, Time.Delta * CameraTiltMultiplier );
 		}
 		else if ( Controller.TimeSinceDash < 0.1f )
 		{
-			CameraTilt = CameraTilt.LerpTo( Controller.Dashing == 1 ? -10f : 10f, 0.04f );
+			CameraTilt = CameraTilt.LerpTo( Controller.Dashing == 1 ? -10f : 10f, Time.Delta * CameraTiltMultiplier );
 		}
 		else
 		{
-			CameraTilt = CameraTilt.LerpTo( 0, 0.03f );
+			CameraTilt = CameraTilt.LerpTo( 0, Time.Delta * CameraTiltMultiplier * 1.1f );
 		}
 	}
 
