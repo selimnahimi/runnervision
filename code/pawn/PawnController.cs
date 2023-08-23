@@ -245,7 +245,7 @@ public class PawnController : EntityComponent<Pawn>
 
 		Entity.Position = Entity.Position.LerpTo( pos, 0.5f );
 
-		if ( Entity.Position.AlmostEqual( VaultTargetPos, 7f ) || bezierCounter >= 1.0f )
+		if ( bezierCounter >= 1.0f )
 			Vaulting = 0;
 	}
 
