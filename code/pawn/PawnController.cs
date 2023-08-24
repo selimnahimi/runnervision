@@ -106,7 +106,7 @@ public class PawnController : EntityComponent<Pawn>
 			Entity.Velocity += Vector3.Down * (IsWallRunning() ? Gravity * 0.75f : Gravity ) * Time.Delta;
 		}
 
-		if ( Grounded && parkouredSinceJumping && !Input.Down( "jump" ) )
+		if (Input.Released( "jump" ))
 		{
 			parkouredSinceJumping = false;
 		}
@@ -135,8 +135,6 @@ public class PawnController : EntityComponent<Pawn>
 					
 					Entity.ApplyAbsoluteImpulse( Camera.Rotation.Forward * 250f + Entity.Rotation.Up * 100f );
 					Wallrunning = 0;
-
-					parkouredSinceJumping = false;
 				}
 				else
 				{
