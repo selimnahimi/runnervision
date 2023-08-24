@@ -5,6 +5,11 @@ namespace RunnerVision;
 
 public partial class PawnController
 {
+	void ClampMaxSpeed()
+	{
+		CurrentMaxSpeed = Math.Min( CurrentMaxSpeed, MaxSpeed );
+	}
+
 	bool IsDashing()
 	{
 		return Dashing != 0;

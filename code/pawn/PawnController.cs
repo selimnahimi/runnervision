@@ -38,6 +38,7 @@ public partial class PawnController : EntityComponent<Pawn>
 	private bool parkouredSinceJumping = false;
 	private bool wallrunSinceJumping = false;
 	private int previousWallrunSide = 0;
+	private bool parkouredBeforeLanding = false;
 
 	HashSet<string> ControllerEvents = new( StringComparer.OrdinalIgnoreCase );
 
@@ -91,13 +92,19 @@ public partial class PawnController : EntityComponent<Pawn>
 			{
 				// Landed on floor
 				Sound.FromWorld( "concretefootstepland", Entity.Position + Vector3.Down * 10f );
+				AddEvent( "grounded" );
 
 				Entity.Velocity = Entity.Velocity.WithZ( 0 );
-				AddEvent( "grounded" );
 				Wallrunning = 0;
 				previousWallrunSide = 0;
 
 				parkouredSinceJumping = false;
+				parkouredBeforeLanding = false;
+
+				if ( Entity.Velocity.Length > 100f )
+				{
+					CurrentMaxSpeed += 500;
+				}
 			}
 
 			Entity.Velocity = Accelerate( Entity.Velocity, moveVector.Normal, moveVector.Length, CurrentMaxSpeed, Acceleration );
@@ -105,7 +112,7 @@ public partial class PawnController : EntityComponent<Pawn>
 		}
 		else
 		{
-			Entity.Velocity += Vector3.Down * (IsWallRunning() ? Gravity * 0.75f : Gravity ) * Time.Delta;
+			Entity.Velocity += Vector3.Down * (IsWallRunning() ? Gravity * 0.60f : Gravity ) * Time.Delta;
 		}
 
 		if ( Input.Released( "jump" ) )
@@ -148,10 +155,9 @@ public partial class PawnController : EntityComponent<Pawn>
 		{
 			if ( IsWallRunning() )
 			{
+				var forwardMultiplier = Math.Max(0.5f, forwardAngle / 90f);
 
-				var forwardMultiplier = Math.Max(0.2f, forwardAngle / 90f);
-
-				var jumpVector = cameraDirection * 300f * forwardMultiplier + Entity.Rotation.Up * 250f;
+				var jumpVector = cameraDirection * 300f * forwardMultiplier + Entity.Rotation.Up * 300f;
 
 				Entity.Velocity *= 0.5f;
 
@@ -206,6 +212,8 @@ public partial class PawnController : EntityComponent<Pawn>
 
 		FootstepWizard();
 		IncreaseDeltaTime();
+
+		ClampMaxSpeed();
 	}
 
 	[ConCmd.Admin( "noclip" )]

@@ -1,4 +1,5 @@
 ﻿using Sandbox;
+using System;
 
 namespace RunnerVision;
 
@@ -26,7 +27,7 @@ public partial class PawnController
 		if ( Wallrunning == 2 && !CheckForWall( isWallrunningOnRightSide: true, behind: false ) )
 			return false;
 
-		if ( Entity.Velocity.WithZ( 0 ).Length < 150f )
+		if ( Entity.Velocity.WithZ( 0 ).Length < 100f )
 			return false;
 
 		return true;
@@ -44,14 +45,18 @@ public partial class PawnController
 		{
 			if ( !IsWallRunning() && !Grounded )
 			{
-				Entity.Velocity = Entity.Velocity.WithZ( 100f );
+				var velocityZ = Math.Max(100f, Entity.Velocity.z);
+
+				Entity.Velocity *= 0.5f;
 				Entity.ApplyAbsoluteImpulse( ForwardDirection * 100f );
+				Entity.Velocity = Entity.Velocity.WithZ( velocityZ );
 			}
 
 			Wallrunning = side;
 			previousWallrunSide = side;
 
 			wallrunSinceJumping = true;
+			parkouredBeforeLanding = true;
 
 			return true;
 		}

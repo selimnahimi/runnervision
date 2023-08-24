@@ -179,6 +179,7 @@ public partial class PawnController
 		}
 
 		parkouredSinceJumping = true;
+		parkouredBeforeLanding = true;
 
 		VaultStartPos = Entity.Position;
 		bezierCounter = 0f;
