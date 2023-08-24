@@ -3,7 +3,7 @@ using Sandbox.Diagnostics;
 using System;
 using System.Numerics;
 
-namespace MyGame;
+namespace RunnerVision;
 
 public partial class Hands : Weapon
 {

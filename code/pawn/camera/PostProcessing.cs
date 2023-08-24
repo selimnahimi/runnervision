@@ -2,7 +2,7 @@
 using Sandbox.Effects;
 using System;
 
-namespace MyGame
+namespace RunnerVision
 {
 	public class CameraPostProcessing : ScreenEffects
 	{

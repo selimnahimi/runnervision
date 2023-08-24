@@ -1,6 +1,6 @@
 using Sandbox;
 
-namespace MyGame;
+namespace RunnerVision;
 
 public partial class WeaponViewModel : BaseViewModel
 {

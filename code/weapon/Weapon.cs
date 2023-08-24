@@ -1,7 +1,7 @@
 using Sandbox;
 using System.Collections.Generic;
 
-namespace MyGame;
+namespace RunnerVision;
 
 public partial class Weapon : AnimatedEntity
 {
