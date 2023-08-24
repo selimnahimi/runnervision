@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http.Headers;
 using System.Numerics;
+using System.Runtime.Intrinsics;
 
 namespace MyGame;
 
@@ -22,12 +23,14 @@ public class PawnController : EntityComponent<Pawn>
 	public float SharpTurnAngle => 50f;
 	public float Acceleration => 0.02f;
 	public float StartFootSoundVelocity => 300f;
+	public float JumpDelay => 0.75f;
 	public int Wallrunning { get; set; }
 	public int Dashing { get; set; }
 	public bool Noclipping { get; set; }
 	public bool UnlimitedSprint { get; set; }
 	public int Vaulting { get; set; }
 	public float TimeSinceDash { get; set; }
+	public Vector3 ForwardDirection { get; set; }
 
 	public float CurrentMaxSpeed { get; set; }
 	private float TimeSinceLastFootstep { get; set; }
@@ -37,8 +40,9 @@ public class PawnController : EntityComponent<Pawn>
 
 	private float bezierCounter = 0f;
 	private float vaultSpeed = 0f;
-	private bool debugMode = false; /*RunnerVision.CurrentRunnerVision().DebugMode*/
+	private bool debugMode => true; /*RunnerVision.CurrentRunnerVision().DebugMode*/
 	private bool parkouredSinceJumping = false;
+	private int previousWallrunSide = 0;
 
 	HashSet<string> ControllerEvents = new( StringComparer.OrdinalIgnoreCase );
 
@@ -53,22 +57,22 @@ public class PawnController : EntityComponent<Pawn>
 	{
 		ControllerEvents.Clear();
 
-		TestAndFixStuck();
-
 		if ( Noclipping )
 		{
+			// TODO: don't return here
 			HandleNoclipping();
 			return;
 		}
 
 		if ( Vaulting != 0 )
 		{
+			// TODO: don't return here
 			UpdateVault();
 			return;
 		}
 
-		if ( Wallrunning != 0 )
-			UpdateWallrunning();
+		TestAndFixStuck();
+		UpdateWallrunning();
 
 		var movement = Entity.InputDirection.Normal;
 		var angles = Entity.ViewAngles.WithPitch( 0 );
@@ -96,6 +100,7 @@ public class PawnController : EntityComponent<Pawn>
 				Entity.Velocity = Entity.Velocity.WithZ( 0 );
 				AddEvent( "grounded" );
 				Wallrunning = 0;
+				previousWallrunSide = 0;
 			}
 
 			Entity.Velocity = Accelerate( Entity.Velocity, moveVector.Normal, moveVector.Length, CurrentMaxSpeed, Acceleration );
@@ -106,7 +111,7 @@ public class PawnController : EntityComponent<Pawn>
 			Entity.Velocity += Vector3.Down * (IsWallRunning() ? Gravity * 0.75f : Gravity ) * Time.Delta;
 		}
 
-		if (Input.Released( "jump" ))
+		if ( Input.Released( "jump" ) )
 		{
 			parkouredSinceJumping = false;
 		}
@@ -126,40 +131,51 @@ public class PawnController : EntityComponent<Pawn>
 
 					TimeSinceDash = 0.0f;
 				}
-			} 
-			else
-			{
-				if ( IsWallRunning() )
-				{
-					Entity.Velocity *= 0.5f;
-					
-					Entity.ApplyAbsoluteImpulse( Camera.Rotation.Forward * 250f + Entity.Rotation.Up * 100f );
-					Wallrunning = 0;
-				}
-				else
-				{
-					DoJump();
-				}
 			}
 		}
 
-		if ( Input.Down( "jump" ) && !Grounded && !parkouredSinceJumping )
+		// TODO: extract to function
+		ForwardDirection = Entity.Velocity.EulerAngles.ToRotation().Forward.WithZ( 0 );
+		var cameraDirection = Camera.Rotation.Forward.WithZ( 0 );
+		var forwardAngle = ForwardDirection.Angle( cameraDirection );
+
+		// Check angle from movement axis (max 90 degrees)
+		float dotProduct = Vector3.Dot( ForwardDirection, cameraDirection );
+		if ( dotProduct < 0 )
 		{
-			if ( CanWallrun() && CheckForWall( isWallrunningOnRightSide: false ) )
+			forwardAngle = 180 - forwardAngle;
+		}
+
+		if ( Input.Pressed( "jump" ))
+		{
+			if ( IsWallRunning() )
 			{
-				Wallrunning = 1;
+
+				var forwardMultiplier = Math.Max(0.2f, forwardAngle / 90f);
+
+				var jumpVector = cameraDirection * 300f * forwardMultiplier + Entity.Rotation.Up * 250f;
+
+				Entity.Velocity *= 0.5f;
+
+				Entity.ApplyAbsoluteImpulse( jumpVector );
+
+				previousWallrunSide = Wallrunning;
+				Wallrunning = 0;
 			}
-			else if ( CanWallrun() && CheckForWall( isWallrunningOnRightSide: true ) )
+			
+			if ( !IsWallRunning() && !IsDashing() )
 			{
-				Wallrunning = 2;
-			}
-			else
-			{
-				TryVaulting();
+				DoJump();
 			}
 		}
 
-		TimeSinceDash += Time.Delta;
+		if ( Input.Down( "jump" ) && !parkouredSinceJumping )
+		{
+			bool successfulWallrun = TryWallrunning( 1 ) || TryWallrunning( 2 );
+
+			if ( !successfulWallrun )
+				TryVaulting();
+		}
 
 		if ( TimeSinceDash > 0.5f )
 			Dashing = 0;
@@ -191,6 +207,35 @@ public class PawnController : EntityComponent<Pawn>
 		}
 
 		FootstepWizard();
+		IncreaseDeltaTime();
+	}
+
+	bool TryWallrunning(int side)
+	{
+		// TODO: replace side with enum
+		bool isWallrunningOnRightSide = side == 2 ? true : false;
+
+		if ( CanWallrun() && previousWallrunSide != side && CheckForWall( isWallrunningOnRightSide ) )
+		{
+			if ( !IsWallRunning() && !Grounded )
+			{
+				Entity.Velocity = Entity.Velocity.WithZ( 100f );
+				Entity.ApplyAbsoluteImpulse( ForwardDirection * 100f );
+			}
+
+			Wallrunning = side;
+			previousWallrunSide = side;
+			parkouredSinceJumping = true;
+
+			return true;
+		}
+
+		return false;
+	}
+
+	bool IsDashing()
+	{
+		return Dashing != 0;
 	}
 
 	void UnStuck()
@@ -220,6 +265,9 @@ public class PawnController : EntityComponent<Pawn>
 
 	void UpdateWallrunning()
 	{
+		if ( Wallrunning == 0 )
+			return;
+
 		if ( !CanWallrun() )
 			Wallrunning = 0;
 	}
@@ -487,6 +535,13 @@ public class PawnController : EntityComponent<Pawn>
 		return trace.Hit;
 	}
 
+	void IncreaseDeltaTime()
+	{
+		TimeSinceLastFootstep += Time.Delta;
+		TimeSinceLastFootstepRelease += Time.Delta;
+		TimeSinceDash += Time.Delta;
+	}
+
 	void FootstepWizard()
 	{
 		float speed = Entity.Velocity.Length;
@@ -499,9 +554,6 @@ public class PawnController : EntityComponent<Pawn>
 
 		if ( !Grounded && !IsWallRunning() )
 			return;
-
-		TimeSinceLastFootstep += Time.Delta;
-		TimeSinceLastFootstepRelease += Time.Delta;
 
 		float nextStep = 80f / speed;
 		String footstepSound = speed < 300 ? "concretefootstepwalk" : "concretefootsteprun";
