@@ -3,9 +3,6 @@ using Sandbox.Internal;
 using Sandbox.UI;
 using System;
 using System.Collections.Generic;
-using System.Net.Http.Headers;
-using System.Numerics;
-using System.Runtime.Intrinsics;
 
 namespace MyGame;
 
@@ -23,7 +20,6 @@ public class PawnController : EntityComponent<Pawn>
 	public float SharpTurnAngle => 50f;
 	public float Acceleration => 0.02f;
 	public float StartFootSoundVelocity => 300f;
-	public float JumpDelay => 0.75f;
 	public int Wallrunning { get; set; }
 	public int Dashing { get; set; }
 	public bool Noclipping { get; set; }
