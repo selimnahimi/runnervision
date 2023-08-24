@@ -24,6 +24,8 @@ public partial class Pawn : AnimatedEntity
 
 	private Angles PreviousViewAngles { get; set; }
 
+	public CameraPostProcessing PostProcessing { get; set; }
+
 	[Net, Predicted]
 	public AnimatedEntity CameraHelper { get; set; }
 
@@ -87,6 +89,16 @@ public partial class Pawn : AnimatedEntity
 		CameraHelper = new AnimatedEntity();
 		CameraHelper.Position = Position + Model.GetBoneTransform( "CameraJoint" ).Position;
 		CameraHelper.SetParent( this, "CameraJoint" );
+
+		PostProcessing = Camera.Main.FindOrCreateHook<CameraPostProcessing>();
+	}
+
+	public void UpdatePostProcessing()
+	{
+		if ( PostProcessing == null )
+			return;
+
+		PostProcessing.PawnMaxSpeed = Controller.CurrentMaxSpeed;
 	}
 
 	public void SetActiveWeapon( Weapon weapon )
@@ -117,12 +129,14 @@ public partial class Pawn : AnimatedEntity
 		ActiveWeapon?.Simulate( cl );
 		EyeLocalPosition = Vector3.Up * (64f * Scale);
 
+		UpdatePostProcessing();
+
 		// var cameraPos = Model.GetBoneTransform( "CameraJoint" );
 		// Log.Info( cameraPos.Position );
 
 		// var cameraBone = Model.Bones.GetBone( "CameraJoint" );
 
-		
+
 
 		// Log.Info( Model.GetAttachment( "camera" ).Value.Position );
 	}
