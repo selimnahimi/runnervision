@@ -98,6 +98,8 @@ public class PawnController : EntityComponent<Pawn>
 				AddEvent( "grounded" );
 				Wallrunning = 0;
 				previousWallrunSide = 0;
+
+				parkouredSinceJumping = false;
 			}
 
 			Entity.Velocity = Accelerate( Entity.Velocity, moveVector.Normal, moveVector.Length, CurrentMaxSpeed, Acceleration );
