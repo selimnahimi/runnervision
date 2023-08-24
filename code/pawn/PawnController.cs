@@ -331,7 +331,7 @@ public class PawnController : EntityComponent<Pawn>
 		if ( speed.AlmostEqual(0f) )
 			return;
 
-		float rayDistance = Math.Max( (speed / 500) * 60f, 40f );
+		float rayDistance = Math.Max( (speed / 500) * 60f, 35f );
 
 		float showDebugTime = 3f;
 		float boxRadius = 20f;
