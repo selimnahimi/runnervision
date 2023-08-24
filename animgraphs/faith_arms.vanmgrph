@@ -378,7 +378,7 @@
 							{
 								m_id = 1165154577
 							}
-							m_position = [ -16.0, -16.0 ]
+							m_position = [ -16.0, -32.0 ]
 							m_bIsStartState = false
 							m_bIsEndtState = false
 							m_bIsPassthrough = false
