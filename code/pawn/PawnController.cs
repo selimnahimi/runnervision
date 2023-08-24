@@ -37,7 +37,7 @@ public class PawnController : EntityComponent<Pawn>
 
 	private float bezierCounter = 0f;
 	private float vaultSpeed = 0f;
-	private bool debugMode = true; /*RunnerVision.CurrentRunnerVision().DebugMode*/
+	private bool debugMode = false; /*RunnerVision.CurrentRunnerVision().DebugMode*/
 	private bool parkouredSinceJumping = false;
 
 	HashSet<string> ControllerEvents = new( StringComparer.OrdinalIgnoreCase );
@@ -265,7 +265,7 @@ public class PawnController : EntityComponent<Pawn>
 
 		bezierCounter += (vaultSpeed/100) * Time.Delta;
 
-		Entity.Position = Entity.Position.LerpTo( pos, Time.Delta * 10f );
+		Entity.Position = Entity.Position.LerpTo( pos, Time.Delta * 50f );
 
 		if ( bezierCounter >= 1.0f )
 			Vaulting = 0;
@@ -307,7 +307,7 @@ public class PawnController : EntityComponent<Pawn>
 
 		BBox boxBehindObstacle = new BBox(
 			mins: Vector3.Forward * +boxRadius + Vector3.Up * 70f + Vector3.Left * boxRadius,
-			maxs: Vector3.Forward * -boxRadius + Vector3.Up * 10f + Vector3.Right * boxRadius
+			maxs: Vector3.Forward * -boxRadius + Vector3.Right * boxRadius
 		).Translate( Entity.Position + Entity.Rotation.Forward * distanceBehindObstacle );
 
 		if ( debugMode )
@@ -356,14 +356,14 @@ public class PawnController : EntityComponent<Pawn>
 
 			// Cast a ray to check where the ground is
 			var traceObstacleSurface = Trace.Ray(
-				from: boxBehindObstacle.Center + Entity.Rotation.Up * 60f,
-				to: boxBehindObstacle.Center + Entity.Rotation.Up * -60f
+				from: boxBehindObstacle.Center + Entity.Rotation.Up * 30f,
+				to: boxBehindObstacle.Center + Entity.Rotation.Up * -50f
 			).Run();
 
 			if ( debugMode )
 				DebugOverlay.Line(
-					start: boxBehindObstacle.Center + Entity.Rotation.Up * 60f,
-					end: boxBehindObstacle.Center + Entity.Rotation.Up * -60f,
+					start: boxBehindObstacle.Center + Entity.Rotation.Up * 30f,
+					end: boxBehindObstacle.Center + Entity.Rotation.Up * -50f,
 					color: Color.Blue, duration: showDebugTime
 				);
 
@@ -388,7 +388,7 @@ public class PawnController : EntityComponent<Pawn>
 			// Make sure there's enough space to stand on obstacle
 			var topBoxLarge = new BBox(
 				mins: Vector3.Forward * +boxRadius + Vector3.Up * 45f + Vector3.Left * boxRadius,
-				maxs: Vector3.Forward * -boxRadius + Vector3.Up * 115f + Vector3.Right * boxRadius
+				maxs: Vector3.Forward * -boxRadius + Vector3.Up * 120f + Vector3.Right * boxRadius
 			).Translate( Entity.Position + Entity.Rotation.Forward * rayDistance );
 
 			var traceBoxLargeAboveObstacle = Trace.Box(
@@ -404,13 +404,13 @@ public class PawnController : EntityComponent<Pawn>
 
 			// Cast a ray to check where the ground is
 			var traceObstacleSurface = Trace.Ray(
-				from: topBoxLarge.Center + Entity.Rotation.Up * 60f,
+				from: topBoxLarge.Center + Entity.Rotation.Up * 30f,
 				to: topBoxLarge.Center + Entity.Rotation.Up * -60f
 			).Run();
 
 			if ( debugMode )
 				DebugOverlay.Line(
-					start: topBoxLarge.Center + Entity.Rotation.Up * 60f,
+					start: topBoxLarge.Center + Entity.Rotation.Up * 30f,
 					end: topBoxLarge.Center + Entity.Rotation.Up * -60f,
 					color: Color.Blue, duration: showDebugTime
 				);
