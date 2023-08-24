@@ -265,7 +265,7 @@ public class PawnController : EntityComponent<Pawn>
 
 		bezierCounter += (vaultSpeed/100) * Time.Delta;
 
-		Entity.Position = Entity.Position.LerpTo( pos, Time.Delta * 5f );
+		Entity.Position = Entity.Position.LerpTo( pos, Time.Delta * 10f );
 
 		if ( bezierCounter >= 1.0f )
 			Vaulting = 0;
