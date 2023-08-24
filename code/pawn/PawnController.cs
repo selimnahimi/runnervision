@@ -38,6 +38,7 @@ public class PawnController : EntityComponent<Pawn>
 	private float vaultSpeed = 0f;
 	private bool debugMode => true; /*RunnerVision.CurrentRunnerVision().DebugMode*/
 	private bool parkouredSinceJumping = false;
+	private bool wallrunSinceJumping = false;
 	private int previousWallrunSide = 0;
 
 	HashSet<string> ControllerEvents = new( StringComparer.OrdinalIgnoreCase );
@@ -110,6 +111,7 @@ public class PawnController : EntityComponent<Pawn>
 		if ( Input.Released( "jump" ) )
 		{
 			parkouredSinceJumping = false;
+			wallrunSinceJumping = false;
 		}
 
 		if ( Input.Pressed( "jump" ) )
@@ -208,6 +210,9 @@ public class PawnController : EntityComponent<Pawn>
 
 	bool TryWallrunning(int side)
 	{
+		if ( wallrunSinceJumping )
+			return false;
+
 		// TODO: replace side with enum
 		bool isWallrunningOnRightSide = side == 2 ? true : false;
 
@@ -221,7 +226,8 @@ public class PawnController : EntityComponent<Pawn>
 
 			Wallrunning = side;
 			previousWallrunSide = side;
-			parkouredSinceJumping = true;
+
+			wallrunSinceJumping = true;
 
 			return true;
 		}
