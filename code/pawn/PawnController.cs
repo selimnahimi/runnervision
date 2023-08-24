@@ -329,7 +329,7 @@ public class PawnController : EntityComponent<Pawn>
 		float boxRadius = 20f;
 		var distanceBehindObstacle = rayDistance * 1.20f + 60f;
 
-		BBox boxFront = new BBox(center: 0, size: 40f)
+		BBox boxFront = new BBox(center: 0, size: 35f)
 			.Translate( Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 30f );
 
 		var traceFront = Trace.Box(
