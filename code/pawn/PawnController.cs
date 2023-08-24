@@ -333,8 +333,6 @@ public class PawnController : EntityComponent<Pawn>
 				duration: showDebugTime
 			);
 
-		var fallAfterVault = false;
-
 		if (!traceBehindObstacle.Hit && !hitFailsafe )
 		{
 			// Vault over
@@ -378,7 +376,6 @@ public class PawnController : EntityComponent<Pawn>
 			else
 			{
 				VaultTargetPos = boxBehindObstacle.Center + Entity.Rotation.Up * -40f;
-				fallAfterVault = true;
 			}
 
 			Vaulting = 2;
@@ -433,13 +430,7 @@ public class PawnController : EntityComponent<Pawn>
 		VaultStartPos = Entity.Position;
 		bezierCounter = 0f;
 
-		Vector3 vaultDirection;
-
-		if ( fallAfterVault )
-			vaultDirection = Entity.Rotation.Forward * 0.3f + Entity.Rotation.Down * 0.3f;
-		else
-			vaultDirection = (VaultTargetPos - Entity.Position).WithZ( 0 ).Normal;
-
+		var vaultDirection = (VaultTargetPos - Entity.Position).WithZ( 0 ).Normal;
 		var speedAfterVault = Entity.Velocity.WithZ( 0 ).Length;
 
 		Entity.Velocity = vaultDirection * speedAfterVault;
