@@ -339,7 +339,7 @@ public class PawnController : EntityComponent<Pawn>
 
 		if ( debugMode )
 			DebugOverlay.Box(
-				bounds: new BBox( Entity.Position + Entity.Rotation.Forward * rayDistance + Entity.Rotation.Up * 20f, 30f ),
+				bounds: boxFront,
 				color: Color.Red,
 				duration: showDebugTime
 			);
