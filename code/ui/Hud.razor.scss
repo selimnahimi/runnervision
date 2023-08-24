@@ -1,21 +1,37 @@
-Hud
-{
-    .header
-    {
+Hud {
+    .header {
         left: 128px;
         top: 128px;
         flex-direction: column;
 
-        label
-        {
+        label {
             font-family: Roboto;
             color: white;
             font-size: 32px;
 
-            &.subtitle
-            {
+            &.subtitle {
                 font-size: 16px;
             }
+        }
+    }
+
+    .crosshair-container
+    {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .crosshair
+        {
+            width: 2px;
+            height: 2px;
+            border-radius: 5px;
+            background-color: white;
         }
     }
 }
