@@ -68,16 +68,22 @@ public partial class PawnController
 		if ( speed == 0f )
 			return;
 
-		if ( !Grounded && !IsWallRunning() )
+		if ( !Grounded && !IsWallRunning() && !Climbing )
 			return;
 
-		float nextStep = 80f / speed;
+		float nextStep = 70f / speed;
 		String footstepSound = speed < 300 ? "concretefootstepwalk" : "concretefootsteprun";
 		String footstepReleaseSound = IsWallRunning() ? "concretefootstepwallrunrelease" : "concretefootsteprunrelease";
 
 		if ( IsWallRunning() )
 		{
-			nextStep = 75f / speed;
+			nextStep = 60f / speed;
+			footstepSound = "concretefootstepwallrun";
+		}
+
+		if ( Climbing )
+		{
+			nextStep = 0.2f;
 			footstepSound = "concretefootstepwallrun";
 		}
 
