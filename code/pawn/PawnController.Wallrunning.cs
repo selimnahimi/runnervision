@@ -11,7 +11,11 @@ public partial class PawnController
 			return;
 
 		if ( !CanWallrun() )
+		{
 			Wallrunning = 0;
+			wallrunSinceJumping = false;
+			previousWallrunSide = 0;
+		}
 	}
 
 	bool IsWallRunning()
