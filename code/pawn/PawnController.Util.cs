@@ -55,6 +55,7 @@ public partial class PawnController
 		TimeSinceLastFootstep += Time.Delta;
 		TimeSinceLastFootstepRelease += Time.Delta;
 		TimeSinceDash += Time.Delta;
+		TimeSinceClimbing += Time.Delta;
 	}
 
 	void FootstepWizard()

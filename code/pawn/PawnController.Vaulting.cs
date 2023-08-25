@@ -5,6 +5,11 @@ namespace RunnerVision;
 
 public partial class PawnController
 {
+	bool IsVaulting()
+	{
+		return Vaulting != 0;
+	}
+
 	void UpdateVault()
 	{
 		// TODO: make smoother

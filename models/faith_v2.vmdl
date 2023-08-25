@@ -6787,9 +6787,9 @@
 								_class = "ExtractMotion"
 								extract_tx = true
 								extract_ty = true
-								extract_tz = false
-								extract_rz = false
-								linear = false
+								extract_tz = true
+								extract_rz = true
+								linear = true
 								quadratic = false
 								root_bone_name = ""
 								motion_type = "Single"
