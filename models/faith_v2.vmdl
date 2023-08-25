@@ -6571,12 +6571,17 @@
 								_class = "ExtractMotion"
 								extract_tx = true
 								extract_ty = true
-								extract_tz = false
-								extract_rz = false
-								linear = false
+								extract_tz = true
+								extract_rz = true
+								linear = true
 								quadratic = false
 								root_bone_name = ""
 								motion_type = "Single"
+							},
+							{
+								_class = "AnimOffset"
+								translation = [ -20.0, 0.0, -30.0 ]
+								rotation_xyz = [ 0.0, 0.0, 0.0 ]
 							},
 						]
 						activity_name = ""
@@ -6788,7 +6793,7 @@
 								extract_tx = true
 								extract_ty = true
 								extract_tz = true
-								extract_rz = true
+								extract_rz = false
 								linear = true
 								quadratic = false
 								root_bone_name = ""
@@ -6800,7 +6805,7 @@
 						weight_list_name = ""
 						fade_in_time = 0.2
 						fade_out_time = 0.2
-						looping = true
+						looping = false
 						delta = false
 						worldSpace = false
 						hidden = false

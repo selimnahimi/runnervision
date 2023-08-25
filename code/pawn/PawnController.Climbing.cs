@@ -22,7 +22,7 @@ public partial class PawnController
 		if ( Entity.Velocity.z < 0 )
 			return;
 
-		if ( CurrentClimbAmount > MaxClimbAmount )
+		if ( CurrentClimbAmount >= MaxClimbAmount )
 			return;
 
 		var traceFront = Trace.Ray(
@@ -41,10 +41,10 @@ public partial class PawnController
 			Climbing = true;
 		}
 
-		if ( traceFront.Hit && TimeSinceClimbing > 0.25f )
+		if ( traceFront.Hit && TimeSinceClimbing > 0.15f )
 		{
 			Log.Info( traceFront.Entity );
-			Entity.ApplyAbsoluteImpulse( Entity.Rotation.Up * 200f );
+			Entity.ApplyAbsoluteImpulse( Entity.Rotation.Up * 100f );
 			TimeSinceClimbing = 0f;
 			CurrentClimbAmount++;
 		}

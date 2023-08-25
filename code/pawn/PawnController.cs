@@ -18,6 +18,7 @@ public partial class PawnController : EntityComponent<Pawn>
 	public float SharpTurnAngle => 50f;
 	public float Acceleration => 0.02f;
 	public float StartFootSoundVelocity => 300f;
+	public int MaxClimbAmount => 4;
 	public bool Climbing { get; set; }
 	public int Wallrunning { get; set; }
 	public int Dashing { get; set; }
@@ -27,7 +28,6 @@ public partial class PawnController : EntityComponent<Pawn>
 	public float TimeSinceDash { get; set; }
 	public Vector3 ForwardDirection { get; set; }
 	public float TimeSinceClimbing { get; set; }
-	public int MaxClimbAmount { get; set; }
 
 	private int CurrentClimbAmount { get; set; }
 	public float CurrentMaxSpeed { get; set; }
