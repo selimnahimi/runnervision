@@ -13,7 +13,7 @@ No, this is just a remake of the movement system.
 ## How do I run this?
 *! Keep in mind that this is currently heavily in development. Please only consider playing this once a release is added to the repository. !*
 
-Clone the repository, and import it as a game inside the S&box devtool GUI.
+Clone the `dev` branch, and import it as a game inside the S&box devtool GUI.
 
 ## Roadmap
 Check out the [GitHub Project](https://github.com/users/selimnahimi/projects/3/views/1) for a detailed view of current development.
