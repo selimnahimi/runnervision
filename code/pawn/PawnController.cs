@@ -24,7 +24,7 @@ public partial class PawnController : EntityComponent<Pawn>
 	public int Dashing { get; set; }
 	public bool Noclipping { get; set; }
 	public bool UnlimitedSprint { get; set; }
-	public int Vaulting { get; set; }
+	public VaultType Vaulting { get; set; }
 	public float TimeSinceDash { get; set; }
 	public Vector3 ForwardDirection { get; set; }
 	public float TimeSinceClimbing { get; set; }
@@ -64,7 +64,7 @@ public partial class PawnController : EntityComponent<Pawn>
 			return;
 		}
 
-		if ( Vaulting != 0 )
+		if ( Vaulting != VaultType.None )
 		{
 			// TODO: don't return here
 			UpdateVault();

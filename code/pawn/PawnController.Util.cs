@@ -120,7 +120,7 @@ public partial class PawnController
 
 	bool CanJump()
 	{
-		return Grounded && Vaulting == 0;
+		return Grounded && !IsVaulting();
 	}
 
 	Entity CheckForGround()
