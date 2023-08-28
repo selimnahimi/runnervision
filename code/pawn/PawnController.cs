@@ -182,7 +182,7 @@ public partial class PawnController : EntityComponent<Pawn>
 			bool successfulWallrun = TryWallrunning( 1 ) || TryWallrunning( 2 );
 
 			if ( !successfulWallrun )
-				TryVaulting();
+				InitiateVault();
 		}
 
 		if ( TimeSinceDash > 0.5f )

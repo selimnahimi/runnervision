@@ -16,7 +16,7 @@ public partial class PawnController
 	float showDebugTime => 3f;
 	float boxRadius => 20f;
 
-	void TryVaulting()
+	void InitiateVault()
 	{
 		var speed = GetSpeed();
 		var rayDistance = GetRayDistance( speed );
@@ -26,10 +26,8 @@ public partial class PawnController
 
 		bool successfulVault = TryVaulting( rayDistance );
 
-		if ( !successfulVault )
-			return;
-
-		InitiateVault();
+		if ( successfulVault )
+			SetupVault();
 	}
 
 	bool IsVaulting()
@@ -56,7 +54,7 @@ public partial class PawnController
 			Vaulting = 0;
 	}
 
-	void InitiateVault()
+	void SetupVault()
 	{
 		parkouredSinceJumping = true;
 		parkouredBeforeLanding = true;
