@@ -1,7 +1,5 @@
 ![runnervision_logo](https://github.com/selimnahimi/runnervision/assets/21970287/2373f60c-8c5a-4ae6-a365-93875e001c39)
 
-"You can't live on the edge all your life Faith, sooner or later, you'll have to jump"
-
 ## What is this?
 This is a fan remake of the [Mirror's Edge](https://store.steampowered.com/app/17410/Mirrors_Edge/) parkour system in [S&box](https://sbox.facepunch.com), in the form of a custom gamemode.
 
