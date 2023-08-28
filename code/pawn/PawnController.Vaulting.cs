@@ -16,12 +16,28 @@ public partial class PawnController
 	float showDebugTime => 3f;
 	float boxRadius => 20f;
 
+	void TryVaulting()
+	{
+		var speed = GetSpeed();
+		var rayDistance = GetRayDistance( speed );
+
+		if ( !CanVault( speed, rayDistance ) )
+			return;
+
+		bool successfulVault = TryVaulting( rayDistance );
+
+		if ( !successfulVault )
+			return;
+
+		InitiateVault();
+	}
+
 	bool IsVaulting()
 	{
 		return Vaulting != VaultType.None;
 	}
 
-	void UpdateVault()
+	void ProgressVault()
 	{
 		// TODO: make smoother
 
@@ -40,18 +56,27 @@ public partial class PawnController
 			Vaulting = 0;
 	}
 
-	void TryVaulting()
+	void InitiateVault()
+	{
+		parkouredSinceJumping = true;
+		parkouredBeforeLanding = true;
+
+		VaultStartPos = Entity.Position;
+		bezierCounter = 0f;
+
+		var vaultDirection = (VaultTargetPos - Entity.Position).WithZ( 0 ).Normal;
+		var speedAfterVault = Entity.Velocity.WithZ( 0 ).Length;
+
+		Entity.Velocity = vaultDirection * speedAfterVault;
+	}
+
+	bool CanVault(float speed, float rayDistance)
 	{
 		if ( Grounded && !Input.Down( "forward" ) )
-			return;
-
-		float speed = Entity.Velocity.Length;
+			return false;
 
 		if ( speed.AlmostEqual( 0f ) )
-			return;
-
-		float rayDistance = Math.Max( (speed / 500) * 60f, 35f );
-		var distanceBehindObstacle = rayDistance * 1.20f + 60f;
+			return false;
 
 		BBox boxFront = GetBoxFront( rayDistance );
 
@@ -68,10 +93,42 @@ public partial class PawnController
 			);
 
 		if ( !traceFront.Hit )
-			return;
+			return false;
 
+		return true;
+	}
+
+	float GetSpeed()
+	{
+		return Entity.Velocity.Length;
+	}
+
+	float GetRayDistance(float speed)
+	{
+		return Math.Max( (speed / 500) * 60f, 35f );
+	}
+
+	bool TryVaulting(float rayDistance)
+	{
+		var distanceBehindObstacle = rayDistance * 1.20f + 60f;
 		BBox boxBehindObstacle = GetBoxBehindObstacle( distanceBehindObstacle );
 
+		bool successfulVault;
+
+		if ( ShouldVaultOver( boxBehindObstacle, distanceBehindObstacle ) )
+		{
+			successfulVault = TryVaultOver( rayDistance, boxBehindObstacle );
+		}
+		else
+		{
+			successfulVault = TryVaultOnto( rayDistance );
+		}
+
+		return successfulVault;
+	}
+
+	bool ShouldVaultOver(BBox boxBehindObstacle, float distanceBehindObstacle)
+	{
 		if ( debugMode )
 			DebugOverlay.Box( bounds: boxBehindObstacle, color: Color.Blue, duration: showDebugTime );
 
@@ -92,33 +149,7 @@ public partial class PawnController
 				duration: showDebugTime
 			);
 
-		if ( !traceBehindObstacle.Hit && !hitFailsafe )
-		{
-			if ( !TryVaultOver( rayDistance, boxBehindObstacle ) )
-				return;
-		}
-		else
-		{
-			// Make sure there's enough space to stand on obstacle
-			if ( !TryVaultOnto( rayDistance ) )
-				return;
-		}
-
-		parkouredSinceJumping = true;
-		parkouredBeforeLanding = true;
-
-		VaultStartPos = Entity.Position;
-		bezierCounter = 0f;
-
-		var vaultDirection = (VaultTargetPos - Entity.Position).WithZ( 0 ).Normal;
-		var speedAfterVault = Entity.Velocity.WithZ( 0 ).Length;
-
-		Entity.Velocity = vaultDirection * speedAfterVault;
-	}
-
-	bool ShouldTryVaulting()
-	{
-
+		return !traceBehindObstacle.Hit && !hitFailsafe;
 	}
 
 	bool TryVaultOver(float rayDistance, BBox boxBehindObstacle)
@@ -133,6 +164,7 @@ public partial class PawnController
 
 	bool TryVaultOnto(float rayDistance)
 	{
+		// Make sure there's enough space to stand on obstacle
 		var topBoxLarge = GetTopBoxLarge( rayDistance );
 
 		if ( !CanVaultOnto( topBoxLarge ) )

@@ -67,7 +67,7 @@ public partial class PawnController : EntityComponent<Pawn>
 		if ( Vaulting != VaultType.None )
 		{
 			// TODO: don't return here
-			UpdateVault();
+			ProgressVault();
 			return;
 		}
 
