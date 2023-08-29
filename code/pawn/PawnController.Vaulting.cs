@@ -8,8 +8,8 @@ public partial class PawnController
 	public enum VaultType
 	{
 		None,
-		Over,
 		Onto,
+		Over,
 		OntoHigh
 	}
 
