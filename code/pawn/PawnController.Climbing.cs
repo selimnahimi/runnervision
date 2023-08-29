@@ -49,4 +49,9 @@ public partial class PawnController
 			CurrentClimbAmount++;
 		}
 	}
+
+	bool IsClimbing()
+	{
+		return Climbing;
+	}
 }

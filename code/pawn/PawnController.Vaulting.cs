@@ -73,9 +73,6 @@ public partial class PawnController
 		if ( Grounded && !Input.Down( "forward" ) )
 			return false;
 
-		if ( speed.AlmostEqual( 0f ) )
-			return false;
-
 		BBox boxFront = GetBoxFront( rayDistance );
 
 		var traceFront = Trace.Box(
@@ -111,18 +108,38 @@ public partial class PawnController
 		var distanceBehindObstacle = rayDistance * 1.20f + 60f;
 		BBox boxBehindObstacle = GetBoxBehindObstacle( distanceBehindObstacle );
 
-		bool successfulVault;
+		bool successfulVault = false;
 
-		if ( ShouldVaultOver( boxBehindObstacle, distanceBehindObstacle ) )
+		if ( ShouldVaultOntoHigh() )
+		{
+			Log.Info( "HI" );
+		}
+		else if ( ShouldVaultOver( boxBehindObstacle, distanceBehindObstacle ) )
 		{
 			successfulVault = TryVaultOver( rayDistance, boxBehindObstacle );
 		}
-		else
+		else if ( ShouldVaultOnto() )
 		{
 			successfulVault = TryVaultOnto( rayDistance );
 		}
 
 		return successfulVault;
+	}
+
+	bool ShouldVaultOntoHigh()
+	{
+		if ( !IsClimbing() )
+			return false;
+
+		BBox boxAboveWall = GetBoxAboveWall();
+		DebugOverlay.Box( bounds: boxAboveWall, Color.Red );
+
+		return true;
+	}
+
+	bool ShouldVaultOnto()
+	{
+		return true;
 	}
 
 	bool ShouldVaultOver(BBox boxBehindObstacle, float distanceBehindObstacle)
@@ -186,6 +203,14 @@ public partial class PawnController
 		).Run();
 	}
 
+	BBox GetBoxAboveWall()
+	{
+		return new BBox(
+			mins: Vector3.Forward * +boxRadius + Vector3.Up * 45f + Vector3.Left * boxRadius,
+			maxs: Vector3.Forward * -boxRadius + Vector3.Up * 120f + Vector3.Right * boxRadius
+		).Translate( Entity.Position + Entity.Rotation.Forward * 50f );
+	}
+
 	BBox GetBoxFront( float rayDistance )
 	{
 		return new BBox( center: 0, size: 35f )
@@ -210,6 +235,9 @@ public partial class PawnController
 
 	bool CanVaultOver( float rayDistance )
 	{
+		if ( GetSpeed().AlmostEqual( 0f ) )
+			return false;
+
 		// Check if there's space to vault over
 		var topBoxSmall = new BBox(
 			mins: Vector3.Forward * +boxRadius * 0.70f + Vector3.Up * 50f + Vector3.Left * boxRadius * 0.70f,
@@ -259,6 +287,9 @@ public partial class PawnController
 
 	bool CanVaultOnto( BBox topBoxLarge )
 	{
+		if ( GetSpeed().AlmostEqual( 0f ) )
+			return false;
+
 		var traceBoxLargeAboveObstacle = Trace.Box(
 			bbox: topBoxLarge,
 			from: 0, to: 0
