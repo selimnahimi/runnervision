@@ -63,9 +63,20 @@ public partial class PawnController
 		bezierCounter = 0f;
 
 		var vaultDirection = (VaultTargetPos - Entity.Position).WithZ( 0 ).Normal;
-		var speedAfterVault = Entity.Velocity.WithZ( 0 ).Length;
+		var speedAfterVault = GetSpeedAfterVault();
 
 		Entity.Velocity = vaultDirection * speedAfterVault;
+	}
+
+	float GetSpeedAfterVault()
+	{
+		switch( Vaulting )
+		{
+			case VaultType.OntoHigh:
+				return 0;
+		}
+
+		return Entity.Velocity.WithZ( 0 ).Length;
 	}
 
 	bool CanVault(float speed, float rayDistance)
@@ -100,19 +111,20 @@ public partial class PawnController
 
 	float GetRayDistance(float speed)
 	{
-		return Math.Max( (speed / 500) * 60f, 35f );
+		return Math.Max( (speed / 500) * 60f, 30f );
 	}
 
 	bool TryVaulting(float rayDistance)
 	{
 		var distanceBehindObstacle = rayDistance * 1.20f + 60f;
-		BBox boxBehindObstacle = GetBoxBehindObstacle( distanceBehindObstacle );
+		var boxBehindObstacle = GetBoxBehindObstacle( distanceBehindObstacle );
+		var boxAboveWall = GetBoxAboveWall();
 
 		bool successfulVault = false;
 
-		if ( ShouldVaultOntoHigh() )
+		if ( ShouldVaultOntoHigh( boxAboveWall ) )
 		{
-			Log.Info( "HI" );
+			successfulVault = TryVaultOntoHigh( boxAboveWall );
 		}
 		else if ( ShouldVaultOver( boxBehindObstacle, distanceBehindObstacle ) )
 		{
@@ -126,15 +138,43 @@ public partial class PawnController
 		return successfulVault;
 	}
 
-	bool ShouldVaultOntoHigh()
+	bool ShouldVaultOntoHigh( BBox boxAboveWall )
 	{
 		if ( !IsClimbing() )
 			return false;
 
-		BBox boxAboveWall = GetBoxAboveWall();
-		DebugOverlay.Box( bounds: boxAboveWall, Color.Red );
+		var traceBoxAboveWall = Trace.Box(
+			bbox: boxAboveWall,
+			from: 0, to: 0
+		).Run();
+
+		if ( debugMode )
+			DebugOverlay.Box( bounds: boxAboveWall, Color.Magenta );
+
+		return !traceBoxAboveWall.Hit;
+	}
+
+	bool TryVaultOntoHigh(BBox boxAboveWall)
+	{
+		var groundPosition = TraceGroundWithBox(
+			bbox: boxAboveWall,
+			offsetTop: 30f,
+			offsetBottom: -60f
+		);
+
+		if ( groundPosition != Vector3.Zero )
+			VaultOntoHigh( groundPosition );
+		else
+			return false;
 
 		return true;
+	}
+
+	void VaultOntoHigh( Vector3 groundPosition )
+	{
+		VaultTargetPos = groundPosition + Vector3.Up * 13f;
+		Vaulting = VaultType.OntoHigh;
+		vaultSpeed = 120f;
 	}
 
 	bool ShouldVaultOnto()
@@ -185,7 +225,7 @@ public partial class PawnController
 		if ( !CanVaultOnto( topBoxLarge ) )
 			return false;
 
-		var groundPosition = VaultOntoGetGround( topBoxLarge );
+		var groundPosition = TraceGroundVaultOnto( topBoxLarge );
 
 		if ( groundPosition != Vector3.Zero )
 			VaultOnto( groundPosition );
@@ -205,10 +245,14 @@ public partial class PawnController
 
 	BBox GetBoxAboveWall()
 	{
+		var offsetBottom = 75f;
+		var offsetTop = 155f;
+		var offsetForward = 20f;
+
 		return new BBox(
-			mins: Vector3.Forward * +boxRadius + Vector3.Up * 45f + Vector3.Left * boxRadius,
-			maxs: Vector3.Forward * -boxRadius + Vector3.Up * 120f + Vector3.Right * boxRadius
-		).Translate( Entity.Position + Entity.Rotation.Forward * 50f );
+			mins: Vector3.Forward * +boxRadius + Vector3.Up * offsetBottom + Vector3.Left * boxRadius,
+			maxs: Vector3.Forward * -boxRadius + Vector3.Up * offsetTop + Vector3.Right * boxRadius
+		).Translate( Entity.Position + Entity.Rotation.Forward * offsetForward );
 	}
 
 	BBox GetBoxFront( float rayDistance )
@@ -301,25 +345,34 @@ public partial class PawnController
 		return !traceBoxLargeAboveObstacle.Hit;
 	}
 
-	Vector3 VaultOntoGetGround( BBox topBoxLarge )
+	Vector3 TraceGroundVaultOnto( BBox topBoxLarge )
+	{
+		return TraceGroundWithBox(
+			bbox: topBoxLarge,
+			offsetTop: 30f,
+			offsetBottom: -60f
+		);
+	}
+
+	Vector3 TraceGroundWithBox( BBox bbox, float offsetTop, float offsetBottom )
 	{
 		// Cast a ray to check where the ground is
-		var traceObstacleSurface = Trace.Ray(
-			from: topBoxLarge.Center + Entity.Rotation.Up * 30f,
-			to: topBoxLarge.Center + Entity.Rotation.Up * -60f
+		var traceGround = Trace.Ray(
+			from: bbox.Center + Entity.Rotation.Up * offsetTop,
+			to: bbox.Center + Entity.Rotation.Up * offsetBottom
 		).Run();
 
 		if ( debugMode )
 			DebugOverlay.Line(
-				start: topBoxLarge.Center + Entity.Rotation.Up * 30f,
-				end: topBoxLarge.Center + Entity.Rotation.Up * -60f,
+				start: bbox.Center + Entity.Rotation.Up * offsetTop,
+				end: bbox.Center + Entity.Rotation.Up * offsetBottom,
 				color: Color.Blue, duration: showDebugTime
 			);
 
-		if ( !traceObstacleSurface.Hit )
+		if ( !traceGround.Hit )
 			return Vector3.Zero;
 
-		return traceObstacleSurface.HitPosition;
+		return traceGround.HitPosition;
 	}
 
 	void VaultOnto( Vector3 groundPosition )
