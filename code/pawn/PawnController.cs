@@ -221,7 +221,7 @@ public partial class PawnController : EntityComponent<Pawn>
 		ClampMaxSpeed();
 	}
 
-	[ConCmd.Admin( "noclip" )]
+	[ConCmd.Server( "noclip" )]
 	static void DoPlayerNoclip()
 	{
 		if ( ConsoleSystem.Caller.Pawn is Pawn player )
