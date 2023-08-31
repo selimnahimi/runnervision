@@ -75,6 +75,8 @@ public partial class Pawn : AnimatedEntity
 
 	public override Ray AimRay => new Ray( EyePosition, EyeRotation.Forward );
 
+	public AnimatedEntity ShadowModel;
+
 	/// <summary>
 	/// Called when the entity is first created 
 	/// </summary>
@@ -91,6 +93,13 @@ public partial class Pawn : AnimatedEntity
 		CameraHelper.SetParent( this, "CameraJoint" );
 
 		PostProcessing = Camera.Main.FindOrCreateHook<CameraPostProcessing>();
+
+		EnableShadowCasting = false;
+
+		ShadowModel = new( "models/faith_shadow.vmdl" );
+		ShadowModel.SetParent( this, true );
+		ShadowModel.EnableShadowOnly = true;
+		ShadowModel.EnableShadowCasting = true;
 	}
 
 	public void UpdatePostProcessing()
@@ -263,5 +272,12 @@ public partial class Pawn : AnimatedEntity
 	{
 		EyeRotation = ViewAngles.ToRotation();
 		Rotation = ViewAngles.WithPitch( 0f ).ToRotation();
+	}
+
+	protected override void OnDestroy()
+	{
+		base.OnDestroy();
+
+		ShadowModel?.Delete();
 	}
 }

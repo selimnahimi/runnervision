@@ -11,16 +11,12 @@
 				[
 					{
 						_class = "ModelModifier_ScaleAndMirror"
-						scale = 35.0
+						scale = 39.369999
 						mirror_x = false
 						mirror_y = false
 						mirror_z = false
 						flip_bone_forward = false
 						swap_left_and_right_bones = false
-					},
-					{
-						_class = "ModelModifier_Translate"
-						translation = [ 0.0, 0.0, 0.0 ]
 					},
 				]
 			},
@@ -41,12 +37,8 @@
 								to = "materials/faith_arms/mi_female_arm_skinn.vmat"
 							},
 							{
-								from = "mi_faith_lowres_upper.vmat"
-								to = "materials/faith_arms/mi_faith_lowres_upper.vmat"
-							},
-							{
-								from = "mi_shtest.vmat"
-								to = "materials/faith_arms/mi_shtest.vmat"
+								from = "faith_merged.vmat"
+								to = "materials/faith_arms/faith_merged.vmat"
 							},
 						]
 						use_global_default = false
@@ -60,7 +52,7 @@
 				[
 					{
 						_class = "RenderMeshFile"
-						filename = "model_source/faith_v2/Collection.dmx"
+						filename = "model_source/faith_v2/faithv2.dmx"
 						import_translation = [ 0.0, 0.0, 0.0 ]
 						import_rotation = [ 0.0, 0.0, 0.0 ]
 						import_scale = 1.0
