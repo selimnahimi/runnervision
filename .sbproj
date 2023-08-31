@@ -1,14 +1,14 @@
 {
   "Title": "RunnerVision",
   "Type": "game",
-  "Org": "local",
+  "Org": "seicore",
   "Ident": "runnervision",
   "Tags": null,
   "Schema": 1,
   "HasAssets": true,
   "AssetsPath": "",
   "Resources": null,
-  "MenuResources": null,
+  "MenuResources": "models/glasscity.vmdl\nmovies/loading1.webm\nmovies/loading2.webm\nmovies/loading3.webm\nmovies/loadingsimple.webm\nsound/menu/runnervision_menuback.sound\nsound/menu/runnervision_menuclick.sound\nsound/menu/runnervision_menumusic.sound\nmaterials/menu_city/city_sky.vmat\nmaterials/menu_city/city_ocean.vmat\nmaterials/menu_city/city_material.vmat\nmaterials/menu_city/city_glass.vmat",
   "HasCode": true,
   "CodePath": "/code/",
   "PackageReferences": [],
@@ -30,6 +30,7 @@
     "HttpAllowList": null,
     "SavedGames": true,
     "MapDependentSaves": false,
-    "SaveFormatVersion": 1001
+    "SaveFormatVersion": 1001,
+    "TickRate": 50
   }
 }
