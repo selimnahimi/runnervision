@@ -68,6 +68,9 @@ public partial class PawnController
 		if ( Wallrunning == WallRunSide.Right && traceWall.side != WallRunSide.Right )
 			return false;
 
+		if ( !IsWallRunning() && (Entity.Velocity * 0.5f).WithZ( 0 ).Length < 100f )
+			return false;
+
 		if ( IsWallRunning() && Entity.Velocity.WithZ( 0 ).Length < 100f )
 			return false;
 

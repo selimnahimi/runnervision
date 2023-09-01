@@ -7,7 +7,7 @@ namespace RunnerVision;
 public partial class PawnController : EntityComponent<Pawn>
 {
 	public int StepSize => 26;
-	public int GroundAngle => 100;
+	public int GroundAngle => 200;
 	public int JumpSpeed => 300;
 	public float Gravity => 800f;
 	public float StartingSpeed => 1000f;
@@ -87,7 +87,6 @@ public partial class PawnController : EntityComponent<Pawn>
 
 		UpdateMaxSpeed( moveVector );
 		AdjustSharpTurn( moveVector );
-		UpdateMoveHelper( groundEntity );
 
 		if ( groundEntity.IsValid() )
 		{
@@ -96,6 +95,12 @@ public partial class PawnController : EntityComponent<Pawn>
 				InitiateLandingOnFloor();
 			}
 
+		}
+
+		UpdateMoveHelper( groundEntity );
+
+		if (Grounded)
+		{
 			DoMovement( moveVector );
 		}
 		else
