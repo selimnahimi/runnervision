@@ -57,6 +57,13 @@ public partial class PawnController : EntityComponent<Pawn>
 	{
 		ControllerEvents.Clear();
 
+		DebugOverlay.ScreenText( "Climbing: " + IsClimbing().ToString(), line: 0 );
+		DebugOverlay.ScreenText( "Wallrunning: " + Wallrunning.ToString(), line: 1 );
+		DebugOverlay.ScreenText( "Vaulting: " + Vaulting.ToString(), line: 2 );
+		DebugOverlay.ScreenText( "Current Speed: " + ((int)Entity.Velocity.Length).ToString(), line: 3 );
+		DebugOverlay.ScreenText( "Current Max Speed: " + CurrentMaxSpeed.ToString(), line: 4 );
+		DebugOverlay.ScreenText( "Max Speed: " + MaxSpeed.ToString(), line: 5 );
+
 		if ( Noclipping )
 		{
 			// TODO: don't return here
