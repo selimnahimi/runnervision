@@ -49,21 +49,30 @@ public partial class PawnController
 
 	bool CanClimb( TraceResult traceFront )
 	{
-		BBox box = GetBoxInfrontOfWall( traceFront );
+		var cameraDirection = GetCameraDirection();
+
+		// Don't climb when facing wall at a wide angle
+		if ( traceFront.Normal.Angle( cameraDirection ) < 150f )
+			return false;
+
+		BBox boxInfrontOfWall = GetBoxInfrontOfWall( traceFront );
 
 		if ( debugMode )
 			DebugOverlay.Box(
-				bounds: box,
+				bounds: boxInfrontOfWall,
 				color: Color.Orange,
 				duration: showDebugTime
 			);
 
 		TraceResult traceBoxInfrontOfWall = Trace.Box(
-			bbox: box,
+			bbox: boxInfrontOfWall,
 			from: 0, to: 0
 		).Run();
 
-		return !traceBoxInfrontOfWall.Hit;
+		if ( traceBoxInfrontOfWall.Hit )
+			return false;
+
+		return true;
 	}
 
 	BBox GetBoxInfrontOfWall( TraceResult traceFront )
