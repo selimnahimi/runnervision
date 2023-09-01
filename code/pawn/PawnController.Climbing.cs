@@ -103,9 +103,10 @@ public partial class PawnController
 	void InitiateClimbing(TraceResult traceFront)
 	{
 		Climbing = true;
+		CurrentWall = traceFront;
 
 		Camera.Rotation = new Rotation(traceFront.Normal, 10f);
-		climbTargetXY = traceFront.HitPosition + Entity.Rotation.Down * 50f + traceFront.Normal * 20f;
+		climbTargetXY = traceFront.HitPosition + Entity.Rotation.Down * 50f + traceFront.Normal * 30f;
 	}
 
 	void ApproachClimbTarget()

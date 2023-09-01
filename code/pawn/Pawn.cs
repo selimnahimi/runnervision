@@ -22,8 +22,7 @@ public partial class Pawn : AnimatedEntity
 	public float CameraTiltMultiplier => 5f;
 
 	public float CameraTilt { get; set; }
-	public Rotation CameraNewRotation { get; set; }
-	public bool CameraShouldRotateToNewPosition { get; set; }
+	public Angles CameraNewAngles { get; set; }
 
 	private Angles PreviousViewAngles { get; set; }
 
@@ -241,6 +240,17 @@ public partial class Pawn : AnimatedEntity
 		Camera.FirstPersonViewer = this;
 
 		Camera.Position = CameraHelper.Position + Rotation.Down * 3f + Rotation.Forward * 3f;
+
+		if ( Controller.Climbing )
+		{
+			LookTowardsWall();
+		}
+	}
+
+	private void LookTowardsWall()
+	{
+		CameraNewAngles = (Controller.CurrentWall.Normal * -1f).EulerAngles.WithPitch(-40f);
+		CameraRotateToNewPosition();
 	}
 
 	private void CameraUpdateTilt()
@@ -262,10 +272,7 @@ public partial class Pawn : AnimatedEntity
 
 	private void CameraUpdateRotation()
 	{
-		if ( CameraShouldRotateToNewPosition )
-			CameraRotateToNewPosition();
-		else
-			CameraRotateToViewAngles();
+		CameraRotateToViewAngles();
 	}
 
 	private void CameraRotateToViewAngles()
@@ -275,13 +282,7 @@ public partial class Pawn : AnimatedEntity
 
 	private void CameraRotateToNewPosition()
 	{
-		var velocity = Vector3.One;
-		Camera.Rotation = Camera.Rotation.SmoothDamp( cameraStartRotation, CameraNewRotation, ref velocity, 0.5f, Time.Delta );
-
-		if ( Camera.Rotation.Distance( CameraNewRotation ) < 0.01f )
-		{
-			CameraShouldRotateToNewPosition = false;
-		}
+		ViewAngles = ViewAngles.LerpTo( CameraNewAngles, 5f * Time.Delta );
 	}
 
 	private void CameraUpdateFOV()
