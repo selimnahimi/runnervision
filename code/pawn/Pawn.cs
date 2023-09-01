@@ -32,6 +32,7 @@ public partial class Pawn : AnimatedEntity
 	public AnimatedEntity CameraHelper { get; set; }
 
 	private Rotation cameraStartRotation { get; set; }
+	private float TimeSinceSnap { get; set; }
 
 	/// <summary>
 	/// Position a player should be looking from in world space.
@@ -145,6 +146,8 @@ public partial class Pawn : AnimatedEntity
 		EyeLocalPosition = Vector3.Up * (64f * Scale);
 
 		UpdatePostProcessing();
+
+		TimeSinceSnap += Time.Delta;
 	}
 
 	void UpdateAnimParameters()
@@ -245,12 +248,54 @@ public partial class Pawn : AnimatedEntity
 		{
 			LookTowardsWall();
 		}
+
+		if ( Controller.IsWallRunning() && Controller.TimeSinceWallrun < 0.25f )
+		{
+			LookTowardsMovement();
+		}
+
+		if ( TimeSinceSnap < 0.5f )
+		{
+			CameraRotateToNewPosition(15f);
+		}
+
+		CheckForSnap();
+	}
+
+	private void CheckForSnap()
+	{
+		if ( TimeSinceSnap < 1f )
+			return;
+
+		if ( Input.Pressed("run") )
+		{
+			TimeSinceSnap = 0f;
+
+			switch (Controller.Wallrunning)
+			{
+				case WallRunSide.Left:
+					CameraNewAngles = (ViewAngles.ToRotation().Right).EulerAngles.WithPitch( 0 );
+					break;
+				case WallRunSide.Right:
+					CameraNewAngles = (ViewAngles.ToRotation().Left).EulerAngles.WithPitch( 0 );
+					break;
+				default:
+					CameraNewAngles = (ViewAngles.Forward * -1f).EulerAngles.WithPitch( 0 );
+					break;
+			}
+		}
 	}
 
 	private void LookTowardsWall()
 	{
 		CameraNewAngles = (Controller.CurrentWall.Normal * -1f).EulerAngles.WithPitch(-40f);
-		CameraRotateToNewPosition();
+		CameraRotateToNewPosition( speed: 5f );
+	}
+
+	private void LookTowardsMovement()
+	{
+		CameraNewAngles = Controller.Entity.Velocity.WithZ(0).EulerAngles;
+		CameraRotateToNewPosition( speed: 15f );
 	}
 
 	private void CameraUpdateTilt()
@@ -280,9 +325,9 @@ public partial class Pawn : AnimatedEntity
 		Camera.Rotation = ViewAngles.ToRotation();
 	}
 
-	private void CameraRotateToNewPosition()
+	private void CameraRotateToNewPosition(float speed = 5f)
 	{
-		ViewAngles = ViewAngles.LerpTo( CameraNewAngles, 5f * Time.Delta );
+		ViewAngles = ViewAngles.LerpTo( CameraNewAngles, speed * Time.Delta );
 	}
 
 	private void CameraUpdateFOV()

@@ -44,7 +44,7 @@ public partial class PawnController
 		}
 	}
 
-	bool IsWallRunning()
+	public bool IsWallRunning()
 	{
 		return Wallrunning != 0;
 	}
@@ -88,26 +88,33 @@ public partial class PawnController
 
 		if ( CanWallrun( traceWall ) && previousWallrunSide != traceWall.side )
 		{
-			if ( !IsWallRunning() && !Grounded )
-			{
-				var velocityZ = Math.Max(100f, Entity.Velocity.z);
-
-				Entity.Velocity *= 0.5f;
-				Entity.ApplyAbsoluteImpulse( ForwardDirection * 100f );
-				Entity.Velocity = Entity.Velocity.WithZ( velocityZ );
-			}
-
-			CurrentWall = traceWall.traceResult;
-			Wallrunning = traceWall.side;
-			previousWallrunSide = traceWall.side;
-
-			wallrunSinceJumping = true;
-			parkouredBeforeLanding = true;
+			InitiateWallrun( traceWall );
 
 			return true;
 		}
 
 		return false;
+	}
+
+	void InitiateWallrun( WallRunTrace traceWall )
+	{
+		if ( !IsWallRunning() && !Grounded )
+		{
+			var velocityZ = Math.Max( 100f, Entity.Velocity.z );
+
+			Entity.Velocity *= 0.5f;
+			Entity.ApplyAbsoluteImpulse( ForwardDirection * 100f );
+			Entity.Velocity = Entity.Velocity.WithZ( velocityZ );
+		}
+
+		CurrentWall = traceWall.traceResult;
+		Wallrunning = traceWall.side;
+		previousWallrunSide = traceWall.side;
+
+		wallrunSinceJumping = true;
+		parkouredBeforeLanding = true;
+
+		TimeSinceWallrun = 0f;
 	}
 
 	WallRunTrace CheckForWall( bool behind = false )
