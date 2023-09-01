@@ -1,5 +1,6 @@
 ﻿using Sandbox;
 using System.ComponentModel;
+using static RunnerVision.PawnController;
 
 namespace RunnerVision;
 
@@ -10,7 +11,7 @@ public partial class Pawn : AnimatedEntity
 
 	[ClientInput]
 	public Vector3 InputDirection { get; set; }
-	
+
 	[ClientInput]
 	public Angles ViewAngles { get; set; }
 
@@ -21,6 +22,7 @@ public partial class Pawn : AnimatedEntity
 	public float CameraTiltMultiplier => 5f;
 
 	public float CameraTilt { get; set; }
+	public Angles CameraNewAngles { get; set; }
 
 	private Angles PreviousViewAngles { get; set; }
 
@@ -28,6 +30,9 @@ public partial class Pawn : AnimatedEntity
 
 	[Net, Predicted]
 	public AnimatedEntity CameraHelper { get; set; }
+
+	private Rotation cameraStartRotation { get; set; }
+	private float TimeSinceSnap { get; set; }
 
 	/// <summary>
 	/// Position a player should be looking from in world space.
@@ -76,6 +81,8 @@ public partial class Pawn : AnimatedEntity
 	public override Ray AimRay => new Ray( EyePosition, EyeRotation.Forward );
 
 	public AnimatedEntity ShadowModel;
+
+	bool IsThirdPerson { get; set; } = false;
 
 	/// <summary>
 	/// Called when the entity is first created 
@@ -140,14 +147,7 @@ public partial class Pawn : AnimatedEntity
 
 		UpdatePostProcessing();
 
-		// var cameraPos = Model.GetBoneTransform( "CameraJoint" );
-		// Log.Info( cameraPos.Position );
-
-		// var cameraBone = Model.Bones.GetBone( "CameraJoint" );
-
-
-
-		// Log.Info( Model.GetAttachment( "camera" ).Value.Position );
+		TimeSinceSnap += Time.Delta;
 	}
 
 	void UpdateAnimParameters()
@@ -155,8 +155,8 @@ public partial class Pawn : AnimatedEntity
 		SetAnimParameter( "speed", Velocity.Length );
 		SetAnimParameter( "jumping", !Controller.Grounded );
 		SetAnimParameter( "dashing", Controller.Dashing );
-		SetAnimParameter( "wallrunning", Controller.Wallrunning );
-		SetAnimParameter( "vaulting", (int) Controller.Vaulting );
+		SetAnimParameter( "wallrunning", (int)Controller.Wallrunning );
+		SetAnimParameter( "vaulting", (int)Controller.Vaulting );
 		SetAnimParameter( "climbing", Controller.Climbing );
 	}
 
@@ -181,69 +181,160 @@ public partial class Pawn : AnimatedEntity
 		ViewAngles = viewAngles.Normal;
 	}
 
-	bool IsThirdPerson { get; set; } = false;
-
-	private float cameraLerpTime = 0f;
 	public override void FrameSimulate( IClient cl )
 	{
 		SimulateRotation();
 
-		Camera.Rotation = ViewAngles.ToRotation();
-		Camera.FieldOfView = Screen.CreateVerticalFieldOfView( Game.Preferences.FieldOfView );
+		CameraUpdateRotation();
+		CameraUpdateFOV();
+		CameraUpdateTilt();
 
 		if ( Input.Pressed( "view" ) )
 		{
-			IsThirdPerson = !IsThirdPerson;
+			ToggleThirdPerson();
 		}
 
 		if ( IsThirdPerson )
 		{
-			Vector3 targetPos;	
-			var pos = Position + Vector3.Up * 64;
-			var rot = Camera.Rotation * Rotation.FromAxis( Vector3.Up, -16 );
-
-			float distance = 80.0f * Scale;
-			targetPos = pos + rot.Right * ((CollisionBounds.Mins.x + 50) * Scale);
-			targetPos += rot.Forward * -distance;
-
-			var tr = Trace.Ray( pos, targetPos )
-				.WithAnyTags( "solid" )
-				.Ignore( this )
-				.Radius( 8 )
-				.Run();
-			
-			Camera.FirstPersonViewer = null;
-			Camera.Position = tr.EndPosition;
+			UpdateCameraThirdPerson();
 		}
 		else
 		{
-			bool turningLeft = ViewAngles.yaw.NormalizeDegrees() > PreviousViewAngles.yaw.NormalizeDegrees();
-			float turnRate = PreviousViewAngles.ToRotation().Distance( ViewAngles.ToRotation() );
+			UpdateCameraFirstPerson();
+		}
+	}
 
-			if ( turnRate > CameraTiltDeadzone )
-				CameraTilt = CameraTilt.LerpTo( turningLeft ? -CameraTiltMax : CameraTiltMax, Time.Delta * CameraTiltMultiplier );
+	private void ToggleThirdPerson()
+	{
+		IsThirdPerson = !IsThirdPerson;
+	}
 
-			PreviousViewAngles = PreviousViewAngles.LerpTo(ViewAngles, Time.Delta * 50f );
+	private void UpdateCameraThirdPerson()
+	{
+		Vector3 targetPos;
+		var pos = Position + Vector3.Up * 64;
+		var rot = Camera.Rotation * Rotation.FromAxis( Vector3.Up, -16 );
 
-			Camera.Rotation = Rotation.From( ViewAngles.pitch, ViewAngles.yaw, ViewAngles.roll + CameraTilt );
-			Camera.FirstPersonViewer = this;
-			
-			Camera.Position = CameraHelper.Position + Rotation.Down * 3f + Rotation.Forward * 3f;
+		float distance = 80.0f * Scale;
+		targetPos = pos + rot.Right * ((CollisionBounds.Mins.x + 50) * Scale);
+		targetPos += rot.Forward * -distance;
 
+		var tr = Trace.Ray( pos, targetPos )
+			.WithAnyTags( "solid" )
+			.Ignore( this )
+			.Radius( 8 )
+			.Run();
+
+		Camera.FirstPersonViewer = null;
+		Camera.Position = tr.EndPosition;
+	}
+
+	private void UpdateCameraFirstPerson()
+	{
+		bool turningLeft = ViewAngles.yaw.NormalizeDegrees() > PreviousViewAngles.yaw.NormalizeDegrees();
+		float turnRate = PreviousViewAngles.ToRotation().Distance( ViewAngles.ToRotation() );
+
+		if ( turnRate > CameraTiltDeadzone )
+			CameraTilt = CameraTilt.LerpTo( turningLeft ? -CameraTiltMax : CameraTiltMax, Time.Delta * CameraTiltMultiplier );
+
+		PreviousViewAngles = PreviousViewAngles.LerpTo( ViewAngles, Time.Delta * 50f );
+
+		Camera.Rotation = Rotation.From( ViewAngles.pitch, ViewAngles.yaw, ViewAngles.roll + CameraTilt );
+		Camera.FirstPersonViewer = this;
+
+		Camera.Position = CameraHelper.Position + Rotation.Down * 3f + Rotation.Forward * 3f;
+
+		if ( TimeSinceSnap < 0.5f )
+		{
+			CameraRotateToNewPosition( 15f );
+		}
+		else
+		{
+			if ( Controller.Climbing )
+			{
+				LookTowardsWall();
+			}
+
+			if ( Controller.IsWallRunning() && Controller.TimeSinceWallrun < 0.25f )
+			{
+				LookTowardsMovement();
+			}
 		}
 
+		CheckForSnap();
+	}
+
+	private void LookTowardsSnap()
+	{
+		if ( Controller.IsWallRunning() )
+		{
+			CameraNewAngles = Controller.CurrentWall.Normal.EulerAngles;
+		}
+		else
+		{
+			CameraNewAngles = (ViewAngles.Forward * -1f).EulerAngles.WithPitch( 0 );
+		}
+	}
+
+	private void CheckForSnap()
+	{
+		if ( TimeSinceSnap < 0.5f )
+			return;
+
+		if ( Input.Pressed("Snap Turn 180 degrees") )
+		{
+			LookTowardsSnap();
+			TimeSinceSnap = 0f;
+		}
+	}
+
+	private void LookTowardsWall()
+	{
+		CameraNewAngles = (Controller.CurrentWall.Normal * -1f).EulerAngles.WithPitch(-40f);
+		CameraRotateToNewPosition( speed: 5f );
+	}
+
+	private void LookTowardsMovement()
+	{
+		CameraNewAngles = Controller.Entity.Velocity.WithZ(0).EulerAngles;
+		CameraRotateToNewPosition( speed: 15f );
+	}
+
+	private void CameraUpdateTilt()
+	{
 		if ( Controller.Wallrunning != 0 )
 		{
-			CameraTilt = CameraTilt.LerpTo( Controller.Wallrunning == 1 ? 10f : -10f, Time.Delta * CameraTiltMultiplier );
+			CameraTilt = CameraTilt.LerpTo( Controller.Wallrunning == WallRunSide.Left ? 10f : -10f, Time.Delta * CameraTiltMultiplier );
+			return;
 		}
-		else if ( Controller.TimeSinceDash < 0.1f )
+
+		if ( Controller.TimeSinceDash < 0.1f )
 		{
 			CameraTilt = CameraTilt.LerpTo( Controller.Dashing == 1 ? -10f : 10f, Time.Delta * CameraTiltMultiplier );
+			return;
 		}
-		else
-		{
-			CameraTilt = CameraTilt.LerpTo( 0, Time.Delta * CameraTiltMultiplier * 1.1f );
-		}
+
+		CameraTilt = CameraTilt.LerpTo( 0, Time.Delta * CameraTiltMultiplier * 1.1f );
+	}
+
+	private void CameraUpdateRotation()
+	{
+		CameraRotateToViewAngles();
+	}
+
+	private void CameraRotateToViewAngles()
+	{
+		Camera.Rotation = ViewAngles.ToRotation();
+	}
+
+	private void CameraRotateToNewPosition(float speed = 5f)
+	{
+		ViewAngles = ViewAngles.LerpTo( CameraNewAngles, speed * Time.Delta );
+	}
+
+	private void CameraUpdateFOV()
+	{
+		Camera.FieldOfView = Screen.CreateVerticalFieldOfView( Game.Preferences.FieldOfView );
 	}
 
 	public TraceResult TraceBBox( Vector3 start, Vector3 end, float liftFeet = 0.0f )
