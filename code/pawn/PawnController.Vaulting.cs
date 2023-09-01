@@ -151,6 +151,8 @@ public partial class PawnController
 		if ( debugMode )
 			DebugOverlay.Box( bounds: boxAboveWall, Color.Magenta );
 
+		StopClimbing();
+
 		return !traceBoxAboveWall.Hit;
 	}
 
