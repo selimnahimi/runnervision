@@ -76,7 +76,6 @@ public partial class PawnController
 
 	float GetForwardAngle()
 	{
-		ForwardDirection = Entity.Velocity.EulerAngles.ToRotation().Forward.WithZ( 0 );
 		var cameraDirection = GetCameraDirection();
 		var forwardAngle = ForwardDirection.Angle( cameraDirection );
 

@@ -155,6 +155,8 @@ public partial class PawnController : EntityComponent<Pawn>
 		UpdateClimbing();
 
 		ClampMaxSpeed();
+
+		ForwardDirection = GetVelocityRotation().Forward.WithZ( 0 );
 	}
 
 	[ConCmd.Server( "noclip" )]
