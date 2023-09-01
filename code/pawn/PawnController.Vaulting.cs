@@ -149,9 +149,7 @@ public partial class PawnController
 		).Run();
 
 		if ( debugMode )
-			DebugOverlay.Box( bounds: boxAboveWall, Color.Magenta );
-
-		StopClimbing();
+			DebugOverlay.Box( bounds: boxAboveWall, Color.Magenta, duration: showDebugTime );
 
 		return !traceBoxAboveWall.Hit;
 	}
@@ -177,6 +175,9 @@ public partial class PawnController
 		VaultTargetPos = groundPosition + Vector3.Up * 13f;
 		Vaulting = VaultType.OntoHigh;
 		vaultSpeed = 120f;
+
+		// TODO: move logic into PawnController.Climbing.cs
+		StopClimbing();
 	}
 
 	bool ShouldVaultOnto()
@@ -247,9 +248,9 @@ public partial class PawnController
 
 	BBox GetBoxAboveWall()
 	{
-		var offsetBottom = 75f;
-		var offsetTop = 155f;
-		var offsetForward = 20f;
+		var offsetBottom = 70f;
+		var offsetTop = 150f;
+		var offsetForward = 40f;
 
 		return new BBox(
 			mins: Vector3.Forward * +boxRadius + Vector3.Up * offsetBottom + Vector3.Left * boxRadius,
