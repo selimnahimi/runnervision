@@ -54,6 +54,9 @@ public partial class PawnController
 		if ( !traceFront.Hit )
 			return false;
 
+		if ( IsVaulting() )
+			return false;
+
 		return true;
 	}
 

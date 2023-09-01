@@ -64,7 +64,7 @@ public partial class PawnController : EntityComponent<Pawn>
 			return;
 		}
 
-		if ( Vaulting != VaultType.None )
+		if ( IsVaulting() )
 		{
 			// TODO: don't return here
 			ProgressVault();
@@ -74,106 +74,50 @@ public partial class PawnController : EntityComponent<Pawn>
 		TestAndFixStuck();
 		UpdateWallrunning();
 
-		var movement = Entity.InputDirection.Normal;
-		var angles = Entity.ViewAngles.WithPitch( 0 );
-		var moveVector = Rotation.From( angles ) * movement * CurrentMaxSpeed;
 		var groundEntity = CheckForGround();
+		var moveVector = GetMoveVector();
 
-		if ( moveVector.LengthSquared != 0 )
-		{
-			CurrentMaxSpeed = CurrentMaxSpeed.Approach( MaxSpeed, Time.Delta * 50f * SpeedGrowthRate );
-		}
-		else
-		{
-			CurrentMaxSpeed = CurrentMaxSpeed.Approach( StartingSpeed, Time.Delta * 50f * SpeedShrinkRate );
-		}
-
+		UpdateMaxSpeed( moveVector );
 		AdjustSharpTurn( moveVector );
 
 		if ( groundEntity.IsValid() )
 		{
 			if ( !Grounded )
 			{
-				// Landed on floor
-				Sound.FromWorld( "concretefootstepland", Entity.Position + Vector3.Down * 10f );
-				AddEvent( "grounded" );
-
-				Entity.Velocity = Entity.Velocity.WithZ( 0 );
-				Wallrunning = 0;
-				previousWallrunSide = 0;
-
-				parkouredSinceJumping = false;
-				parkouredBeforeLanding = false;
-
-				if ( Entity.Velocity.Length > 100f )
-				{
-					CurrentMaxSpeed += 500;
-				}
+				InitiateLandingOnFloor();
 			}
 
-			Entity.Velocity = Accelerate( Entity.Velocity, moveVector.Normal, moveVector.Length, CurrentMaxSpeed, Acceleration );
-			Entity.Velocity = ApplyFriction( Entity.Velocity, Friction );
+			DoMovement( moveVector );
 		}
 		else
 		{
-			Entity.Velocity += Vector3.Down * (IsWallRunning() ? Gravity * 0.60f : Gravity ) * Time.Delta;
+			DoFall();
 		}
 
 		if ( Input.Released( "jump" ) )
 		{
-			parkouredSinceJumping = false;
-			wallrunSinceJumping = false;
+			DisableParkourLock();
 		}
 
 		if ( Input.Pressed( "jump" ) )
 		{
 			if ( ShouldDash() )
 			{
-				if ( TimeSinceDash > 1.0f )
-				{
-					var isLeft = Input.Down( "left" );
-
-					Dashing = isLeft ? 1 : 2;
-
-					Entity.ApplyAbsoluteImpulse( (isLeft ? Entity.Rotation.Left : Entity.Rotation.Right) * 300f );
-					CurrentMaxSpeed += 200f;
-
-					TimeSinceDash = 0.0f;
-				}
+				InitiateDash();
 			}
 		}
 
-		// TODO: extract to function
-		ForwardDirection = Entity.Velocity.EulerAngles.ToRotation().Forward.WithZ( 0 );
-		var cameraDirection = Camera.Rotation.Forward.WithZ( 0 );
-		var forwardAngle = ForwardDirection.Angle( cameraDirection );
-
-		// Check angle from movement axis (max 90 degrees)
-		float dotProduct = Vector3.Dot( ForwardDirection, cameraDirection );
-		if ( dotProduct < 0 )
-		{
-			forwardAngle = 180 - forwardAngle;
-		}
 
 		if ( Input.Pressed( "jump" ))
 		{
 			if ( IsWallRunning() )
 			{
-				var forwardMultiplier = Math.Max(0.5f, forwardAngle / 90f);
-
-				var jumpVector = cameraDirection * 300f * forwardMultiplier + Entity.Rotation.Up * 300f;
-
-				Entity.Velocity *= 0.5f;
-
-				Entity.ApplyAbsoluteImpulse( jumpVector );
-
-				previousWallrunSide = Wallrunning;
-				Wallrunning = 0;
+				InitiateJumpOffWall();
 			}
 			
 			if ( !IsWallRunning() && !IsDashing() )
 			{
-				DoJump();
+				InitiateJump();
 			}
 		}
 
@@ -185,23 +129,8 @@ public partial class PawnController : EntityComponent<Pawn>
 				InitiateVault();
 		}
 
-		if ( TimeSinceDash > 0.5f )
-			Dashing = 0;
-
-		var mh = new MoveHelper( Entity.Position, Entity.Velocity );
-		mh.Trace = mh.Trace.Size( Entity.Hull ).Ignore( Entity );
-		
-		if ( mh.TryMoveWithStep( Time.Delta, StepSize ) > 0 )
-		{
-			if ( Grounded )
-			{
-				mh.Position = StayOnGround( mh.Position );
-			}
-			Entity.Position = mh.Position;
-			Entity.Velocity = mh.Velocity;
-		}
-
-		Entity.GroundEntity = groundEntity;
+		UpdateDash();
+		UpdateMoveHelper(groundEntity);
 
 		if ( UnlimitedSprint )
 			CurrentMaxSpeed = MaxSpeed;
@@ -214,7 +143,7 @@ public partial class PawnController : EntityComponent<Pawn>
 			DebugOverlay.ScreenText( Vaulting.ToString(), 1 );
 		}
 
-		FootstepWizard();
+		UpdateFootsteps();
 		IncreaseDeltaTime();
 		UpdateClimbing();
 
