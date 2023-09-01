@@ -5,6 +5,8 @@ This is a fan remake of the [Mirror's Edge](https://store.steampowered.com/app/1
 
 *! Keep in mind that this is currently heavily in development. !*
 
+![gameplay](https://github.com/selimnahimi/runnervision/assets/21970287/28dca12b-970e-4bce-b98a-666612978071)
+
 ## What's included?
 - A close from-scratch remake of the Mirror's Edge movement
 - Custom UI resembling the style of the original game
