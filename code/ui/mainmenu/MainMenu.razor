@@ -13,19 +13,26 @@
 
 @code
 {
-    void PlayMusic()
+    public override void Tick()
     {
-        Audio.Play("runnervision_menumusic");
+        base.Tick();
+        UpdateMusic();
     }
 
-    protected override void OnAfterTreeRender(bool firstTime)
+    SoundHandle MenuMusic;
+
+    void UpdateMusic()
     {
-        base.OnAfterTreeRender(firstTime);
-
-        if (!firstTime)
+        if (Game.InGame)
+        {
+            MenuMusic.Stop(true);
             return;
+        }
 
-        PlayMusic();
+        if (!MenuMusic.IsPlaying)
+        {
+            MenuMusic = Audio.Play("runnervision_menumusic");
+        }
     }
 
     public MainMenu()
