@@ -244,41 +244,47 @@ public partial class Pawn : AnimatedEntity
 
 		Camera.Position = CameraHelper.Position + Rotation.Down * 3f + Rotation.Forward * 3f;
 
-		if ( Controller.Climbing )
-		{
-			LookTowardsWall();
-		}
-
-		if ( Controller.IsWallRunning() && Controller.TimeSinceWallrun < 0.25f )
-		{
-			LookTowardsMovement();
-		}
-
 		if ( TimeSinceSnap < 0.5f )
 		{
-			CameraRotateToNewPosition(15f);
+			CameraRotateToNewPosition( 15f );
+		}
+		else
+		{
+			if ( Controller.Climbing )
+			{
+				LookTowardsWall();
+			}
+
+			if ( Controller.IsWallRunning() && Controller.TimeSinceWallrun < 0.25f )
+			{
+				LookTowardsMovement();
+			}
 		}
 
 		CheckForSnap();
 	}
 
+	private void LookTowardsSnap()
+	{
+		if ( Controller.IsWallRunning() )
+		{
+			CameraNewAngles = Controller.CurrentWall.Normal.EulerAngles;
+		}
+		else
+		{
+			CameraNewAngles = (ViewAngles.Forward * -1f).EulerAngles.WithPitch( 0 );
+		}
+	}
+
 	private void CheckForSnap()
 	{
-		if ( TimeSinceSnap < 1f )
+		if ( TimeSinceSnap < 0.5f )
 			return;
 
 		if ( Input.Pressed("Snap Turn 180 degrees") )
 		{
+			LookTowardsSnap();
 			TimeSinceSnap = 0f;
-
-			if ( Controller.IsWallRunning() )
-			{
-				CameraNewAngles = Controller.CurrentWall.Normal.EulerAngles;
-			}
-			else
-			{
-				CameraNewAngles = (ViewAngles.Forward * -1f).EulerAngles.WithPitch( 0 );
-			}
 		}
 	}
 
