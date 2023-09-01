@@ -267,7 +267,7 @@ public partial class Pawn : AnimatedEntity
 		if ( TimeSinceSnap < 1f )
 			return;
 
-		if ( Input.Pressed("run") )
+		if ( Input.Pressed("Snap Turn 180 degrees") )
 		{
 			TimeSinceSnap = 0f;
 
