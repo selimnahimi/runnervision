@@ -21,24 +21,6 @@ public partial class PawnController
 		return true;
 	}
 
-	void UpdateMoveHelper(Entity groundEntity)
-	{
-		var mh = new MoveHelper( Entity.Position, Entity.Velocity );
-		mh.Trace = mh.Trace.Size( Entity.Hull ).Ignore( Entity );
-
-		if ( mh.TryMoveWithStep( Time.Delta, StepSize ) > 0 )
-		{
-			if ( Grounded )
-			{
-				mh.Position = StayOnGround( mh.Position );
-			}
-			Entity.Position = mh.Position;
-			Entity.Velocity = mh.Velocity;
-		}
-
-		Entity.GroundEntity = groundEntity;
-	}
-
 	Vector3 GetMoveVector()
 	{
 		var movement = Entity.InputDirection.Normal;
@@ -109,12 +91,6 @@ public partial class PawnController
 	{
 		parkouredSinceJumping = false;
 		wallrunSinceJumping = false;
-	}
-
-	void DoMovement( Vector3 moveVector )
-	{
-		Entity.Velocity = Accelerate( Entity.Velocity, moveVector.Normal, moveVector.Length, CurrentMaxSpeed, Acceleration );
-		Entity.Velocity = ApplyFriction( Entity.Velocity, Friction );
 	}
 
 	void DoFall()
@@ -313,6 +289,12 @@ public partial class PawnController
 		return input;
 	}
 
+	void DoMovement( Vector3 moveVector )
+	{
+		Entity.Velocity = Accelerate( Entity.Velocity, moveVector.Normal, moveVector.Length, CurrentMaxSpeed, Acceleration );
+		Entity.Velocity = ApplyFriction( Entity.Velocity, Friction );
+	}
+
 	Vector3 Accelerate( Vector3 input, Vector3 wishdir, float wishspeed, float speedLimit, float acceleration )
 	{
 		if ( speedLimit > 0 && wishspeed > speedLimit )
@@ -328,6 +310,24 @@ public partial class PawnController
 		AddEvent( jumpType );
 
 		return input + Vector3.Up * JumpSpeed;
+	}
+
+	void UpdateMoveHelper( Entity groundEntity )
+	{
+		var mh = new MoveHelper( Entity.Position, Entity.Velocity );
+		mh.Trace = mh.Trace.Size( Entity.Hull ).Ignore( Entity );
+
+		if ( mh.TryMoveWithStep( Time.Delta, StepSize ) > 0 )
+		{
+			if ( Grounded )
+			{
+				mh.Position = StayOnGround( mh.Position );
+			}
+			Entity.Position = mh.Position;
+			Entity.Velocity = mh.Velocity;
+		}
+
+		Entity.GroundEntity = groundEntity;
 	}
 
 	Vector3 StayOnGround( Vector3 position )
