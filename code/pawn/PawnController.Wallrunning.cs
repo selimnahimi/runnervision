@@ -54,6 +54,12 @@ public partial class PawnController
 		if ( traceWall.side == WallRunSide.None )
 			return false;
 
+		if ( IsDashing() )
+			return false;
+
+		if ( Grounded )
+			return false;
+
 		if ( Wallrunning == WallRunSide.Left && traceWall.side != WallRunSide.Left )
 			return false;
 
@@ -91,6 +97,7 @@ public partial class PawnController
 				Entity.Velocity = Entity.Velocity.WithZ( velocityZ );
 			}
 
+			CurrentWall = traceWall.traceResult;
 			Wallrunning = traceWall.side;
 			previousWallrunSide = traceWall.side;
 
