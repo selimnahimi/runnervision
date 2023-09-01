@@ -80,7 +80,6 @@ public partial class PawnController : EntityComponent<Pawn>
 			return;
 		}
 
-		TestAndFixStuck();
 		UpdateWallrunning();
 
 		var groundEntity = CheckForGround();
@@ -88,6 +87,7 @@ public partial class PawnController : EntityComponent<Pawn>
 
 		UpdateMaxSpeed( moveVector );
 		AdjustSharpTurn( moveVector );
+		UpdateMoveHelper( groundEntity );
 
 		if ( groundEntity.IsValid() )
 		{
@@ -139,7 +139,8 @@ public partial class PawnController : EntityComponent<Pawn>
 		}
 
 		UpdateDash();
-		UpdateMoveHelper(groundEntity);
+
+		TestAndFixStuck( );
 
 		if ( UnlimitedSprint )
 			CurrentMaxSpeed = MaxSpeed;
