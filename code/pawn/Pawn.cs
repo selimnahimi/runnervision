@@ -271,17 +271,13 @@ public partial class Pawn : AnimatedEntity
 		{
 			TimeSinceSnap = 0f;
 
-			switch (Controller.Wallrunning)
+			if ( Controller.IsWallRunning() )
 			{
-				case WallRunSide.Left:
-					CameraNewAngles = (ViewAngles.ToRotation().Right).EulerAngles.WithPitch( 0 );
-					break;
-				case WallRunSide.Right:
-					CameraNewAngles = (ViewAngles.ToRotation().Left).EulerAngles.WithPitch( 0 );
-					break;
-				default:
-					CameraNewAngles = (ViewAngles.Forward * -1f).EulerAngles.WithPitch( 0 );
-					break;
+				CameraNewAngles = Controller.CurrentWall.Normal.EulerAngles;
+			}
+			else
+			{
+				CameraNewAngles = (ViewAngles.Forward * -1f).EulerAngles.WithPitch( 0 );
 			}
 		}
 	}
