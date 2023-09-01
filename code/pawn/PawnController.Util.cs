@@ -5,7 +5,12 @@ namespace RunnerVision;
 
 public partial class PawnController
 {
-	bool AngleWithinRange(Vector3 directionVector1, Vector3 directionVector2, float minAngle, float maxAngle = 360f)
+	Rotation GetVelocityRotation()
+	{
+		return Entity.Velocity.EulerAngles.ToRotation();
+	}
+
+	bool AngleWithinRange(Vector3 directionVector1, Vector3 directionVector2, float minAngle = 0f, float maxAngle = 360f)
 	{
 		if ( directionVector1.Normal.Angle( directionVector2 ) > maxAngle )
 			return false;

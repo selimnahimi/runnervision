@@ -52,7 +52,7 @@ public partial class PawnController
 		var cameraDirection = GetCameraDirection();
 
 		// Don't climb when facing wall at a wide angle
-		if ( !AngleWithinRange( cameraDirection, traceFront.Normal, 150f ) )
+		if ( !AngleWithinRange( cameraDirection, traceFront.Normal, minAngle: 150f ) )
 			return false;
 
 		BBox boxInfrontOfWall = GetBoxInfrontOfWall( traceFront );

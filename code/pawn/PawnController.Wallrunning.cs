@@ -63,6 +63,9 @@ public partial class PawnController
 		if ( Entity.Velocity.WithZ( 0 ).Length < 150f )
 			return false;
 
+		if ( !AngleWithinRange( GetVelocityRotation().Forward, traceWall.traceResult.Normal, maxAngle: 140f ) )
+			return false;
+
 		return true;
 	}
 
@@ -98,7 +101,7 @@ public partial class PawnController
 
 	WallRunTrace CheckForWall( bool behind = false )
 	{
-		var velocityRotation = Entity.Velocity.EulerAngles.ToRotation();
+		var velocityRotation = GetVelocityRotation();
 
 		var from = Entity.Position + Vector3.Up * 50f;
 		var toLeft = Entity.Position + Vector3.Up * 50f + velocityRotation.Left * 30f + velocityRotation.Forward * (behind ? -15f : 15f);
