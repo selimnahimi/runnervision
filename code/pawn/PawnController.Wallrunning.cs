@@ -42,6 +42,8 @@ public partial class PawnController
 			wallrunSinceJumping = false;
 			previousWallrunSide = 0;
 		}
+
+		CurrentWall = traceWall.traceResult;
 	}
 
 	public bool IsWallRunning()
@@ -107,7 +109,6 @@ public partial class PawnController
 			Entity.Velocity = Entity.Velocity.WithZ( velocityZ );
 		}
 
-		CurrentWall = traceWall.traceResult;
 		Wallrunning = traceWall.side;
 		previousWallrunSide = traceWall.side;
 
