@@ -1,5 +1,6 @@
 ﻿using Sandbox;
 using System.ComponentModel;
+using static RunnerVision.PawnController;
 
 namespace RunnerVision;
 
@@ -152,7 +153,7 @@ public partial class Pawn : AnimatedEntity
 		SetAnimParameter( "speed", Velocity.Length );
 		SetAnimParameter( "jumping", !Controller.Grounded );
 		SetAnimParameter( "dashing", Controller.Dashing );
-		SetAnimParameter( "wallrunning", Controller.Wallrunning );
+		SetAnimParameter( "wallrunning", (int)Controller.Wallrunning );
 		SetAnimParameter( "vaulting", (int)Controller.Vaulting );
 		SetAnimParameter( "climbing", Controller.Climbing );
 	}
@@ -246,7 +247,7 @@ public partial class Pawn : AnimatedEntity
 	{
 		if ( Controller.Wallrunning != 0 )
 		{
-			CameraTilt = CameraTilt.LerpTo( Controller.Wallrunning == 1 ? 10f : -10f, Time.Delta * CameraTiltMultiplier );
+			CameraTilt = CameraTilt.LerpTo( Controller.Wallrunning == WallRunSide.Left ? 10f : -10f, Time.Delta * CameraTiltMultiplier );
 			return;
 		}
 

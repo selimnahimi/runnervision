@@ -20,7 +20,7 @@ public partial class PawnController : EntityComponent<Pawn>
 	public float StartFootSoundVelocity => 300f;
 	public int MaxClimbAmount => 4;
 	public bool Climbing { get; set; }
-	public int Wallrunning { get; set; }
+	public WallRunSide Wallrunning { get; set; }
 	public int Dashing { get; set; }
 	public bool Noclipping { get; set; }
 	public bool UnlimitedSprint { get; set; }
@@ -41,7 +41,7 @@ public partial class PawnController : EntityComponent<Pawn>
 	private bool debugMode => false;
 	private bool parkouredSinceJumping = false;
 	private bool wallrunSinceJumping = false;
-	private int previousWallrunSide = 0;
+	private WallRunSide previousWallrunSide = WallRunSide.None;
 	private bool parkouredBeforeLanding = false;
 
 	HashSet<string> ControllerEvents = new( StringComparer.OrdinalIgnoreCase );
@@ -123,7 +123,7 @@ public partial class PawnController : EntityComponent<Pawn>
 
 		if ( Input.Down( "jump" ) && !parkouredSinceJumping )
 		{
-			bool successfulWallrun = TryWallrunning( 1 ) || TryWallrunning( 2 );
+			bool successfulWallrun = TryWallrunning( );
 
 			if ( !successfulWallrun )
 				InitiateVault();
