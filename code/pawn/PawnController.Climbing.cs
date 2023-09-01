@@ -33,11 +33,45 @@ public partial class PawnController
 			return;
 		}
 
-		if ( !IsClimbing() )
+		if ( ShouldInitiateClimb( traceFront ) )
 			InitiateClimbing( traceFront );
 
-		DoClimbing();
-		ApproachClimbTarget();
+		if ( IsClimbing() )
+		{
+			DoClimbing();
+		}
+	}
+
+	bool ShouldInitiateClimb( TraceResult traceFront )
+	{
+		return !IsClimbing() && CanClimb( traceFront );
+	}
+
+	bool CanClimb( TraceResult traceFront )
+	{
+		BBox box = GetBoxInfrontOfWall( traceFront );
+
+		if ( debugMode )
+			DebugOverlay.Box(
+				bounds: box,
+				color: Color.Orange,
+				duration: showDebugTime
+			);
+
+		TraceResult traceBoxInfrontOfWall = Trace.Box(
+			bbox: box,
+			from: 0, to: 0
+		).Run();
+
+		return !traceBoxInfrontOfWall.Hit;
+	}
+
+	BBox GetBoxInfrontOfWall( TraceResult traceFront )
+	{
+		return new BBox(
+			mins: Vector3.Forward * +boxRadius + Vector3.Up * 45f + Vector3.Left * boxRadius,
+			maxs: Vector3.Forward * -boxRadius + Vector3.Up * 120f + Vector3.Right * boxRadius
+		).Translate( traceFront.HitPosition + Vector3.Down * 80f + traceFront.Normal * (boxRadius + 10f) );
 	}
 
 	bool ShouldClimb( TraceResult traceFront )
@@ -87,6 +121,8 @@ public partial class PawnController
 			TimeSinceClimbing = 0f;
 			CurrentClimbAmount++;
 		}
+
+		ApproachClimbTarget();
 	}
 
 	bool IsClimbing()
