@@ -123,11 +123,12 @@ public partial class PawnController
 
 	void DoClimbing()
 	{
-		Entity.Velocity = Entity.Velocity.WithX( 0 ).WithY( 0 );
+		Entity.Velocity = Entity.Velocity.LerpTo(Entity.Velocity.WithX( 0 ).WithY( 0 ), 10f * Time.Delta);
 
 		if ( TimeSinceClimbing > 0.15f )
 		{
-			Entity.ApplyAbsoluteImpulse( Entity.Rotation.Up * 100f );
+			var addHorizontalSpeed = Entity.Velocity.WithZ( 0 ).Length;
+			Entity.ApplyAbsoluteImpulse( Entity.Rotation.Up * 100f + Entity.Rotation.Up * addHorizontalSpeed );
 			TimeSinceClimbing = 0f;
 			CurrentClimbAmount++;
 		}
