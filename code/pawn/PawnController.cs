@@ -145,7 +145,7 @@ public partial class PawnController : EntityComponent<Pawn>
 
 		UpdateDash();
 
-		TestAndFixStuck( );
+		// TestAndFixStuck( ); // This causes the slope glitch
 
 		if ( UnlimitedSprint )
 			CurrentMaxSpeed = MaxSpeed;
