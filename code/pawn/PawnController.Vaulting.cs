@@ -287,8 +287,8 @@ public partial class PawnController
 
 		// Check if there's space to vault over
 		var topBoxSmall = new BBox(
-			mins: Vector3.Forward * +boxRadius * 0.70f + Vector3.Up * 50f + Vector3.Left * boxRadius * 0.70f,
-			maxs: Vector3.Forward * -boxRadius * 0.70f + Vector3.Up * 80f + Vector3.Right * boxRadius * 0.70f
+			mins: Vector3.Forward * +boxRadius + Vector3.Up * 50f + Vector3.Left * boxRadius,
+			maxs: Vector3.Forward * -boxRadius + Vector3.Up * 80f + Vector3.Right * boxRadius
 		).Translate( Entity.Position + Entity.Rotation.Forward * rayDistance );
 
 		var traceBoxSmallAboveObstacle = Trace.Box(
