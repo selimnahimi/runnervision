@@ -6,6 +6,9 @@ namespace RunnerVision;
 
 public partial class PawnController : EntityComponent<Pawn>
 {
+	[Net]
+	public bool Noclipping { get; set; }
+
 	public int StepSize => 26;
 	public int GroundAngle => 200;
 	public int JumpSpeed => 300;
@@ -22,7 +25,6 @@ public partial class PawnController : EntityComponent<Pawn>
 	public bool Climbing { get; set; }
 	public WallRunSide Wallrunning { get; set; }
 	public int Dashing { get; set; }
-	public bool Noclipping { get; set; }
 	public bool UnlimitedSprint { get; set; }
 	public VaultType Vaulting { get; set; }
 	public float TimeSinceDash { get; set; }
