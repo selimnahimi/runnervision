@@ -1,6 +1,5 @@
 
-MainMenu
-{
+MainMenu {
     background-color: #262934;
     padding: 128px 128px;
     opacity: 1;
@@ -10,107 +9,132 @@ MainMenu
     height: 100%;
     position: absolute;
     transition: all 0.3s ease-out;
-    color: rgba( white, 0.8 );
+    color: rgba( white, 0.95 );
+    font-weight: 600;
 
-    .background
-    {
+    .game-description {
+        background-color: rgba(150, 0, 0, 0.95);
+        position: absolute;
+        right: 100px;
+        width: 600px;
+        height: 100%;
+        color: white;
+        padding: 50px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+
+        p {
+            padding-bottom: 5px;
+            border-bottom: 1px solid white;
+            font-weight: 200;
+        }
+    }
+
+    .background {
         position: absolute;
         width: 100%;
         height: 100%;
     }
 
-    &:intro
-    {
+    &:intro {
         opacity: 0;
         transform: scaleX( 1.1 );
     }
 
-    &.ingame
-    {
+    &.ingame {
         background-color: #262934ee;
         backdrop-filter: blur(10px);
 
-        .background
-        {
+        .background {
             opacity: 0;
         }
     }
 
-    .scroll
-    {
+    .scroll {
         flex-direction: column;
         max-height: 386px;
         overflow: scroll;
         gap: 50px;
     }
 
-    .spacer
-    {
+    .spacer {
         height: 1px;
         background-image: linear-gradient( to right, rgba( white, 0.4 ), rgba( white, 0 ) );
         width: 512px;
         margin: 16px 0px;
     }
 
-    .game-title
-    {
+    .game-title {
         font-family: Roboto Condensed;
         font-weight: 700;
         font-size: 70px;
-        color: rgba( white, 1 );
+        color: rgba( white, 0.95 );
         padding-bottom: 64px;
+        margin-left: 20px;
     }
 
-    .col
-    {
+    .col {
         flex-direction: column;
         gap: 16px;
     }
 
-    .controls
-    {
+    .controls {
         flex-direction: column;
-        gap: 50px;
         align-items: flex-start;
         text-transform: uppercase;
+        font-style: italic;
 
-        a, .button
-        {
-            background-color: white;
+        a, .button, .button-back {
+            background-color: transparent;
             font-family: Roboto;
+            font-size: 50px;
             color: black;
-            padding: 10px 70px;
+            padding: 10px 20px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            width: 100%;
+            transition: all 0.1s;
+            color: white;
 
-            &:hover
-            {
+            &:hover {
+                background-color: rgba(white, 0.75);
                 color: rgba( black, 1 );
                 font-weight: 900;
-                sound-in: ui.button.over;
                 cursor: pointer;
+                text-shadow: 2px 2px black;
             }
 
-            &:active
-            {
-                sound-in: ui.button.press;
+            &:active {
             }
         }
 
-        .span
-        {
-            gap: 128px;
+        .button:active {
+            sound-in: runnervision_menuclick;
+        }
+
+        .button-back:active {
+            sound-in: runnervision_menuback;
+        }
+
+        .span {
+            flex-direction: column;
         }
     }
 
-    .navigator-canvas
-    {
+    .navigator-canvas {
+        position: absolute;
+        background-color: rgba(150, 0, 0, 0.95);
         flex-direction: column;
         height: 100%;
+        width: 1000px;
+        left: 100px;
         flex-grow: 1;
         flex-shrink: 0;
     }
 
-    .navigator-body
-    {
+    .navigator-body {
         position: absolute;
         left: 0;
         right: 0;
@@ -118,20 +142,29 @@ MainMenu
         top: 0;
         flex-direction: column;
         justify-content: center;
-        transition: opacity 0.15s ease-out;
 
-        &.hidden
-        {
+        &.hidden {
             opacity: 0;
         }
     }
 }
 
-FormGroup
-{
+FormGroup {
     flex-direction: column;
     min-width: 300px;
-    gap:16px;
+}
+
+FormGroup Label {
+    padding: 0 20px;
+}
+
+FormGroup .button label {
+    padding: 0;
+}
+
+SliderControl {
+    max-width: 800px;
+    padding: 10px 20px;
 }
 
 SlimPackageCard

@@ -5,8 +5,6 @@
 @using Sandbox.UI;
 
 <root>
-    
-
     <div class="game-title">
         @Game.Menu.Package.Title
     </div>
@@ -18,9 +16,9 @@
         }
         else
         {
-            <a class="button" @onclick=@PlayClick href="/setup">New Game</a>
+            <a class="button" href="/setup">New Game</a>
 
-            <a class="button" @onclick=@PlayClick href="/lobby/list">Lobbies</a>
+            <a class="button" href="/lobby/list">Lobbies</a>
 
             @if ( Game.Menu.Package.SupportsSavedGames && Game.Menu.SavedGames.Any())
             {
@@ -34,11 +32,6 @@
 
 @code
 {
-    void PlayClick()
-    {
-        Audio.Play("runnervision_menuclick");
-    }
-
     void LeaveGame()
     {
         Game.Menu.LeaveServer( "Leaving" );
