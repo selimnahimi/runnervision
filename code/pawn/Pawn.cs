@@ -296,7 +296,21 @@ public partial class Pawn : AnimatedEntity
 
 	private void LookTowardsMovement()
 	{
-		CameraNewAngles = Controller.Entity.Velocity.WithZ(0).EulerAngles;
+		if ( !Controller.CurrentWall.Hit )
+			return;
+
+		var wallNormalRotation = Controller.CurrentWall.Normal.EulerAngles.ToRotation();
+
+		switch ( Controller.Wallrunning )
+		{
+			case WallRunSide.Left:
+				CameraNewAngles = wallNormalRotation.Left.EulerAngles;
+				break;
+			case WallRunSide.Right:
+				CameraNewAngles = wallNormalRotation.Right.EulerAngles;
+				break;
+		}
+
 		CameraRotateToNewPosition( speed: 15f );
 	}
 
