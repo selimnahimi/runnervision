@@ -255,7 +255,7 @@ public partial class Pawn : AnimatedEntity
 				LookTowardsWall();
 			}
 
-			if ( Controller.IsWallRunning() && Controller.TimeSinceWallrun < 0.25f )
+			if ( Controller.IsWallRunning() )
 			{
 				LookTowardsMovement();
 			}
@@ -299,6 +299,12 @@ public partial class Pawn : AnimatedEntity
 		if ( !Controller.CurrentWall.Hit )
 			return;
 
+		if ( Controller.TimeSinceWallrun > 0.25f )
+			return;
+
+		if ( Controller.TimeSinceWallrun < 0.05f )
+			return;
+
 		var wallNormalRotation = Controller.CurrentWall.Normal.EulerAngles.ToRotation();
 
 		switch ( Controller.Wallrunning )
@@ -309,6 +315,8 @@ public partial class Pawn : AnimatedEntity
 			case WallRunSide.Right:
 				CameraNewAngles = wallNormalRotation.Right.EulerAngles;
 				break;
+			default:
+				return;
 		}
 
 		CameraRotateToNewPosition( speed: 15f );
