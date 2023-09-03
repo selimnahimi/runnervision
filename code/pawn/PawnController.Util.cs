@@ -104,7 +104,6 @@ public partial class PawnController
 		Sound.FromWorld( "concretefootstepland", Entity.Position + Vector3.Down * 10f );
 		AddEvent( "grounded" );
 
-		Entity.Velocity = Entity.Velocity.WithZ( 0 );
 		Wallrunning = 0;
 		previousWallrunSide = 0;
 

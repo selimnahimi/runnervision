@@ -10,7 +10,7 @@ public partial class PawnController : EntityComponent<Pawn>
 	public bool Noclipping { get; set; }
 
 	public int StepSize => 26;
-	public int GroundAngle => 200;
+	public int GroundAngle => 50;
 	public int JumpSpeed => 300;
 	public float Gravity => 800f;
 	public float StartingSpeed => 1000f;
@@ -61,12 +61,13 @@ public partial class PawnController : EntityComponent<Pawn>
 	{
 		ControllerEvents.Clear();
 
-		DebugOverlay.ScreenText( "Climbing: " + IsClimbing().ToString(), line: 0 );
-		DebugOverlay.ScreenText( "Wallrunning: " + Wallrunning.ToString(), line: 1 );
-		DebugOverlay.ScreenText( "Vaulting: " + Vaulting.ToString(), line: 2 );
-		DebugOverlay.ScreenText( "Current Speed: " + ((int)Entity.Velocity.Length).ToString(), line: 3 );
-		DebugOverlay.ScreenText( "Current Accel: " + CurrentMaxSpeed.ToString(), line: 4 );
-		DebugOverlay.ScreenText( "Max Accel: " + MaxSpeed.ToString(), line: 5 );
+		DebugOverlay.ScreenText( "Climbing: " + IsClimbing().ToString(), line: 5 );
+		DebugOverlay.ScreenText( "Wallrunning: " + Wallrunning.ToString(), line: 6 );
+		DebugOverlay.ScreenText( "Vaulting: " + Vaulting.ToString(), line: 7 );
+		DebugOverlay.ScreenText( "Grounded: " + Grounded.ToString(), line: 8 );
+		DebugOverlay.ScreenText( "Current Speed: " + ((int)Entity.Velocity.Length).ToString(), line: 9 );
+		DebugOverlay.ScreenText( "Current Accel: " + CurrentMaxSpeed.ToString(), line: 10 );
+		DebugOverlay.ScreenText( "Max Accel: " + MaxSpeed.ToString(), line: 11 );
 
 		if ( Noclipping )
 		{
@@ -96,7 +97,6 @@ public partial class PawnController : EntityComponent<Pawn>
 			{
 				InitiateLandingOnFloor();
 			}
-
 		}
 
 		UpdateMoveHelper( groundEntity );
