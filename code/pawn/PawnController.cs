@@ -10,7 +10,7 @@ public partial class PawnController : EntityComponent<Pawn>
 	public bool Noclipping { get; set; }
 
 	public int StepSize => 26;
-	public int GroundAngle => 200;
+	public int GroundAngle => 50;
 	public int JumpSpeed => 300;
 	public float Gravity => 800f;
 	public float StartingSpeed => 1000f;
