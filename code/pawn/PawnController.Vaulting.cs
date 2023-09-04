@@ -122,11 +122,7 @@ public partial class PawnController
 
 		bool successfulVault = false;
 
-		if ( ShouldVaultOntoHigh( boxAboveWall ) )
-		{
-			successfulVault = TryVaultOntoHigh( boxAboveWall );
-		}
-		else if ( ShouldVaultOver( boxBehindObstacle, distanceBehindObstacle ) )
+		if ( ShouldVaultOver( boxBehindObstacle, distanceBehindObstacle ) )
 		{
 			successfulVault = TryVaultOver( rayDistance, boxBehindObstacle );
 		}
@@ -134,13 +130,17 @@ public partial class PawnController
 		{
 			successfulVault = TryVaultOnto( rayDistance );
 		}
+		else if ( ShouldVaultOntoHigh( boxAboveWall ) )
+		{
+			successfulVault = TryVaultOntoHigh( boxAboveWall );
+		}
 
 		return successfulVault;
 	}
 
 	bool ShouldVaultOntoHigh( BBox boxAboveWall )
 	{
-		if ( !IsClimbing() )
+		if ( Grounded )
 			return false;
 
 		var traceBoxAboveWall = Trace.Box(
@@ -182,6 +182,9 @@ public partial class PawnController
 
 	bool ShouldVaultOnto()
 	{
+		if ( IsClimbing() )
+			return false;
+
 		return true;
 	}
 
