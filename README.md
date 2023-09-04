@@ -14,9 +14,16 @@ This is a fan remake of the [Mirror's Edge](https://store.steampowered.com/app/1
 ## Roadmap
 Check out the [GitHub Project](https://github.com/users/selimnahimi/projects/3/views/1) for a detailed view of current development.
 
-## Contributing
-Currently there is no defined method of contribution, but issues/pull requests are welcome.
+## Feature requests, bug reports
+For feature requests or bug reports, please create an Issue, and use the appropriate template.
 
-Clone the `dev-preview` branch, and import it as a game inside the S&box devtool GUI.
+## Contributing
+For contribution, please:
+1. Create Issue(s) if they don't already exist, then
+2. Implement your contribution(s), then
+3. Create a Pull Request mentioning the Issue(s)
 
 Please keep in mind that this project is under heavy development, and will have a lot of issues that are in the process of being fixed. Expect daily updates.
+
+## Other feedback
+For general feedback or conversation, please visit the [Discussions page](https://github.com/selimnahimi/runnervision/discussions)!
