@@ -185,6 +185,9 @@ public partial class PawnController
 		if ( IsClimbing() )
 			return false;
 
+		if ( IsFalling() )
+			return false;
+
 		return true;
 	}
 

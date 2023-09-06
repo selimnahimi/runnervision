@@ -142,4 +142,9 @@ public partial class PawnController
 
 		return WallRunTrace.None;
 	}
+
+	public bool IsFalling()
+	{
+		return Entity.Velocity.z < 0f;
+	}
 }
