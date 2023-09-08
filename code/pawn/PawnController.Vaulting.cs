@@ -47,7 +47,7 @@ public partial class PawnController
 			t: bezierCounter
 		);
 
-		bezierCounter += (vaultSpeed / 100) * Time.Delta;
+		bezierCounter += (vaultSpeed / 85) * Time.Delta;
 
 		Entity.Position = Entity.Position.LerpTo( pos, Time.Delta * 50f );
 
