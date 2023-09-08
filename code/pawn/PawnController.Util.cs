@@ -307,7 +307,7 @@ public partial class PawnController
 	Vector3 ApplyJump( Vector3 input, string jumpType )
 	{
 		AddEvent( jumpType );
-		return input + Vector3.Up * JumpSpeed;
+		return input.WithZ(0) + Vector3.Up * JumpSpeed;
 	}
 
 	void UpdateMoveHelper( Entity groundEntity )
