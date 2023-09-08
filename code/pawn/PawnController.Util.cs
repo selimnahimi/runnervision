@@ -263,12 +263,12 @@ public partial class PawnController
 		return trace.Entity;
 	}
 
-	Vector3 ApplyFriction( Vector3 input, float frictionAmount )
+	Vector3 ApplyFriction( Vector3 velocity, float frictionAmount )
 	{
 		float StopSpeed = 100.0f;
 
-		var speed = input.Length;
-		if ( speed < 0.1f ) return input;
+		var speed = velocity.Length;
+		if ( speed < 0.1f ) return velocity;
 
 		// Bleed off some speed, but if we have less than the bleed
 		// threshold, bleed the threshold amount.
@@ -280,12 +280,12 @@ public partial class PawnController
 		// scale the velocity
 		float newspeed = speed - drop;
 		if ( newspeed < 0 ) newspeed = 0;
-		if ( newspeed == speed ) return input;
+		if ( newspeed == speed ) return velocity;
 
 		newspeed /= speed;
-		input *= newspeed;
+		velocity *= newspeed;
 
-		return input;
+		return velocity;
 	}
 
 	void DoMovement( Vector3 moveVector )
@@ -294,20 +294,20 @@ public partial class PawnController
 		Entity.Velocity = ApplyFriction( Entity.Velocity, Friction );
 	}
 
-	Vector3 Accelerate( Vector3 input, Vector3 wishdir, float wishspeed, float speedLimit, float acceleration )
+	Vector3 Accelerate( Vector3 velocity, Vector3 wishdir, float wishspeed, float speedLimit, float acceleration )
 	{
 		if ( speedLimit > 0 && wishspeed > speedLimit )
 			wishspeed = speedLimit;
 
-		input = input.LerpTo( wishdir * wishspeed, Time.Delta * 45f * acceleration );
+		velocity = velocity.LerpTo( wishdir * wishspeed, Time.Delta * 45f * acceleration );
 
-		return input;
+		return velocity;
 	}
 
-	Vector3 ApplyJump( Vector3 input, string jumpType )
+	Vector3 ApplyJump( Vector3 velocity, string jumpType )
 	{
 		AddEvent( jumpType );
-		return input.WithZ(0) + Vector3.Up * JumpSpeed;
+		return velocity.WithZ(0) + Vector3.Up * JumpSpeed;
 	}
 
 	void UpdateMoveHelper( Entity groundEntity )
