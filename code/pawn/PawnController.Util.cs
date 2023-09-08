@@ -226,7 +226,19 @@ public partial class PawnController
 
 	bool CanJump()
 	{
-		return Grounded && !IsVaulting();
+		if ( !Grounded )
+			return false;
+
+		if ( IsVaulting() )
+			return false;
+
+		if ( IsDashing() )
+			return false;
+
+		if ( IsWallRunning() )
+			return false;
+
+		return true;
 	}
 
 	Entity CheckForGround()

@@ -133,10 +133,7 @@ public partial class PawnController : EntityComponent<Pawn>
 				InitiateJumpOffWall();
 			}
 			
-			if ( !IsWallRunning() && !IsDashing() )
-			{
-				InitiateJump();
-			}
+			InitiateJump();
 		}
 
 		if ( Input.Down( "jump" ) && !parkouredSinceJumping )
