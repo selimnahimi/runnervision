@@ -110,7 +110,7 @@ public partial class PawnController
 		parkouredSinceJumping = false;
 		parkouredBeforeLanding = false;
 
-		Jumping = false;
+		Jumping = true;
 
 		if ( Entity.Velocity.Length > 100f )
 		{
