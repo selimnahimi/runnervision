@@ -75,8 +75,6 @@ public partial class PawnController
 		{
 			case VaultType.OntoHigh:
 				return 0;
-			case VaultType.Over:
-				return Entity.Velocity.WithZ( -50 ).Length * 2f;
 		}
 
 		return Entity.Velocity.WithZ( 0 ).Length;
