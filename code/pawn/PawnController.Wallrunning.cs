@@ -40,7 +40,7 @@ public partial class PawnController
 		{
 			Wallrunning = 0;
 			wallrunSinceJumping = false;
-			previousWallrunSide = 0;
+			previousWallrunNormal = Vector3.Zero;
 		}
 
 		CurrentWall = traceWall.traceResult;
@@ -87,7 +87,7 @@ public partial class PawnController
 
 		var traceWall = CheckForWall();
 
-		if ( CanWallrun( traceWall ) && previousWallrunSide != traceWall.side )
+		if ( CanWallrun( traceWall ) && previousWallrunNormal != traceWall.traceResult.Normal )
 		{
 			InitiateWallrun( traceWall );
 
@@ -109,7 +109,7 @@ public partial class PawnController
 		}
 
 		Wallrunning = traceWall.side;
-		previousWallrunSide = traceWall.side;
+		previousWallrunNormal = traceWall.traceResult.Normal;
 
 		wallrunSinceJumping = true;
 		parkouredBeforeLanding = true;

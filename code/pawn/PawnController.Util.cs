@@ -47,7 +47,7 @@ public partial class PawnController
 
 		Entity.ApplyAbsoluteImpulse( jumpVector );
 
-		previousWallrunSide = Wallrunning;
+		previousWallrunNormal = CurrentWall.Normal;
 		Wallrunning = 0;
 	}
 
@@ -104,7 +104,7 @@ public partial class PawnController
 		AddEvent( "grounded" );
 
 		Wallrunning = 0;
-		previousWallrunSide = 0;
+		previousWallrunNormal = Vector3.Zero;
 
 		parkouredSinceJumping = false;
 		parkouredBeforeLanding = false;
