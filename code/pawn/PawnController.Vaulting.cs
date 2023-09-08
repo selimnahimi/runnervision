@@ -15,7 +15,7 @@ public partial class PawnController
 
 	float showDebugTime => 3f;
 	float boxRadius => 20f;
-	Vector3 velocityAfterVault = Vector3.Zero;
+	Vector3 vaultAdditionalVelocity = Vector3.Zero;
 
 	void InitiateVault()
 	{
@@ -66,7 +66,9 @@ public partial class PawnController
 		var vaultDirection = (VaultTargetPos - Entity.Position).WithZ( 0 ).Normal;
 		var speedAfterVault = GetSpeedAfterVault();
 
-		Entity.Velocity = vaultDirection * speedAfterVault;
+		Entity.Velocity = vaultDirection * speedAfterVault + vaultAdditionalVelocity;
+
+		ResetVaultAdditionalVelocity();
 	}
 
 	float GetSpeedAfterVault()
@@ -75,8 +77,6 @@ public partial class PawnController
 		{
 			case VaultType.OntoHigh:
 				return 0;
-			case VaultType.Over:
-				return Entity.Velocity.WithZ( -50 ).Length * 2f;
 		}
 
 		return Entity.Velocity.WithZ( 0 ).Length;
@@ -348,6 +348,7 @@ public partial class PawnController
 	void VaultOverAndFall( BBox boxBehindObstacle )
 	{
 		VaultTargetPos = boxBehindObstacle.Center + Entity.Rotation.Up * -40f;
+		vaultAdditionalVelocity = Vector3.Down * 50f;
 	}
 
 	bool CanVaultOnto( BBox topBoxLarge )
@@ -401,5 +402,10 @@ public partial class PawnController
 		VaultTargetPos = groundPosition + Vector3.Up * 13f;
 		Vaulting = VaultType.Onto;
 		vaultSpeed = Math.Max( Entity.Velocity.Length, 200f );
+	}
+
+	private void ResetVaultAdditionalVelocity()
+	{
+		vaultAdditionalVelocity = Vector3.Zero;
 	}
 }

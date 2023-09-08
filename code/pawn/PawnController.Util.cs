@@ -100,7 +100,6 @@ public partial class PawnController
 
 	void InitiateLandingOnFloor()
 	{
-		// Landed on floor
 		Sound.FromWorld( "concretefootstepland", Entity.Position + Vector3.Down * 10f );
 		AddEvent( "grounded" );
 
@@ -138,26 +137,6 @@ public partial class PawnController
 	bool IsDashing()
 	{
 		return Dashing != 0;
-	}
-
-	void UnStuck()
-	{
-		// TODO: make this smarter
-		Entity.Position += Entity.Rotation.Up;
-	}
-
-	bool IsStuck()
-	{
-		var result = Entity.TraceBBox( Entity.Position, Entity.Position );
-		return result.Hit;
-	}
-
-	void TestAndFixStuck()
-	{
-		if ( IsStuck() )
-		{
-			UnStuck();
-		}
 	}
 
 	bool ShouldDash()
