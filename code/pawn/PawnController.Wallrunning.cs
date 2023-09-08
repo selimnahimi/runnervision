@@ -87,14 +87,14 @@ public partial class PawnController
 
 		var traceWall = CheckForWall();
 
-		if ( CanWallrun( traceWall ) && previousWallrunNormal != traceWall.traceResult.Normal )
-		{
-			InitiateWallrun( traceWall );
+		if ( previousWallrunNormal.AlmostEqual(traceWall.traceResult.Normal, 0.1f) )
+			return false;
 
-			return true;
-		}
+		if ( !CanWallrun( traceWall ) )
+			return false;
 
-		return false;
+		InitiateWallrun( traceWall );
+		return true;
 	}
 
 	void InitiateWallrun( WallRunTrace traceWall )

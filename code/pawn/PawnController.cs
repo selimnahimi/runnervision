@@ -46,7 +46,6 @@ public partial class PawnController : EntityComponent<Pawn>
 	private bool debugMode => false;
 	private bool parkouredSinceJumping = false;
 	private bool wallrunSinceJumping = false;
-	// private WallRunSide previousWallrunSide = WallRunSide.None;
 	private Vector3 previousWallrunNormal = Vector3.Zero;
 	private bool parkouredBeforeLanding = false;
 
@@ -133,7 +132,7 @@ public partial class PawnController : EntityComponent<Pawn>
 				InitiateJumpOffWall();
 			}
 			
-			if ( !IsWallRunning() && !IsDashing() )
+			if ( CanJump() )
 			{
 				InitiateJump();
 			}
