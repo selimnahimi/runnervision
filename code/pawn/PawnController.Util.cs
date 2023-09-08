@@ -110,6 +110,8 @@ public partial class PawnController
 		parkouredSinceJumping = false;
 		parkouredBeforeLanding = false;
 
+		Jumping = false;
+
 		if ( Entity.Velocity.Length > 100f )
 		{
 			CurrentMaxSpeed += 500;
@@ -238,6 +240,7 @@ public partial class PawnController
 	{
 		if ( CanJump() )
 		{
+			Jumping = true;
 			Entity.Velocity = ApplyJump( Entity.Velocity, "jump" );
 		}
 	}
