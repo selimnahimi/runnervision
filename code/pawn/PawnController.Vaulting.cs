@@ -348,6 +348,7 @@ public partial class PawnController
 	void VaultOverAndFall( BBox boxBehindObstacle )
 	{
 		VaultTargetPos = boxBehindObstacle.Center + Entity.Rotation.Up * -40f;
+		vaultAdditionalVelocity = Vector3.Down * 50f;
 	}
 
 	bool CanVaultOnto( BBox topBoxLarge )
