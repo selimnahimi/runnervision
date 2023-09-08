@@ -32,6 +32,7 @@ public partial class PawnController : EntityComponent<Pawn>
 	public float TimeSinceClimbing { get; set; }
 	public float TimeSinceWallrun { get; set; }
 	public TraceResult CurrentWall { get; set; } = new TraceResult();
+	public bool Jumping { get; set; }
 
 	private int CurrentClimbAmount { get; set; }
 	public float CurrentMaxSpeed { get; set; }

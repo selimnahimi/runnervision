@@ -154,7 +154,8 @@ public partial class Pawn : AnimatedEntity
 	{
 		SetAnimParameter( "speed", Velocity.Length );
 		SetAnimParameter( "horizontal_speed", Velocity.WithZ(0).Length );
-		SetAnimParameter( "jumping", !Controller.Grounded );
+		SetAnimParameter( "airborne", !Controller.Grounded );
+		SetAnimParameter( "jumping", Controller.Jumping );
 		SetAnimParameter( "dashing", Controller.Dashing );
 		SetAnimParameter( "wallrunning", (int)Controller.Wallrunning );
 		SetAnimParameter( "vaulting", (int)Controller.Vaulting );

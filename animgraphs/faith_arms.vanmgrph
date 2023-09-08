@@ -206,6 +206,19 @@
 												m_data = 10.0
 											}
 										},
+										{
+											_class = "CParameterAnimCondition"
+											m_comparisonOp = 0
+											m_paramID = 
+											{
+												m_id = 1226064506
+											}
+											m_comparisonValue = 
+											{
+												m_nType = 1
+												m_data = true
+											}
+										},
 									]
 									m_blendDuration = 0.2
 									m_destState = 
@@ -271,6 +284,19 @@
 											{
 												m_nType = 4
 												m_data = 10.0
+											}
+										},
+										{
+											_class = "CParameterAnimCondition"
+											m_comparisonOp = 0
+											m_paramID = 
+											{
+												m_id = 1226064506
+											}
+											m_comparisonValue = 
+											{
+												m_nType = 1
+												m_data = false
 											}
 										},
 									]
@@ -2712,7 +2738,7 @@
 			},
 			{
 				_class = "CBoolAnimParameter"
-				m_name = "jumping"
+				m_name = "airborne"
 				m_id = 
 				{
 					m_id = 1731058928
@@ -2835,6 +2861,20 @@
 				m_fMinValue = 0.0
 				m_fMaxValue = 1000.0
 				m_bInterpolate = false
+			},
+			{
+				_class = "CBoolAnimParameter"
+				m_name = "jumping"
+				m_id = 
+				{
+					m_id = 1226064506
+				}
+				m_previewButton = "ANIMPARAM_BUTTON_NONE"
+				m_bNetwork = true
+				m_bUseMostRecentValue = false
+				m_bAutoReset = false
+				m_bPredicted = false
+				m_bDefaultValue = false
 			},
 		]
 	}
