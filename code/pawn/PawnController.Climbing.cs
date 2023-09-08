@@ -13,6 +13,7 @@ public partial class PawnController
 		{
 			TimeSinceClimbing = 0f;
 			CurrentClimbAmount = 0;
+			StopClimbing();
 			return;
 		}
 
