@@ -141,7 +141,16 @@ public partial class PawnController
 
 	bool ShouldDash()
 	{
-		return Grounded && !Input.Down( "forward" ) && (Input.Down( "left" ) || Input.Down( "right" ));
+		if ( !Grounded )
+			return false;
+
+		if ( Input.Down( "forward" ) )
+			return false;
+
+		if ( !Input.Down( "left" ) && !Input.Down( "right" ) )
+			return false;
+
+		return true;
 	}
 
 	void HandleNoclipping()
@@ -298,7 +307,6 @@ public partial class PawnController
 	Vector3 ApplyJump( Vector3 input, string jumpType )
 	{
 		AddEvent( jumpType );
-
 		return input + Vector3.Up * JumpSpeed;
 	}
 
