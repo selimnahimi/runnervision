@@ -132,7 +132,10 @@ public partial class PawnController : EntityComponent<Pawn>
 				InitiateJumpOffWall();
 			}
 			
-			InitiateJump();
+			if ( CanJump() )
+			{
+				InitiateJump();
+			}
 		}
 
 		if ( Input.Down( "jump" ) && !parkouredSinceJumping )

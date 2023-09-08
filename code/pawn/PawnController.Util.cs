@@ -217,11 +217,8 @@ public partial class PawnController
 
 	void InitiateJump()
 	{
-		if ( CanJump() )
-		{
-			Jumping = true;
-			Entity.Velocity = ApplyJump( Entity.Velocity, "jump" );
-		}
+		Jumping = true;
+		Entity.Velocity = ApplyJump( Entity.Velocity, "jump" );
 	}
 
 	bool CanJump()
