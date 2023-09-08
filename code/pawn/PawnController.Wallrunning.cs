@@ -87,7 +87,7 @@ public partial class PawnController
 
 		var traceWall = CheckForWall();
 
-		if ( previousWallrunNormal != traceWall.traceResult.Normal )
+		if ( previousWallrunNormal == traceWall.traceResult.Normal )
 			return false;
 
 		if ( !CanWallrun( traceWall ) )
