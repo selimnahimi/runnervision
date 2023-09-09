@@ -5627,6 +5627,25 @@
 					{
 						_class = "AnimFile"
 						name = "vaultontohigh02"
+						children = 
+						[
+							{
+								_class = "AnimOffset"
+								translation = [ 24.0, 0.0, -10.0 ]
+								rotation_xyz = [ 0.0, 0.0, 0.0 ]
+							},
+							{
+								_class = "ExtractMotion"
+								extract_tx = true
+								extract_ty = true
+								extract_tz = true
+								extract_rz = false
+								linear = true
+								quadratic = false
+								root_bone_name = ""
+								motion_type = "Uniform"
+							},
+						]
 						activity_name = ""
 						activity_weight = 1
 						weight_list_name = ""
@@ -6438,9 +6457,9 @@
 								_class = "ExtractMotion"
 								extract_tx = true
 								extract_ty = true
-								extract_tz = false
+								extract_tz = true
 								extract_rz = false
-								linear = false
+								linear = true
 								quadratic = false
 								root_bone_name = ""
 								motion_type = "Single"
@@ -6474,9 +6493,9 @@
 								_class = "ExtractMotion"
 								extract_tx = true
 								extract_ty = true
-								extract_tz = false
+								extract_tz = true
 								extract_rz = false
-								linear = false
+								linear = true
 								quadratic = false
 								root_bone_name = ""
 								motion_type = "Single"
@@ -6510,9 +6529,9 @@
 								_class = "ExtractMotion"
 								extract_tx = true
 								extract_ty = true
-								extract_tz = false
+								extract_tz = true
 								extract_rz = false
-								linear = false
+								linear = true
 								quadratic = false
 								root_bone_name = ""
 								motion_type = "Single"
@@ -6546,9 +6565,9 @@
 								_class = "ExtractMotion"
 								extract_tx = true
 								extract_ty = true
-								extract_tz = false
+								extract_tz = true
 								extract_rz = false
-								linear = false
+								linear = true
 								quadratic = false
 								root_bone_name = ""
 								motion_type = "Single"
