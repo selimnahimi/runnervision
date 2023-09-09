@@ -40,10 +40,15 @@ public partial class PawnController
 	{
 		// TODO: make smoother
 
+		// TODO: put this into a class or something
+		var startCurveSize = Vaulting == VaultType.OntoHigh ? 10f : 30f;
+		var endCurveSize = Vaulting == VaultType.OntoHigh ? -70f : 30f;
+
 		Vector3 pos = Bezier.Approach(
 			start: VaultStartPos,
 			end: VaultTargetPos,
-			curveSize: 30f,
+			startCurveSize: startCurveSize,
+			endCurveSize: endCurveSize,
 			t: bezierCounter
 		);
 
