@@ -9,6 +9,28 @@
 			{
 				key = 
 				{
+					m_id = 2925321
+				}
+				value = 
+				{
+					_class = "CSequenceAnimNode"
+					m_sName = ""
+					m_vecPosition = [ -496.0, 640.0 ]
+					m_nNodeID = 
+					{
+						m_id = 2925321
+					}
+					m_networkMode = "ServerAuthoritative"
+					m_sNote = ""
+					m_tagSpans = [  ]
+					m_sequenceName = "VaultOntoHigh"
+					m_playbackSpeed = 1.5
+					m_bLoop = false
+				}
+			},
+			{
+				key = 
+				{
 					m_id = 85639047
 				}
 				value = 
@@ -44,7 +66,7 @@
 				{
 					_class = "CSequenceAnimNode"
 					m_sName = ""
-					m_vecPosition = [ -160.0, 656.0 ]
+					m_vecPosition = [ -496.0, 704.0 ]
 					m_nNodeID = 
 					{
 						m_id = 92405404
@@ -52,7 +74,7 @@
 					m_networkMode = "ServerAuthoritative"
 					m_sNote = ""
 					m_tagSpans = [  ]
-					m_sequenceName = "VaultOntoHigh"
+					m_sequenceName = "vaultontohigh02"
 					m_playbackSpeed = 1.5
 					m_bLoop = false
 				}
@@ -77,6 +99,67 @@
 					m_sequenceName = "WallrunLeft"
 					m_playbackSpeed = 1.0
 					m_bLoop = true
+				}
+			},
+			{
+				key = 
+				{
+					m_id = 369569741
+				}
+				value = 
+				{
+					_class = "CChoiceAnimNode"
+					m_sName = "Unnamed"
+					m_vecPosition = [ -208.0, 656.0 ]
+					m_nNodeID = 
+					{
+						m_id = 369569741
+					}
+					m_networkMode = "ServerAuthoritative"
+					m_sNote = ""
+					m_children = 
+					[
+						{
+							m_inputConnection = 
+							{
+								m_nodeID = 
+								{
+									m_id = 2925321
+								}
+								m_outputID = 
+								{
+									m_id = 4294967295
+								}
+							}
+							m_name = "Vault Onto High 1"
+							m_weight = 0.0
+							m_blendTime = 0.2
+						},
+						{
+							m_inputConnection = 
+							{
+								m_nodeID = 
+								{
+									m_id = 92405404
+								}
+								m_outputID = 
+								{
+									m_id = 4294967295
+								}
+							}
+							m_name = "Vault Onto High 2"
+							m_weight = 0.0
+							m_blendTime = 0.2
+						},
+					]
+					m_seed = 802104759
+					m_choiceMethod = "WeightedRandom"
+					m_choiceChangeMethod = "OnReset"
+					m_blendMethod = "SingleBlendTime"
+					m_blendTime = 0.2
+					m_bCrossFade = false
+					m_bResetChosen = true
+					m_bDontResetSameSelection = false
 				}
 			},
 			{
@@ -2459,7 +2542,7 @@
 							{
 								m_nodeID = 
 								{
-									m_id = 92405404
+									m_id = 369569741
 								}
 								m_outputID = 
 								{

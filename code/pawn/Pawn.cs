@@ -33,6 +33,7 @@ public partial class Pawn : AnimatedEntity
 
 	private Rotation cameraStartRotation { get; set; }
 	private float TimeSinceSnap { get; set; }
+	private Vector3 CurrentCameraOffset { get; set; }
 
 	/// <summary>
 	/// Position a player should be looking from in world space.
@@ -244,7 +245,8 @@ public partial class Pawn : AnimatedEntity
 		Camera.Rotation = Rotation.From( ViewAngles.pitch, ViewAngles.yaw, ViewAngles.roll + CameraTilt );
 		Camera.FirstPersonViewer = this;
 
-		Camera.Position = CameraHelper.Position + Rotation.Down * 3f + Rotation.Forward * 3f;
+		UpdateCameraOffset();
+		Camera.Position = Position + CurrentCameraOffset;
 
 		if ( TimeSinceSnap < 0.5f )
 		{
@@ -264,6 +266,12 @@ public partial class Pawn : AnimatedEntity
 		}
 
 		CheckForSnap();
+	}
+
+	private void UpdateCameraOffset()
+	{
+		var cameraHelperLocalPosition = CameraHelper.Position - Position;
+		CurrentCameraOffset = CurrentCameraOffset.LerpTo( cameraHelperLocalPosition, 10f * Time.Delta );
 	}
 
 	private void LookTowardsSnap()
