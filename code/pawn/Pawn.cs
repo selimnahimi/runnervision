@@ -271,7 +271,7 @@ public partial class Pawn : AnimatedEntity
 	private void UpdateCameraOffset()
 	{
 		var cameraHelperLocalPosition = CameraHelper.Position - Position;
-		CurrentCameraOffset = CurrentCameraOffset.LerpTo( cameraHelperLocalPosition, 25f * Time.Delta );
+		CurrentCameraOffset = CurrentCameraOffset.LerpTo( cameraHelperLocalPosition, 10f * Time.Delta );
 	}
 
 	private void LookTowardsSnap()
