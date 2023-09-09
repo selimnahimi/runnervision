@@ -111,9 +111,9 @@ public partial class PawnController
 
 		Jumping = false;
 
-		if ( Entity.Velocity.Length > 100f )
+		if ( Entity.Velocity.WithZ(0).Length > 100f )
 		{
-			CurrentMaxSpeed += 500;
+			CurrentMaxSpeed += 200;
 		}
 	}
 
