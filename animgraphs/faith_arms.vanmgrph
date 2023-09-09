@@ -24,7 +24,7 @@
 					m_sNote = ""
 					m_tagSpans = [  ]
 					m_sequenceName = "VaultOntoHigh"
-					m_playbackSpeed = 1.5
+					m_playbackSpeed = 1.3
 					m_bLoop = false
 				}
 			},
@@ -75,7 +75,7 @@
 					m_sNote = ""
 					m_tagSpans = [  ]
 					m_sequenceName = "vaultontohigh02"
-					m_playbackSpeed = 1.5
+					m_playbackSpeed = 1.3
 					m_bLoop = false
 				}
 			},
