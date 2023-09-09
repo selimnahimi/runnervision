@@ -12,7 +12,12 @@ namespace RunnerVision
 		{
 			base.OnFrame( target );
 
-			ChromaticAberration.Scale = Math.Max(0f, PawnMaxSpeed / 2000f - 0.5f);
+			UpdateChromaticAberration();
+		}
+
+		private void UpdateChromaticAberration()
+		{
+			ChromaticAberration.Scale = ChromaticAberration.Scale.LerpTo( Math.Max( 0f, PawnMaxSpeed / 2000f - 0.5f ), 0.5f * Time.Delta );
 		}
 	}
 }
