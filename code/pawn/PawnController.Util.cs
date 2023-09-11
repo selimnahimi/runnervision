@@ -111,7 +111,7 @@ public partial class PawnController
 
 		Jumping = false;
 
-		if ( Entity.Velocity.WithZ(0).Length > 100f )
+		if ( GetHorizontalVelocity() > 100f )
 		{
 			CurrentMaxSpeed += 200;
 		}
@@ -134,7 +134,7 @@ public partial class PawnController
 		CurrentMaxSpeed = Math.Min( CurrentMaxSpeed, MaxSpeed );
 	}
 
-	bool IsDashing()
+	public bool IsDashing()
 	{
 		return Dashing != 0;
 	}
@@ -346,5 +346,15 @@ public partial class PawnController
 		if ( Vector3.GetAngle( Vector3.Up, trace.Normal ) > GroundAngle ) return position;
 
 		return trace.EndPosition;
+	}
+
+	public bool IsRunning()
+	{
+		return GetHorizontalVelocity() > 100f;
+	}
+
+	public float GetHorizontalVelocity()
+	{
+		return Entity.Velocity.WithZ( 0 ).Length;
 	}
 }

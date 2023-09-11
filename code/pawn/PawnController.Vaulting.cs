@@ -84,7 +84,7 @@ public partial class PawnController
 				return 0;
 		}
 
-		return Entity.Velocity.WithZ( 0 ).Length;
+		return GetHorizontalVelocity();
 	}
 
 	bool CanVault(float speed, float rayDistance)

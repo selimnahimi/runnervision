@@ -128,7 +128,7 @@ public partial class PawnController
 
 		if ( TimeSinceClimbing > 0.15f )
 		{
-			var addHorizontalSpeed = Math.Min(50f, Entity.Velocity.WithZ( 0 ).Length);
+			var addHorizontalSpeed = Math.Min(50f, GetHorizontalVelocity());
 			Entity.ApplyAbsoluteImpulse( Entity.Rotation.Up * 100f + Entity.Rotation.Up * addHorizontalSpeed );
 			TimeSinceClimbing = 0f;
 			CurrentClimbAmount++;
@@ -137,7 +137,7 @@ public partial class PawnController
 		ApproachClimbTarget();
 	}
 
-	bool IsClimbing()
+	public bool IsClimbing()
 	{
 		return Climbing;
 	}
