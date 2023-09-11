@@ -346,7 +346,7 @@ public partial class PawnController
 
 	void VaultOverAndLand(TraceResult traceObstacleSurface )
 	{
-		var groundPosition = traceObstacleSurface.HitPosition;
+		var groundPosition = traceObstacleSurface.HitPosition + Entity.Rotation.Up * 5f;
 		VaultTargetPos = groundPosition;
 	}
 
