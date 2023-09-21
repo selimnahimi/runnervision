@@ -261,7 +261,12 @@ public partial class Pawn : AnimatedEntity
 
 			if ( Controller.IsWallRunning() )
 			{
-				LookTowardsMovement();
+				LookTowardsWallrunMovement();
+			}
+
+			if ( Controller.Vaulting == VaultType.OntoHigh )
+			{
+				LookTowardsVaultTarget();
 			}
 		}
 
@@ -270,8 +275,20 @@ public partial class Pawn : AnimatedEntity
 
 	private void UpdateCameraOffset()
 	{
+		var lerpSpeed = GetCameraOffsetLerpSpeed();
+
 		var cameraHelperLocalPosition = CameraHelper.Position - Position;
-		CurrentCameraOffset = CurrentCameraOffset.LerpTo( cameraHelperLocalPosition, 10f * Time.Delta );
+		CurrentCameraOffset = CurrentCameraOffset.LerpTo( cameraHelperLocalPosition, lerpSpeed * Time.Delta );
+	}
+
+	private float GetCameraOffsetLerpSpeed()
+	{
+		if ( Controller.IsWallRunning() )
+		{
+			return 30f;
+		}
+
+		return 10f;
 	}
 
 	private void LookTowardsSnap()
@@ -304,7 +321,13 @@ public partial class Pawn : AnimatedEntity
 		CameraRotateToNewPosition( speed: 5f );
 	}
 
-	private void LookTowardsMovement()
+	private void LookTowardsVaultTarget()
+	{
+		CameraNewAngles = (Controller.VaultTargetPos - Controller.Entity.Position).EulerAngles.WithPitch(0);
+		CameraRotateToNewPosition( speed: 5f );
+	}
+
+	private void LookTowardsWallrunMovement()
 	{
 		if ( !Controller.CurrentWall.Hit )
 			return;
