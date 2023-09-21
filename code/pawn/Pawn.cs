@@ -162,6 +162,7 @@ public partial class Pawn : AnimatedEntity
 		SetAnimParameter( "vaulting", (int)Controller.Vaulting );
 		SetAnimParameter( "climbing", Controller.Climbing );
 		SetAnimParameter( "ducking", Controller.Ducking );
+		SetAnimParameter( "sliding", Controller.Sliding );
 	}
 
 	public override void BuildInput()
@@ -285,9 +286,10 @@ public partial class Pawn : AnimatedEntity
 	private float GetCameraOffsetLerpSpeed()
 	{
 		if ( Controller.IsWallRunning() )
-		{
 			return 30f;
-		}
+
+		if ( Controller.TimeSinceSlideStopped < 0.5f )
+			return 30f;
 
 		return 10f;
 	}

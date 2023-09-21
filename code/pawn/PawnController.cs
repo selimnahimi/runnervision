@@ -31,10 +31,12 @@ public partial class PawnController : EntityComponent<Pawn>
 	public Vector3 ForwardDirection { get; set; }
 	public float TimeSinceClimbing { get; set; }
 	public float TimeSinceWallrun { get; set; }
+	public float TimeSinceSlideStopped { get; set; }
 	public TraceResult CurrentWall { get; set; } = new TraceResult();
 	public bool Jumping { get; set; }
 	public Vector3 VaultTargetPos { get; set; }
 	public bool Ducking { get; set; }
+	public bool Sliding { get; set; }
 
 	private int CurrentClimbAmount { get; set; }
 	public float CurrentMaxSpeed { get; set; }
@@ -67,9 +69,11 @@ public partial class PawnController : EntityComponent<Pawn>
 		DebugOverlay.ScreenText( "Wallrunning: " + Wallrunning.ToString(), line: 6 );
 		DebugOverlay.ScreenText( "Vaulting: " + Vaulting.ToString(), line: 7 );
 		DebugOverlay.ScreenText( "Grounded: " + Grounded.ToString(), line: 8 );
-		DebugOverlay.ScreenText( "Current Speed: " + ((int)Entity.Velocity.Length).ToString(), line: 9 );
-		DebugOverlay.ScreenText( "Current Accel: " + CurrentMaxSpeed.ToString(), line: 10 );
-		DebugOverlay.ScreenText( "Max Accel: " + MaxSpeed.ToString(), line: 11 );
+		DebugOverlay.ScreenText( "Ducking: " + Ducking.ToString(), line: 9 );
+		DebugOverlay.ScreenText( "Sliding: " + Sliding.ToString(), line: 10 );
+		DebugOverlay.ScreenText( "Current Speed: " + ((int)Entity.Velocity.Length).ToString(), line: 11 );
+		DebugOverlay.ScreenText( "Current Accel: " + CurrentMaxSpeed.ToString(), line: 12 );
+		DebugOverlay.ScreenText( "Max Accel: " + MaxSpeed.ToString(), line: 13 );
 
 		if ( Noclipping )
 		{
@@ -151,13 +155,15 @@ public partial class PawnController : EntityComponent<Pawn>
 		{
 			TryDucking();
 		}
-		else if ( IsDucking() )
+		else
 		{
-			StopDucking();
+			if ( IsDucking() && !IsSliding() )
+				StopDucking();
 		}
 
 		UpdateDash();
 		UpdateDuck();
+		UpdateSlide();
 
 		// TestAndFixStuck( ); // This causes the slope glitch
 
