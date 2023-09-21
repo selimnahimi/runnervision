@@ -141,6 +141,9 @@ public partial class PawnController
 
 	bool ShouldDash()
 	{
+		if ( Ducking )
+			return false;
+
 		if ( !Grounded )
 			return false;
 
@@ -242,6 +245,9 @@ public partial class PawnController
 			return false;
 
 		if ( IsWallRunning() )
+			return false;
+
+		if ( IsDucking() )
 			return false;
 
 		return true;

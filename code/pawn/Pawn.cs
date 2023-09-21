@@ -161,6 +161,7 @@ public partial class Pawn : AnimatedEntity
 		SetAnimParameter( "wallrunning", (int)Controller.Wallrunning );
 		SetAnimParameter( "vaulting", (int)Controller.Vaulting );
 		SetAnimParameter( "climbing", Controller.Climbing );
+		SetAnimParameter( "ducking", Controller.Ducking );
 	}
 
 	public override void BuildInput()

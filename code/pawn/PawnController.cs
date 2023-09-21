@@ -34,6 +34,7 @@ public partial class PawnController : EntityComponent<Pawn>
 	public TraceResult CurrentWall { get; set; } = new TraceResult();
 	public bool Jumping { get; set; }
 	public Vector3 VaultTargetPos { get; set; }
+	public bool Ducking { get; set; }
 
 	private int CurrentClimbAmount { get; set; }
 	public float CurrentMaxSpeed { get; set; }
@@ -146,7 +147,17 @@ public partial class PawnController : EntityComponent<Pawn>
 				InitiateVault();
 		}
 
+		if ( Input.Down( "run" ) )
+		{
+			TryDucking();
+		}
+		else if ( IsDucking() )
+		{
+			StopDucking();
+		}
+
 		UpdateDash();
+		UpdateDuck();
 
 		// TestAndFixStuck( ); // This causes the slope glitch
 
