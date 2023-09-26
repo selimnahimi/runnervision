@@ -1,0 +1,18 @@
+{
+  "UI": false,
+  "Volume": "1.00,1.00,0",
+  "Pitch": "1.00,1.00,0",
+  "Decibels": 70,
+  "SelectionMode": "RandomExclusive",
+  "Sounds": [
+    "sound/concretefootstepslide_01.vsnd",
+    "sound/concretefootstepslide_02.vsnd",
+    "sound/concretefootstepslide_03.vsnd",
+    "sound/concretefootstepslide_04.vsnd",
+    "sound/concretefootstepslide_05.vsnd",
+    "sound/concretefootstepslide_06.vsnd",
+    "sound/concretefootstepslide_07.vsnd"
+  ],
+  "MaximumDistance": 1143.9335,
+  "MinimumDistance": 57.196674
+}

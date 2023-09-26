@@ -141,6 +141,9 @@ public partial class PawnController
 
 	bool ShouldDash()
 	{
+		if ( Ducking )
+			return false;
+
 		if ( !Grounded )
 			return false;
 
@@ -170,6 +173,7 @@ public partial class PawnController
 		TimeSinceDash += Time.Delta;
 		TimeSinceClimbing += Time.Delta;
 		TimeSinceWallrun += Time.Delta;
+		TimeSinceSlideStopped += Time.Delta;
 	}
 
 	void UpdateFootsteps()
@@ -244,6 +248,9 @@ public partial class PawnController
 		if ( IsWallRunning() )
 			return false;
 
+		if ( IsDucking() )
+			return false;
+
 		return true;
 	}
 
@@ -290,8 +297,36 @@ public partial class PawnController
 
 	void DoMovement( Vector3 moveVector )
 	{
+		if ( ShouldAccelerate() )
+			DoAccelerate( moveVector );
+
+		DoApplyFriction();
+	}
+
+	void DoAccelerate( Vector3 moveVector )
+	{
 		Entity.Velocity = Accelerate( Entity.Velocity, moveVector.Normal, moveVector.Length, CurrentMaxSpeed, Acceleration );
-		Entity.Velocity = ApplyFriction( Entity.Velocity, Friction );
+	}
+
+	void DoApplyFriction()
+	{
+		Entity.Velocity = ApplyFriction( Entity.Velocity, GetFriction() );
+	}
+
+	bool ShouldAccelerate()
+	{
+		if ( IsSliding() )
+			return false;
+
+		return true;
+	}
+
+	float GetFriction()
+	{
+		if ( IsSliding() )
+			return Friction * 0.5f;
+
+		return Friction;
 	}
 
 	Vector3 Accelerate( Vector3 velocity, Vector3 wishdir, float wishspeed, float speedLimit, float acceleration )
@@ -346,5 +381,15 @@ public partial class PawnController
 		if ( Vector3.GetAngle( Vector3.Up, trace.Normal ) > GroundAngle ) return position;
 
 		return trace.EndPosition;
+	}
+
+	float GetSpeed()
+	{
+		return Entity.Velocity.Length;
+	}
+
+	float GetHorizontalSpeed()
+	{
+		return Entity.Velocity.WithZ( 0 ).Length;
 	}
 }

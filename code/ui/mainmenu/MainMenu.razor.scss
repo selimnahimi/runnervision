@@ -28,6 +28,11 @@ MainMenu {
             padding-bottom: 5px;
             border-bottom: 1px solid white;
             font-weight: 200;
+            flex-direction: column;
+        }
+
+        p ul {
+            flex-direction: column;
         }
     }
 

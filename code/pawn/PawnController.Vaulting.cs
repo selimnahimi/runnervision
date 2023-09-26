@@ -112,11 +112,6 @@ public partial class PawnController
 		return true;
 	}
 
-	float GetSpeed()
-	{
-		return Entity.Velocity.Length;
-	}
-
 	float GetRayDistance(float speed)
 	{
 		return Math.Max( (speed / 500) * 60f, 30f );

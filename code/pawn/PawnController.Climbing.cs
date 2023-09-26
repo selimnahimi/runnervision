@@ -98,6 +98,9 @@ public partial class PawnController
 		if ( !traceFront.Hit )
 			return false;
 
+		if ( IsDucking() )
+			return false;
+
 		return true;
 	}
 

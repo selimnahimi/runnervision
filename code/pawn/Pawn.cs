@@ -69,7 +69,31 @@ public partial class Pawn : AnimatedEntity
 
 	public BBox Hull
 	{
-		get => new
+		get => GetHull();
+	}
+
+	public BBox GetHull()
+	{
+		if (Controller.IsDucking())
+		{
+			return GetDuckingHull();
+		}
+
+		return GetStandingHull();
+	}
+
+	private BBox GetDuckingHull()
+	{
+		return new BBox
+		(
+			new Vector3( -16, -16, 0 ),
+			new Vector3( 16, 16, 32 )
+		);
+	}
+
+	private BBox GetStandingHull()
+	{
+		return new BBox
 		(
 			new Vector3( -16, -16, 0 ),
 			new Vector3( 16, 16, 64 )
@@ -161,6 +185,8 @@ public partial class Pawn : AnimatedEntity
 		SetAnimParameter( "wallrunning", (int)Controller.Wallrunning );
 		SetAnimParameter( "vaulting", (int)Controller.Vaulting );
 		SetAnimParameter( "climbing", Controller.Climbing );
+		SetAnimParameter( "ducking", Controller.Ducking );
+		SetAnimParameter( "sliding", Controller.Sliding );
 	}
 
 	public override void BuildInput()
@@ -261,7 +287,12 @@ public partial class Pawn : AnimatedEntity
 
 			if ( Controller.IsWallRunning() )
 			{
-				LookTowardsMovement();
+				LookTowardsWallrunMovement();
+			}
+
+			if ( Controller.Vaulting == VaultType.OntoHigh )
+			{
+				LookTowardsVaultTarget();
 			}
 		}
 
@@ -270,8 +301,21 @@ public partial class Pawn : AnimatedEntity
 
 	private void UpdateCameraOffset()
 	{
+		var lerpSpeed = GetCameraOffsetLerpSpeed();
+
 		var cameraHelperLocalPosition = CameraHelper.Position - Position;
-		CurrentCameraOffset = CurrentCameraOffset.LerpTo( cameraHelperLocalPosition, 10f * Time.Delta );
+		CurrentCameraOffset = CurrentCameraOffset.LerpTo( cameraHelperLocalPosition, lerpSpeed * Time.Delta );
+	}
+
+	private float GetCameraOffsetLerpSpeed()
+	{
+		if ( Controller.IsWallRunning() )
+			return 30f;
+
+		if ( Controller.TimeSinceSlideStopped < 0.5f )
+			return 30f;
+
+		return 10f;
 	}
 
 	private void LookTowardsSnap()
@@ -304,7 +348,13 @@ public partial class Pawn : AnimatedEntity
 		CameraRotateToNewPosition( speed: 5f );
 	}
 
-	private void LookTowardsMovement()
+	private void LookTowardsVaultTarget()
+	{
+		CameraNewAngles = (Controller.VaultTargetPos - Controller.Entity.Position).EulerAngles.WithPitch(0);
+		CameraRotateToNewPosition( speed: 5f );
+	}
+
+	private void LookTowardsWallrunMovement()
 	{
 		if ( !Controller.CurrentWall.Hit )
 			return;
