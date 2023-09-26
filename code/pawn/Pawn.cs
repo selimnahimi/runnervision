@@ -69,7 +69,31 @@ public partial class Pawn : AnimatedEntity
 
 	public BBox Hull
 	{
-		get => new
+		get => GetHull();
+	}
+
+	public BBox GetHull()
+	{
+		if (Controller.IsDucking())
+		{
+			return GetDuckingHull();
+		}
+
+		return GetStandingHull();
+	}
+
+	private BBox GetDuckingHull()
+	{
+		return new BBox
+		(
+			new Vector3( -16, -16, 0 ),
+			new Vector3( 16, 16, 32 )
+		);
+	}
+
+	private BBox GetStandingHull()
+	{
+		return new BBox
 		(
 			new Vector3( -16, -16, 0 ),
 			new Vector3( 16, 16, 64 )
